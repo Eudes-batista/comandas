@@ -1,6 +1,7 @@
 package servico;
 
 import java.util.List;
+import modelo.Comandas;
 import modelo.Sosa98;
 
 public interface ComandaService {
@@ -33,9 +34,9 @@ public interface ComandaService {
     
     public int verificarComanda(String mesa,String comanda);
 
-    public void transferirComandaParaMesa(String mesa,String comanda);
+    public void transferirComandaParaMesa(String mesa,Comandas comandas);
     
-    public void transferirComandaParaComanda(String comandaOrigem,String comandaDestino);
+    public void transferirComandaParaComanda(Comandas comandaOrigem,String comandaDestino);
     
     public void atualizarStatusImpressao(String comanda);
     
@@ -47,4 +48,8 @@ public interface ComandaService {
     
     public void alterarQuantidadeItem(double quantidade,String numero);
     
+    public List<Object[]> pesquisarItensTransferencia(String pedidos);
+    
+    public void transferirItens(String numero,String item);
+        
 }

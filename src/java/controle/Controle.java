@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import modelo.Comandas;
 import modelo.Sosa98;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
@@ -222,13 +223,47 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferirComandaParaMesa(String mesa, String comanda) {
-        executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda + "'");
+    public void transferirComandaParaMesa(String mesa, Comandas comanda) {
+        executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getComanda() + "'");
     }
-    
+
     @Override
-    public void transferirComandaParaComanda(String comandaOrigem, String comandaDestino) {
-        executarSql("update sosa98 set tecomand='" +comandaDestino + "' where tecomand='" + comandaOrigem + "'");
+    public void transferirComandaParaComanda(Comandas comandaOrigem, String comandaDestino) {
+        List<Object[]> comanda = pesquisarComandaPorCodigo(comandaDestino);
+        String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda;
+        int somaQauntidadePessoasMesa;
+        if (comanda.isEmpty()) {
+            sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getComanda() + "'";
+            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "' where pedido ='" + comandaOrigem.getPedido() + "'";
+            executarSql(sqlSoa98);
+            executarSql(sqlEspelhoComanda);
+            return;
+        }
+        mesaDestino = String.valueOf(comanda.get(0)[3]);
+        pedido = String.valueOf(comanda.get(0)[5]);
+        somaQauntidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0)[4])) + Integer.parseInt(comandaOrigem.getPessoasMesa());
+        sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "' where tecomand='" + comandaOrigem.getComanda() + "'";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "' where pedido in('" + comandaOrigem.getPedido() + "','" + pedido + "')";
+        executarSql(sqlSoa98);
+        executarSql(sqlEspelhoComanda);
+        List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
+        for (int i = 0; i < itensTransferencia.size(); i++) {
+            transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));
+        }
+    }
+
+    @Override
+    public List<Object[]> pesquisarItensTransferencia(String pedidos) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        List<Object[]> resultado = session.createSQLQuery("select TENUMERO from  sosa98 inner join espelho_comanda on(numero=tenumero) where pedido ='" + pedidos + "';").list();
+        session.close();
+        return resultado;
+    }
+
+    @Override
+    public void transferirItens(String numero, String item) {
+        executarSql("update sosa98 set tenumseq='" + item + "' where tenumero='" + numero + "'");
+        executarSql("update espelho_comanda set numero_item='" + item + "' where numero='" + numero + "'");
     }
 
     @Override
@@ -268,12 +303,12 @@ public class Controle implements ComandaService, Serializable {
 
     @Override
     public void alterar(Sosa98 sosa98) {
-        executarSql("update sosa98 set TEOBSERV='"+sosa98.getTeobserv()+"' where tenumero='"+sosa98.getId().getTenumero()+"'");
+        executarSql("update sosa98 set TEOBSERV='" + sosa98.getTeobserv() + "' where tenumero='" + sosa98.getId().getTenumero() + "'");
     }
 
     @Override
-    public void alterarQuantidadeItem(double quantidade,String numero) {
-        executarSql("update sosa98 set tequanti="+quantidade+" where tenumero='"+numero+"'");
+    public void alterarQuantidadeItem(double quantidade, String numero) {
+        executarSql("update sosa98 set tequanti=" + quantidade + " where tenumero='" + numero + "'");
     }
-    
+
 }

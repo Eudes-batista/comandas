@@ -224,17 +224,17 @@ public class ComandasBean implements Serializable {
             return;
         }
         formatarMesaComQuatroDigitos();
-        if (mesaDestino.equals(codigoMesa)) {
-            Messages.addGlobalWarn("Mesa ou Comanda igual a de origem.");
-            return;
-        }
-        if (!mesaDestino.equals("RSVA") || !Pattern.compile("\\d").matcher(mesaDestino).find()) {
+//        if (mesaDestino.equals(codigoMesa)) {
+//            Messages.addGlobalWarn("Mesa ou Comanda igual a de origem.");
+//            return;
+//        }
+        if (!mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(mesaDestino).find()) {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
         }
         Comandas cm = comandas.stream().filter(c -> c.getComanda().equals(comandaOrigem)).findAny().orElse(null);
         if (cm != null && !cm.getStatus().equals("P")) {
-            transferirMesaComanda();
+            transferirMesaComanda(cm);
             atualizarERedirecionar();
             return;
         }
@@ -261,11 +261,11 @@ public class ComandasBean implements Serializable {
         }
     }
 
-    private void transferirMesaComanda() {
+    private void transferirMesaComanda(Comandas comandaOrigem) {
         if ("mesa".equals(this.tipoTransferencia)) {
             controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
         } else {
-            controleService.transferirComandaParaComanda(mesaDestino, comandaOrigem);
+            controleService.transferirComandaParaComanda(comandaOrigem,mesaDestino);
         }
     }
 
