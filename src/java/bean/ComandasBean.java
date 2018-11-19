@@ -220,38 +220,52 @@ public class ComandasBean implements Serializable {
     }
 
     public void transferirComanda() {
-        if (mesaDestino != null) {
-            if (Pattern.compile("\\d").matcher(mesaDestino).find()) {
-                mesaDestino = String.format("%04d", Integer.parseInt(mesaDestino));
-            }
-            if (!mesaDestino.equals(codigoMesa)) {
-                if (mesaDestino.equals("RSVA") || Pattern.compile("\\d").matcher(mesaDestino).find()) {
-                    Comandas cm = comandas.stream().filter(c -> c.getComanda().equals(comandaOrigem)).findAny().orElse(null);
-                    if (cm != null && !cm.getStatus().equals("P")) {
-                        if ("mesa".equals(this.tipoTransferencia)) {
-                            controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
-                        } else {
-                            controleService.transferirComandaParaComanda(mesaDestino, comandaOrigem);
-                        }
-                        System.out.println("cm = " + cm);
-                        if (comandas.size() > 1) {
-                            comandas.remove(new Comandas(comandaOrigem));
-                            PrimeFaces.current().ajax().update("frm:tabelaComanda");
-                            PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
-                            return;
-                        }
-                        try {
-                            Faces.redirect("mesas.jsf");
-                        } catch (IOException ex) {
-                            Messages.addGlobalWarn("Erro ao abrir a pagina das mesas.");
-                        }
-                    } else {
-                        Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
-                    }
-                } else {
-                    Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
-                }
-            }
+        if (mesaDestino == null) {
+            return;
+        }
+        formatarMesaComQuatroDigitos();
+        if (mesaDestino.equals(codigoMesa)) {
+            Messages.addGlobalWarn("Mesa ou Comanda igual a de origem.");
+            return;
+        }
+        if (!mesaDestino.equals("RSVA") || !Pattern.compile("\\d").matcher(mesaDestino).find()) {
+            Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
+            return;
+        }
+        Comandas cm = comandas.stream().filter(c -> c.getComanda().equals(comandaOrigem)).findAny().orElse(null);
+        if (cm != null && !cm.getStatus().equals("P")) {
+            transferirMesaComanda();
+            atualizarERedirecionar();
+            return;
+        }
+        Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
+    }
+
+    private void formatarMesaComQuatroDigitos() throws NumberFormatException {
+        if (Pattern.compile("\\d").matcher(mesaDestino).find()) {
+            mesaDestino = String.format("%04d", Integer.parseInt(mesaDestino));
+        }
+    }
+
+    private void atualizarERedirecionar() {
+        if (comandas.size() > 1) {
+            comandas.remove(new Comandas(comandaOrigem));
+            PrimeFaces.current().ajax().update("frm:tabelaComanda");
+            PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
+            return;
+        }
+        try {
+            Faces.redirect("mesas.jsf");
+        } catch (IOException ex) {
+            Messages.addGlobalWarn("Erro ao abrir a pagina das mesas.");
+        }
+    }
+
+    private void transferirMesaComanda() {
+        if ("mesa".equals(this.tipoTransferencia)) {
+            controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
+        } else {
+            controleService.transferirComandaParaComanda(mesaDestino, comandaOrigem);
         }
     }
 
