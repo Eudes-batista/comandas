@@ -233,6 +233,7 @@ public class ComandasBean implements Serializable {
                         } else {
                             controleService.transferirComandaParaComanda(mesaDestino, comandaOrigem);
                         }
+                        System.out.println("cm = " + cm);
                         if (comandas.size() > 1) {
                             comandas.remove(new Comandas(comandaOrigem));
                             PrimeFaces.current().ajax().update("frm:tabelaComanda");
