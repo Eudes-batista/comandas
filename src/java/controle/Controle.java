@@ -225,6 +225,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferirComandaParaMesa(String mesa, Comandas comanda) {
         executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getComanda() + "'");
+        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPedido()+ "'");
     }
 
     @Override
