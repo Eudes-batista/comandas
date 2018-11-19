@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{acompanhamentoBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Acompanhamentos</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
+        <link rel="stylesheet" href="resources/css/incluir-mesa.css" /> 
+        <script>
+            document.addEventListener("keydown", function (evt) {
+                if (evt.keyCode === 27) {
+                    window.location.href = "mesas.jsf";
+                }
+            });
+        </script>
+    </h:head>
+    <h:body>
+        <div class="container-fluid comanda">
+            <div class="row">
+                <div class="col-md-12 label-campo">
+                    <h3>Cadastro Acompanhamentos</h3>
+                </div>
+                <h:form id="frm">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:messages id="msg" closable="true" showIcon="false"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:selectOneMenu id="grupo" value="#{acompanhamentoBean.acompanhamento.grupo}" class="form-control" converter="omnifaces.SelectItemsConverter"
+                                                 required="true" requiredMessage="Campo Obrigatorio! Grupo">
+                                    <f:selectItem itemLabel="Selecione um Grupo" noSelectionOption="true" />
+                                    <f:selectItems value="#{acompanhamentoBean.grupoAcompanhamentos}" var="acompanhamento"
+                                                   itemLabel="#{acompanhamento.nome}" itemValue="#{acompanhamento}"/>
+                                </h:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText id="nome" value="#{acompanhamentoBean.acompanhamento.nome}"
+                                             required="true" requiredMessage="Campo Obrigatorio! Nome" maxlength="50">
+                                    <f:passThroughAttribute name='placeholder' value='Nome do Acompanhamento'/>
+                                    <f:passThroughAttribute name='autofocus' value='true'/>
+                                </h:inputText>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink id="salvar" class="btn btn-info btn-block" actionListener="#{acompanhamentoBean.salvar()}"
+                                               update="frm:tabela frm:nome frm:msg" process="frm:nome frm:grupo @this">
+                                    Salvar
+                                </p:commandLink>
+                                <p:defaultCommand target="salvar" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="overflow: auto;height: 200px;">
+                                <h:dataTable id="tabela" value="#{acompanhamentoBean.acompanhamentos}" var="acompanhamento" class="table label-campo">
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Nome
+                                        </f:facet>
+                                        #{acompanhamento.nome}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Grupo
+                                        </f:facet>
+                                        #{acompanhamento.grupo.nome}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandLink class="btn btn-danger" actionListener="#{acompanhamentoBean.excluir(acompanhamento)}" onclick="return confirm('Deseja mesmo excluir?')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <f:ajax render="frm:tabela" execute="@this" />
+                                        </h:commandLink>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-2 col-md-offset-7 text-right">
+                                <a id="voltar" href="mesas.jsf" class="btn btn-danger">Sair (ESC)</a>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</html>
+

@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{motivoCancelamentoBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Cadastro de Motivos de Cancelamento</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
+        <link rel="stylesheet" href="resources/css/incluir-mesa.css" /> 
+        <script>
+            document.addEventListener("keydown", function (evt) {
+                if (evt.keyCode === 27) {
+                    window.location.href = "mesas.jsf";
+                }
+            });
+        </script>
+    </h:head>
+    <h:body>
+        <div class="container-fluid comanda">
+            <div class="row">
+                <div class="col-md-12 label-campo">
+                    <h3>Cadastro Motivos de Cancelamentos</h3>
+                </div>
+                <h:form id="frm">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText id="nome" value="#{motivoCancelamentoBean.motivoCancelamento.nome}">
+                                    <f:passThroughAttribute name='placeholder' value='Nome do Motivo'/>
+                                    <f:passThroughAttribute name='autofocus' value='true'/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row" style="display: none;">
+                            <div class="col-md-12">
+                                <label style="color: #fff;font-size: 15pt;">Observação é Obrigatoria?</label>
+                            </div>
+                        </div>
+                        <div class="row" style="display: none;">
+                            <div class="col-md-12">
+                                <h:selectBooleanCheckbox class="checkbox" style="height: 25px;" value="#{motivoCancelamentoBean.motivoCancelamento.observacaoObrigatoria}"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink id="salvar" class="btn btn-info" actionListener="#{motivoCancelamentoBean.salvar()}"
+                                               update="frm:tabela frm:nome" process="frm:nome @this">
+                                    Salvar
+                                </p:commandLink>
+                                <p:defaultCommand target="salvar" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="overflow: auto;height: 180px;">
+                                <h:dataTable id="tabela" value="#{motivoCancelamentoBean.motivoCancelamentos}" var="motivo" class="table label-campo">
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Codigo
+                                        </f:facet>
+                                        #{motivo.codigo}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Nome
+                                        </f:facet>
+                                        #{motivo.nome}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandLink class="btn btn-danger" actionListener="#{motivoCancelamentoBean.excluir(motivo)}" onclick="return confirm('Deseja mesmo excluir?')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <f:ajax render="frm:tabela" execute="@this" />
+                                        </h:commandLink>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-2 col-md-offset-7 text-right">
+                                <a href="mesas.jsf" class="btn btn-danger">Sair (ESC)</a>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</html>
+

@@ -1,0 +1,50 @@
+package servico;
+
+import java.util.List;
+import modelo.Sosa98;
+
+public interface ComandaService {
+
+    public List<Object[]> listarComandasPorMesas(String mesa);
+
+    public List<Object[]> listarComandasPorCodigo(String mesa,String comanda);
+
+    public List<Object[]> ListarLancamentos(String codigo,String mesa);
+    
+    public int buscarQuantidadeProdutosComanda(String comanda,String mesa);
+
+    public void salvar(Sosa98 sosa98);
+    
+    public void alterar(Sosa98 sosa98);
+
+    public void excluir(String codigo);
+
+    public Sosa98 buscarPorId(String codigo);
+    
+    public List<Object[]> listarComandas(String codigo);
+    
+    public List<Object[]> listarComandas();
+    
+    public List<Object[]> pesquisarComandaPorCodigo(String codigo);
+
+    public String gerarSequencia(String comanda);
+    
+    public void excluirMesa(String mesa,String comanda);
+    
+    public int verificarComanda(String mesa,String comanda);
+
+    public void transferirComandaParaMesa(String mesa,String comanda);
+    
+    public void transferirComandaParaComanda(String comandaOrigem,String comandaDestino);
+    
+    public void atualizarStatusImpressao(String comanda);
+    
+    public void atualizarStatusPreconta(String comanda);
+    
+    public boolean verificarStatusMesa(String comanda);
+    
+    public int verificarNumeroPedido(String comanda);
+    
+    public void alterarQuantidadeItem(double quantidade,String numero);
+    
+}

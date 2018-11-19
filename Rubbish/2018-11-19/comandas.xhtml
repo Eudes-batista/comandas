@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:metadata>
+        <f:viewParam name="id" value="#{comandasBean.codigoMesa}"/>
+        <f:viewAction action="#{comandasBean.init()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Mesas</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="resources/imagens/food.png" type="image/x-icon" />
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputStylesheet library="css" name="comandas.css" />
+        <script type="text/javascript">
+            document.addEventListener("keydown", function (evt) {
+                if (evt.keyCode === 27) {
+                    location.href = "mesas.jsf";
+                    return;
+                }
+                if (evt.keyCode === 113) {
+                    document.getElementById("frmCabecalho:abrirComanda").click();
+                } else if (evt.keyCode === 115) {
+                    document.getElementById("frmCabecalho:imprimirPreconta").click();
+                }
+            });
+            window.onload = function () {
+                var usuario = document.getElementById("frmDialogo:usuario");
+                if (usuario) {
+                    usuario.onkeypress = function (e) {
+                        if (e.keyCode === 13) {
+                            document.getElementById("frmDialogo:senha").focus();
+                        }
+                    };
+                }
+            };
+            function handleLoginRequest(xhr, status, args) {
+                if (!args.validationFailed || args.fechar) {
+                    PF('dialogoUsuario').hide();
+                }
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <!--CABECALHO-->
+        <h:form id="frmCabecalho">
+            <div class="container-fluid">
+                <div class="row barra" style="padding: 10px;">
+                    <div class="col-md-4">
+                        Mesa #{comandasBean.codigoMesa} - Comandas Total:
+                        <h:outputLabel id="total" value="#{comandasBean.totalMesa}">
+                            <f:convertNumber pattern="##,##0.00"/>
+                        </h:outputLabel>
+                    </div>
+                    <div class="col-md-2">
+                        <p:inputText styleClass="form-control" placeholder="Pesquisar comanda" value="#{comandasBean.pesquisa}"
+                                     style="margin-top: 10px;">
+                            <f:passThroughAttribute name="type" value="tel" />
+                            <f:passThroughAttribute name="autofocus" value="true" />
+                            <f:ajax event="keyup" render="frm:tabelaComanda" execute="@this" listener="#{comandasBean.pesquisarComanda()}" />
+                        </p:inputText>
+                    </div>
+                    <ul class="col-md-6 text-center" style="margin-top: 10px;">
+                        <li class="col-md-3">
+                            <p:link id="abrirComanda" class="btn-modal btn btn-success btn-block fa fa-plus" href="index.jsf?mesa=#{comandasBean.codigoMesa}"></p:link>
+                            <p:tooltip for="abrirComanda" value="Nova Comanda ( F2 )" showEffect="fade" hideEffect="fade"
+                                       position="bottom"/>
+                        </li>
+                        <li class="col-md-3">
+                            <p:link id="atualizar" class="btn-modal btn btn-info btn-block fa fa-refresh" href="comandas.jsf?id=#{comandasBean.codigoMesa}"></p:link>
+                            <p:tooltip for="atualizar" value="Atualizar ( F5 )" showEffect="fade" hideEffect="fade"
+                                       position="bottom"/>
+                        </li>
+                        <li class="col-md-3">
+                            <p:commandLink id="imprimirPreconta" class="btn-modal btn btn-warning btn-block" actionListener="#{comandasBean.imprimirPrecontaMesa()}" update="@this" process="@this"
+                                           disabled="#{comandasBean.codigoMesa eq 'RSVA'}">
+                                <i class="fa fa-print"></i>
+                                <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />
+                            </p:commandLink>
+                            <p:tooltip for="imprimirPreconta" value="Imprimir Preconta ( F4 )" showEffect="fade" hideEffect="fade"
+                                       position="bottom"/>
+                        </li>
+                        <li class="col-md-3 ">
+                            <p:link id="sair" class="btn-modal btn btn-danger btn-block fa fa-remove" outcome="mesas.jsf" ></p:link>
+                            <p:tooltip for="sair" value="Sair ( ESC )" showEffect="fade" hideEffect="fade"
+                                       position="bottom"/>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </h:form>
+        <!--COMANDAS-->
+        <div class="container-fluid text-center">
+            <div class="row">
+                <div class="col-md-12" style="overflow: auto;height: 500px;">
+                    <h:form id="frm">
+                        <ul jsf:id="tabelaComanda">
+                            <ui:repeat  value="#{comandasBean.comandas}" var="item">   
+                                <li>    
+                                    <div class="#{item.status eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
+                                        <h:link outcome="produtos.jsf" >
+                                            <h3 style="color: #fff; font-weight: bold;">#{item.comanda}</h3>
+                                            <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold; color: #fff;" value="#{item.total}">
+                                                <f:convertNumber for="label" pattern="#,##0.00"/>
+                                            </h:outputLabel>
+                                            <f:param name="mesa" value="#{item.mesa}"/>
+                                            <f:param name="comanda" value="#{item.comanda}"/>
+                                            <f:param name="pessoas" value="#{item.pessoasMesa}"/>
+                                            <f:param name="pedido" value="#{item.pedido}"/>
+                                            <f:param name="status" value="#{item.status}"/>
+                                        </h:link>
+                                        <ul style="margin-top: 5px;">
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-warning btn-block fa fa-print" actionListener="#{comandasBean.imprimirPreconta(item.comanda)}"
+                                                               process="@this" update="frm:tabelaComanda" disabled="#{comandasBean.codigoMesa eq 'RSVA'}">
+                                                    <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />
+                                                </p:commandLink>
+                                            </li>
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" oncomplete="PF('dialogoTransferencia').show();"
+                                                               update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.comanda)}"
+                                                               partialSubmit="true" disabled="#{item.status eq 'P'}"/>
+                                            </li>
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-danger btn-block fa fa-trash" actionListener="#{comandasBean.receberCodigoExcluxao(item)}" oncomplete="PF('dialogoUsuario').show();"
+                                                               process="@this"/>
+                                            </li>
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-default btn-block fa fa-eye" actionListener="#{comandasBean.listarProdutosAdicionados(item.comanda)}"
+                                                               process="@this" update="frmVisualizarItens" oncomplete="PF('dialogoVisualizarItens').show();"/>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form> 
+                </div>
+            </div>
+        </div>
+        <!--FORMULARIO DE AUTORIZAÇÃO-->
+        <p:dialog header="Autorização" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmDialogo"> 
+                <p:messages id="msgUsuario" closable="true" showIcon="false"/>
+                <div class="ui-fluid">                    
+                    <p:panelGrid id="panelUsuario" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:focus for="usuario"/>
+                        <p:outputLabel for="usuario" value="Usuario" class="modal-text"/>
+                        <p:inputText id="usuario" label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" value="#{comandasBean.usuario}" style="text-transform: uppercase;"
+                                     />
+                        <p:outputLabel for="senha" value="Senha" class="modal-text"/>
+                        <p:password id="senha" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" value="#{comandasBean.senha}"/>
+                    </p:panelGrid>
+                </div>
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                    <p:commandLink id="confirma" class="btn-modal btn btn-success btn-block" value="Confirma" update="frmDialogo:panelUsuario frmDialogo:msgUsuario frm:tabelaComanda frmCabecalho:total" process="frmDialogo:panelUsuario @this" actionListener="#{comandasBean.validarUsuario()}" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"/>
+                    <a class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoUsuario').hide();">
+                        Cancelar
+                    </a>
+                </p:panelGrid>
+                <p:defaultCommand target="confirma" />
+            </h:form>
+        </p:dialog>
+        <!--TRANSFERIR COMANDAS-->
+        <p:dialog showHeader="false" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlTransferencia" widgetVar="dialogoTransferencia" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmTransferencia">
+                <h:panelGroup id="header"><h3 style="color: #fff;">Transferir Comanda #{comandasBean.comandaOrigem}</h3></h:panelGroup>
+                <div class="ui-fluid">
+                    <p:messages id="msgTrans" closable="true" showIcon="false" />
+                    <p:panelGrid id="panelTrans" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:inputText placeholder="mesa de Destino" value="#{comandasBean.mesaDestino}"
+                                     required="true" requiredMessage="Mesa de Destino Obrigatorio."/>
+                        <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" update="frm:tabelaComanda msgTrans" process="panelTrans @this"
+                                       actionListener="#{comandasBean.transferirComanda()}">
+                            Confirma
+                        </p:commandLink>
+                        <a class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoTransferencia').hide();">
+                            Cancelar
+                        </a>
+                    </p:panelGrid>
+                    <p:defaultCommand target="sim" />
+                </div>
+            </h:form>
+        </p:dialog>     
+        <!--FORMULARIO DE VISUALIZACAO DOS ITENS-->
+        <p:dialog showHeader="false" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlVisualizarItens" widgetVar="dialogoVisualizarItens" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmVisualizarItens">
+                <h3 style="color: #fff;">Comanda #{comandasBean.comandaOrigem} Itens</h3>
+                <div style="overflow: auto;height:380px;">
+                    <h:panelGroup id="tabela">
+                        <table class="table" >
+                            <tbody>
+                                <ui:repeat value="#{comandasBean.lancamentos}" var="lancamento" varStatus="status">
+                                    <c:set value="display:none" var="esconder" />
+                                    <c:set value="display:block" var="mostra" />
+
+                                    <tr style="margin-top: 5px !important;" class="#{lancamento.imprimir eq '1' ?'ja-impressos':'nao-ja-impressos' }">
+                                        <td style="font-size: 9pt; width: 200px;" class="text-left ">#{lancamento.descricao}</td>
+                                        <td style="font-size: 9pt;">#{lancamento.quantidade}</td>
+                                        <td style="font-size: 9pt;"><h:outputText value="#{lancamento.preco}"><f:convertNumber pattern="###,##0.00" /></h:outputText></td>
+                                        <td style="font-size: 9pt;"><h:outputText value="#{lancamento.precoTotal}"><f:convertNumber pattern="###,##0.00" /></h:outputText></td>
+
+                                        <tr style="#{empty comandasBean.getItemAcompanhamentos(lancamento) ? esconder : mostra}">
+                                            <td style="background: rgba(200,200,200,.2)">
+                                                <div class="col-md-12">
+                                                    <ui:repeat value="#{comandasBean.getItemAcompanhamentos(lancamento)}" var="acompanhamento">
+                                                        <span class=" acompanhamentos" >#{acompanhamento.acompanhamento}</span> <span class="acompanhamentos">/</span> 
+                                                    </ui:repeat> 
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tr>
+                                </ui:repeat> 
+                            </tbody>
+                        </table>
+                    </h:panelGroup>  
+                </div>
+                <a class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoVisualizarItens').hide();">
+                    Voltar
+                </a>
+            </h:form>      
+        </p:dialog>
+        <!--MENSAGEM DE IMPRESSAO-->
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandLink value="Sim" type="button" styleClass="ui-confirmdialog-yes btn-modal btn btn-primary" style="margin-right: 5px !important;"  />
+                <p:commandLink value="Não" type="button" styleClass="ui-confirmdialog-no btn-modal btn btn-danger"  />
+            </p:confirmDialog>
+        </h:form>
+    </h:body>
+</html>
+

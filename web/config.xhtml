@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{impressaoBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Impressão</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputScript library="js" name="locale-primefaces.js" />
+        <style>
+            .table{font-size: 16pt;text-align: center;}
+            .table thead th{text-align: center;}
+            .jumbotron{padding: 20px;margin-top: 20px;margin-left: auto;margin-right: auto;width: 600px;}
+            .form-control{margin-bottom: 5px;}
+            label{font-size: 15pt;}
+            .btn{margin-right: 5px;}
+        </style>
+    </h:head>
+    <h:body>
+        <h:form id="form">
+            <div class="jumbotron">
+                <p:growl id="msg"/>
+                <div class="ui-fluid">
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <h:outputLabel for="subgrupo" value="Sub-Grupo" />
+                        <h:inputText id="subgrupo" class="form-control" value="#{impressaoBean.impressao.subgrupo}"
+                                     required="true"  maxlength="5" style="text-transform: uppercase;"/>
+                        <h:outputLabel for="caminho" value="Caminho da Impressora" />
+                        <h:inputText id="caminho" class="form-control" value="#{impressaoBean.impressao.caminhoImpressora}"
+                                     required="true" />                  
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <h:commandLink class="btn btn-success btn-block" style="color: #fff;"
+                                       actionListener="#{impressaoBean.salvar()}">
+                            <i class="fa fa-check"></i> Adicionar
+                            <f:ajax execute="@form"  render=":form:tabelaImpressoa :form:msg"/>
+                        </h:commandLink>
+                        <a href="mesas.jsf" class="btn btn-warning btn-block" style="color: #fff;">Voltar Para Mesas</a>
+                    </p:panelGrid>
+                </div>
+                <div style="overflow: auto;height:290px;">
+                    <h:dataTable id="tabelaImpressoa" class="table table-striped table-hover" 
+                                 value="#{impressaoBean.impressoes}"
+                                 var="imp">
+                        <f:facet name="header">
+                            Lista de Impressoras
+                        </f:facet>
+                        <h:column>
+                            <f:facet name="header">
+                                Sub-grupo
+                            </f:facet>
+                            #{imp.subgrupo}
+                        </h:column>          
+                        <h:column>
+                            <f:facet name="header">
+                                Impressora
+                            </f:facet>
+                            #{imp.caminhoImpressora}
+                        </h:column>     
+                        <h:column>
+                            <f:facet name="header">
+                            </f:facet>
+                            <h:commandLink id="excluir" class="btn btn-danger" actionListener="#{impressaoBean.excluir(imp)}" style="color:#fff;" onclick="return confirm('Deseja mesmo excluir');"
+                                           immediate="true">
+                                <i class="fa fa-trash"></i>
+                                <f:ajax execute="@form" render=":form" />
+                            </h:commandLink>
+                            <p:tooltip for="excluir" value="Excluir" />
+                            <h:commandLink id="print" class="btn btn-primary" actionListener="#{impressaoBean.testarConexaoImpressora(imp)}" style="color:#fff;" 
+                                           immediate="true">
+                                <i class="fa fa-print"></i>
+                                <f:ajax execute="@form" render=":form" />
+                            </h:commandLink>
+                            <p:tooltip for="print" value="Testar Impressora" />
+                        </h:column>     
+                    </h:dataTable>
+                </div> 
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

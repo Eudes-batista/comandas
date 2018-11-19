@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <f:metadata>
+        <f:viewParam name="comanda" value="#{produtoBean.comanda}" />
+        <f:viewParam name="mesa" value="#{produtoBean.mesa}" />
+        <f:viewParam name="pessoas" value="#{produtoBean.quantidadePessoas}" />
+        <f:viewParam name="pedido" value="#{produtoBean.pedido}" />
+        <f:viewParam name="status" value="#{produtoBean.status}" />
+        <f:viewAction action="#{produtoBean.init()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Produtos</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <h:outputStylesheet library="css" name="lancarProdutos.css" />
+        <h:outputScript library="js" name="function.js" />
+        <script>
+            var fecharNotificacao = function () {
+                setTimeout(function () {
+                    PF('bar').hide();
+                }, 1000);
+            };
+            var selecionarTexto = function () {
+                selecionarCampo(document.getElementById("frmProduto:referencia"));
+            };
+            var selecionarPesquisa = function () {
+                selecionarCampo(document.getElementById("frm:pesquisar"));
+            };
+            document.addEventListener("keydown", function (e) {
+                if (e.keyCode === 113) {
+                    document.getElementById("frm:grupos").click();
+                } else if (e.keyCode === 115) {
+                    document.getElementById("frm:totalItens").click();
+                } else if (e.keyCode === 118) {
+                    PF('dialogoProduto').hide();
+                    document.getElementById("frm:imprimirTodos").click();
+                } else if (e.keyCode === 119) {
+                    PF("dialogoProduto").show();
+                } else if (e.keyCode === 27) {
+                    window.location.href = "comandas.jsf?id=#{produtoBean.mesa}";
+                }
+            });
+        </script>
+    </h:head>
+    <h:body>
+        <h:form id="frm">
+            <!--BARRA DE NOTIFICAÇÃO SUPERIOR-->
+            <p:notificationBar id="notificacao" position="top" effect="slide" styleClass="top" widgetVar="bar" style="background: #5cb85c;">
+                <h:outputText value="#{produtoBean.quantidade}X - #{produtoBean.produto.descricao} " style="font-size:20px;color:#fff;" />
+            </p:notificationBar>
+            <!--CABEÇALHO-->
+            <div class="ui-fluid">
+                <div class="container-fluid barra">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 jsf:id="titulo" class="texto-cabecalho text-center">Mesa #{produtoBean.mesa} | Comanda #{produtoBean.comanda} | Vendedor #{produtoBean.vendedor}</h4>
+                        </div>
+                        <div class="col-md-6" style="padding-top: 10px;">
+                            <ul>
+                                <li>
+                                    <p:commandLink id="grupos" value="Grupos" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar1').show()" actionListener="#{produtoBean.listarGrupos()}"
+                                                   update="frm:listaGrupo" process="@this"/>
+                                    <p:tooltip for="grupos" value="Grupos ( F2 )" showEffect="fade" hideEffect="fade"
+                                               position="bottom"/>
+                                </li>
+                                <li>
+                                    <p:commandLink id="totalItens" value="Itens #{produtoBean.quantidadeItensAdicionados}" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar2').show()"
+                                                   update="frm:tabela frm:valorTotalItens" actionListener="#{produtoBean.listarProdutosAdicionados()}" process="@this"/>
+                                    <p:tooltip for="totalItens" value="Itens ( F4 )" showEffect="fade" hideEffect="fade"
+                                               position="bottom"/>
+                                </li>
+
+                                <li style="display: none;">
+                                    <p:link id="sair" class="btn-modal btn btn-warning btn-block" outcome="comandas.jsf?id=#{produtoBean.mesa}">Voltar</p:link>
+                                    <p:tooltip for="sair" value="Sair ( ESC )" showEffect="fade" hideEffect="fade"
+                                               position="bottom"/>
+                                </li>
+                                <li style="width: 50% ;text-align: center;">
+                                    <p:commandLink id="imprimirTodos" value="Imprimir Pedido" class="btn-modal btn btn-success btn-block" 
+                                                   update="@this" actionListener="#{produtoBean.imprimirTodos()}" process="@this"/>
+                                    <p:tooltip for="imprimirTodos" value="Imprimir Pedido ( F7 )" showEffect="fade" hideEffect="fade"
+                                               position="bottom"/>
+                                </li>
+                            </ul>                        
+                        </div>
+                    </div>
+                </div>
+                <!--CAMPO PESQUISA-->
+                <div class="panel-body">
+                    <p:inputText id="pesquisar" placeholder="O que você está buscando ? " value="#{produtoBean.pesquisa}" style="font-size: 15pt;">
+                        <p:ajax event="keyup" listener="#{produtoBean.pesquisarProduto()}" process="@this" update="frm:tabelaProduto" />
+                    </p:inputText>
+                </div>
+                <!--MODAL DOS GRUPOS-->
+                <p:sidebar id="sidebar1" widgetVar="sidebar1" baseZIndex="10000" blockScroll="true" fullScreen="true">
+                    <div style="overflow: auto;height:500px;">
+                        <h3><p:commandLink class="btn btn-default" oncomplete="PF('sidebar1').hide();">Grupos</p:commandLink></h3>
+                        <ul jsf:id="listaGrupo">
+                            <ui:repeat id="prd" value="#{produtoBean.grupos}" var="g" varStatus="indexpdr">
+                                <li>
+                                    <h:panelGrid columns="1" style="width:100%" columnClasses="logo,detail">
+                                        <p:commandLink actionListener="#{produtoBean.listarProdutoPorGrupo(g)}" update="frm:tabelaProduto"
+                                                       oncomplete="PF('sidebar1').hide();">                                            
+                                            <p:graphicImage id="img" library="imagens" name="#{g.imagem}" width="100"/> 
+                                            <p:outputPanel >
+                                                #{g.t51dsgrp}
+                                            </p:outputPanel>
+                                        </p:commandLink> 
+                                    </h:panelGrid>                                
+                                </li>                                 
+                            </ui:repeat>   
+                        </ul>          
+                    </div>  
+                </p:sidebar>
+                <!--LISTA DOS PRODUTOS-->
+                <p:dataGrid id="tabelaProduto" styleClass="transparente"  emptyMessage="Nenhum produto encontrado" value="#{produtoBean.produtos}" var="p" columns="3" layout="grid" rowIndexVar="index">
+                    <div class="mesa">
+                        <div>
+                            <ul>
+                                <li class="texto-mesa text-left" style="text-align: left; margin-top: 10px; width: 350px;">
+                                    #{p.referencia} - #{p.descricao}
+                                </li>
+                                <li class="texto-mesa text-right" style="text-align: right;">
+                                    <h:outputLabel  value="#{p.preco}">
+                                        <f:convertNumber pattern="##,###0.00" />
+                                    </h:outputLabel>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <ul class="text-center">
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-produto btn-danger" style="color: #fff;" onclick="removerQuantidade('frm:tabelaProduto:#{index}:qtd')"
+                                                               update="@this" process="@this">
+                                                    <i class="fa fa-minus"></i>
+                                                </p:commandLink>   
+                                            </li>
+                                            <li >
+                                                <h:inputText id="qtd" class="form-control" style="width: 50px;" maxlength="5" value="#{produtoBean.quantidade}"
+                                                             onkeyup="keypressQuantidade(this)" >
+                                                    <f:passThroughAttribute name="type" value="tel" />
+                                                    <p:keyFilter for="qtd" mask="num" />
+                                                    <f:convertNumber pattern="#" />
+                                                </h:inputText>
+                                            </li> 
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-produto btn-info" style="color: #fff; "  onclick="adicionarQuantidade('frm:tabelaProduto:#{index}:qtd')"
+                                                               update="@this" process="@this">
+                                                    <i class="fa fa-plus"></i>
+                                                </p:commandLink>   
+                                            </li>
+                                            <li>
+                                                <p:commandLink class="btn-modal btn btn-produto btn-success btn-block" style="color: #fff; margin-left: 30px;"
+                                                               actionListener="#{produtoBean.adicionarItem(p)}"
+                                                               update="frm:tabelaProduto:#{index}:qtd frm:totalItens frm:notificacao" process="frm:tabelaProduto:#{index}:qtd @this" 
+                                                               partialSubmit="true" oncomplete="PF('bar').show();fecharNotificacao();selecionarPesquisa();">
+                                                    <i class="fa fa-check"></i>
+                                                </p:commandLink>   
+                                            </li>
+                                        </ul>                                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                           
+                    </div>
+                </p:dataGrid>  
+                <!--LISTA DOS ITENS ADICIONADOS-->
+                <p:sidebar id="itens" widgetVar="sidebar2" baseZIndex="10000" blockScroll="true"  style="width: 370px;" class="mesa-modal">
+                    <h3>Comanda #{produtoBean.comanda}</h3>
+                    <div style="overflow: auto;height:380px;">
+                        <h:panelGroup id="tabela">
+                            <table class="table" >
+                                <tbody>
+                                    <ui:repeat value="#{produtoBean.lancamentosAdicionados}" var="lancamento">
+                                        <tr style="margin-top: 5px !important;" class="#{lancamento.imprimir eq '1' ?'ja-impressos':''}">
+                                            <td style="font-size: 9pt; width: 200px;" class="text-left">#{lancamento.descricao}</td>
+                                            <td style="font-size: 9pt;">#{lancamento.quantidade}</td>
+                                            <td style="font-size: 9pt;"><h:outputText value="#{lancamento.preco}"><f:convertNumber pattern="###,##0.00" /></h:outputText></td>
+                                            <td style="font-size: 9pt;"><h:outputText value="#{lancamento.precoTotal}"><f:convertNumber pattern="###,##0.00" /></h:outputText></td>
+                                            <td >
+                                                <p:commandLink id="observacao" style="color: #2aabd2; border-radius: 50px !important; font-size: 15pt;"
+                                                               actionListener="#{produtoBean.setLancamentoAcompanhamento(lancamento)}" update="frm:obs" process="@this" 
+                                                               oncomplete="PF('sidebarObs').show();" disabled="#{lancamento.descricao.contains('COUVERT')}"
+                                                               >
+                                                    <i class="fa fa-info-circle"></i>
+                                                </p:commandLink>
+                                            </td>
+                                            <td>
+                                                <p:commandLink style="color: red; border-radius: 50px !important; font-size: 15pt;" 
+                                                               oncomplete="PF('dialogoCancelamento').show();" process="@this"
+                                                               actionListener="#{produtoBean.receberCodigo(lancamento,'E')}" rendered="#{lancamento.imprimir eq '1'}"
+                                                               update="frmCancelamento:panelAutorizacao frmCancelamento:panelInformacao">
+                                                    <i class="fa fa-trash"></i>
+                                                </p:commandLink>
+                                                <p:commandLink style="color: red; border-radius: 50px !important; font-size: 15pt;" process="@this"
+                                                               actionListener="#{produtoBean.excluirItem(lancamento)}" rendered="#{lancamento.imprimir ne '1'}" update="frm:tabela frm:valorTotalItens">
+                                                    <i class="fa fa-trash"></i>
+                                                </p:commandLink>
+                                            </td>
+                                            <td >
+                                                <p:commandLink style="color: #858585; border-radius: 50px !important; font-size: 15pt;" process="@this"
+                                                               disabled="#{lancamento.imprimir ne '1' or lancamento.descricao.contains('COUVERT')}"
+                                                               actionListener="#{produtoBean.receberCodigo(lancamento, 'R')}" oncomplete="PF('dialogoUsuario').show();">
+                                                    <i class="fa fa-print"></i>
+                                                </p:commandLink>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat> 
+                                </tbody>
+                            </table>
+                        </h:panelGroup>  
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" 
+                                               update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}"
+                                               >
+                                    <i class="fa fa-print"></i> imprimir
+                                </p:commandLink>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h:outputLabel value="Total:  " style="font-size: 14pt;"/>
+                                <p:outputLabel id="valorTotalItens" value="#{produtoBean.valorTotalItens}" style="font-size: 14pt;">
+                                    <f:convertNumber  pattern="##,###0.00" />
+                                </p:outputLabel>                                
+                            </div>
+                        </div>
+                    </div>
+                </p:sidebar>
+                <!--BARRA DE OBSERVAÇÃO-->
+                <p:sidebar id="obs" widgetVar="sidebarObs" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
+                    <h4>Acompanhamentos/Obersevações</h4>
+                    <p:inputTextarea id="textArea" placeholder="Observação" value="#{produtoBean.lancamentoAcompanhamento.observacao}" style="font-size: 11pt"/>    
+                    <h:selectOneMenu id="grupoAcompanhamento" class="form-control" value="#{produtoBean.grupoAcompanhamento}" converter="omnifaces.SelectItemsConverter">
+                        <f:selectItems value="#{produtoBean.grupoAcompanhamentos}" var="grupo"
+                                       itemLabel="#{grupo.nome}" itemValue="#{grupo}"/>
+                        <f:ajax event="valueChange" render="linhas" execute="@this" listener="#{produtoBean.listarAcompanhamentosPorGrupo()}"/>
+                    </h:selectOneMenu>
+                    <div style="overflow: auto;height:260px;">
+                        <table class="table text-left">
+                            <tbody jsf:id="linhas">
+                                <ui:repeat value="#{produtoBean.acompanhamentos}" var="acompanhamento">                                    
+                                    <tr jsf:id="adicionarPorcao">
+                                        <td>#{acompanhamento.nome}</td>
+                                        <f:ajax event="click" render="frm:chips" execute="@this frm:chips" listener="#{produtoBean.adidcionarAcompanhamento(acompanhamento.nome)}" />
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p:chips id="chips" placeholder="Acompanhamentos" value="#{produtoBean.itensAcompanhamentos}" />
+                    <p:commandLink class="btn-modal btn btn-success btn-block" value="Salvar" actionListener="#{produtoBean.salvoAcompanhamento()}" 
+                                   update="frm:obs" process="frm:obs" style="color: #fff !important;margin-right: 5px;"
+                                   oncomplete="PF('sidebarObs').hide();"/> 
+                    <p:commandLink class="btn-modal btn btn-danger btn-block" value="Fechar" process="@this" update="@this"
+                                   oncomplete="PF('sidebarObs').hide();" style="color: #fff !important;"/> 
+                </p:sidebar>
+            </div>
+        </h:form> 
+        <!--MODAL DE VALIDAR USUARIO-->
+        <p:dialog header="Autorização" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" 
+                  id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" class="mesa-modal">
+            <h:form id="frmDialogo"> 
+                <p:messages id="msgUsuario" closable="true" showIcon="false"/>
+                <div class="ui-fluid">                    
+                    <p:panelGrid id="panelUsuario" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:focus for="usuario"/>
+                        <p:outputLabel for="usuario" value="Usuario" style="color: #fff; font-weight: normal;"/>
+                        <p:inputText id="usuario" label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" value="#{produtoBean.usuario}" style="text-transform: uppercase;"/>
+                        <p:outputLabel for="senha" value="Senha" style="color: #fff; font-weight: normal;"/>
+                        <p:password id="senha" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" value="#{produtoBean.senha}"/>
+                    </p:panelGrid>
+                </div>
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                    <p:commandLink id="confirma" style="color: #fff;" class="btn-modal btn btn-success btn-block" value="Confirma" update="frmDialogo:panelUsuario frmDialogo:msgUsuario frm:tabela frm:totalItens frm:valorTotalItens" process="frmDialogo:panelUsuario @this" actionListener="#{produtoBean.validarUsuario()}" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"/>
+                    <p:commandLink style="color: #fff;" class="btn-modal btn btn-danger btn-block" update="@this" process="@this" oncomplete="PF('dialogoUsuario').hide();">
+                        Cancelar
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:defaultCommand target="confirma" />
+            </h:form>
+            <script type="text/javascript">
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || args.fechar) {
+                        PF('dialogoUsuario').hide();
+                    }
+                }
+            </script>
+        </p:dialog>
+        <!--MODAL DE CANCELAMENTO-->
+        <p:dialog showHeader="false" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" 
+                  id="dlCancelamento" widgetVar="dialogoCancelamento" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" class="form-cancelamento">
+            <h:form id="frmCancelamento"> 
+                <div class="container-fluid" style="background: rgba(250,250,250, .1);padding: 10px; border-radius: 5px; margin-bottom: 5px;">
+                    <p:messages id="msgCancelar" showIcon="false" closable="true"/>
+                    <h:panelGroup id="panelInformacao">
+                        <h4 class="texto-cabecalho">#{produtoBean.lancamento.descricao}</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText id="quantidadeCancelamento" class="form-control input-cancelamento" value="#{produtoBean.quantidade}"
+                                             onkeyup="validarQuantidade(this)">
+                                    <f:passThroughAttribute name="placeholder" value="Quantidade a cancelar"/>
+                                    <f:passThroughAttribute name="type" value="tel"/>
+                                    <f:convertNumber />
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:selectOneMenu id="motivoCancelamento" class="form-control input-cancelamento" required="true" requiredMessage="Motivo é obrigatorio!"
+                                                 value="#{espelhoComandaBean.espelhoComanda.codigoMotivoCancelamento}">
+                                    <f:selectItem itemLabel="SELECIONE UM MOTIVO" noSelectionOption="true"/>
+                                    <f:selectItems value="#{produtoBean.motivoCancelamentoBean.motivoCancelamentos}" var="motivoCancelamento"
+                                                   itemLabel="#{motivoCancelamento.nome}" itemValue="#{motivoCancelamento.codigo}"/>
+                                </h:selectOneMenu>
+                            </div>                        
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputTextarea class="form-control input-cancelamento" style="resize: none;" value="#{espelhoComandaBean.espelhoComanda.observacaoMotivo}">
+                                    <f:passThroughAttribute name="placeholder" value="Observação"/>
+                                </h:inputTextarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:selectBooleanButton offLabel="Não foi produzido" onLabel="Sim, foi produzido" styleClass="form-control" style="margin-top: 10px;margin-bottom: 10px;"
+                                                       value="#{espelhoComandaBean.espelhoComanda.foiProduzido}"/>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+                <div class="container-fluid" style="background: rgba(250,250,250, .1);padding: 10px; border-radius: 5px; ">
+                    <h4 class="texto-cabecalho">Autorização</h4>
+                    <h:panelGroup id="panelAutorizacao">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText class="form-control input-cancelamento" value="#{produtoBean.usuario}" required="true" requiredMessage="Usuário obrigatorio!">
+                                    <f:passThroughAttribute name="placeholder" value="Usuário"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputSecret class="form-control input-cancelamento" value="#{produtoBean.senha}" required="true" requiredMessage="Senha obrigatorio!">
+                                    <f:passThroughAttribute name="placeholder" value="Senha"/>
+                                </h:inputSecret>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p:commandLink id="confirmarCancelamento" style="color: #fff;" class="btn-modal btn btn-success btn-block" value="Confirma" 
+                                           update="frm:tabela frm:totalItens frm:valorTotalItens frmCancelamento:msgCancelar" process="frmCancelamento:panelInformacao frmCancelamento:panelAutorizacao @this" 
+                                           resetValues="true" actionListener="#{produtoBean.excluirProdutoJaImpresso()}"/>
+                            <a style="color: #fff;font-size: 13pt;" class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoCancelamento').hide();">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <p:commandButton id="semCao" style="display: none;"/>
+                <p:defaultCommand target="semCao" />
+            </h:form>
+            <script type="text/javascript">
+                var valorQuantidadeExclusao = document.getElementById("frmCancelamento:quantidadeCancelamento").value;
+                function validarQuantidade(input) {
+                    var valor = input.value;
+                    if (parseInt(valor) > parseInt(valorQuantidadeExclusao)) {
+                        document.getElementById("frmCancelamento:quantidadeCancelamento").value = valorQuantidadeExclusao;
+                    }
+                }
+            </script>
+        </p:dialog>
+        <!--MODAL DE SENHA DO VENDEDOR-->
+        <p:dialog header="Vendedor" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlVendedor" widgetVar="dialogoVendedor" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" visible="true">
+            <h:form id="frmVendedor">
+                <p:messages id="msgVendedor" closable="true" showIcon="false"/>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p:password id="confirmaSenha" class="form-control" placeholder="Senha" value="#{produtoBean.senha}" required="true" requiredMessage="Senha Obrigatoria."/>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
+                                           update="frm:titulo msgVendedor" process="confirmaSenha @this" actionListener="#{produtoBean.validaVendedor()}"
+                                           oncomplete="selecionarPesquisa();">
+                                OK
+                            </p:commandLink> 
+                            <p:defaultCommand target="ok" />
+                            <h:link outcome="mesas.jsf" class="btn-modal btn btn-warning btn-block" value="Voltar" style="color: #fff;"/>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+        <!--MODAL DE ENVIO PARA IMPRESSÃO-->
+        <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlImpressao" widgetVar="dialogoImpressao" dynamic="true" 
+                   closable="false" closeOnEscape="true"
+                   showEffect="fade" hideEffect="fade" visible="false">
+            <span style="color:#fff;">#{produtoBean.mensagem}</span>
+            <p:link id="voltar" class="btn-modal btn btn-warning btn-block" outcome="mesas.jsf" style="margin-top: 30px; color: #fff;">OK</p:link>
+        </p:dialog>
+        <!--MODAL DE REGISTRO DE PRODUTO-->
+        <p:dialog header="Adicionar Produto" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300"  id="dlProduto" widgetVar="dialogoProduto" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" visible="false" >
+            <h:form id="frmProduto">
+                <div class="ui-fluid">
+                    <p:messages id="msgAddProduto" closable="true" showIcon="false"/>
+                    <h:inputText id="referencia" value="#{produtoBean.produto.referencia}" class="form-control">
+                        <f:passThroughAttribute name="autofocus" value="true"/>
+                        <f:passThroughAttribute name="placeholder" value="Codigo do Produto"/>
+                    </h:inputText>
+                    <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoProduto').hide();" style="color: #fff;">Voltar</a>
+                </div>
+                <p:commandButton style="display: none;" id="confirmarProduto" actionListener="#{produtoBean.adicionarItem()}"
+                                 update="frm:totalItens frm:notificacao frmProduto:msgAddProduto"
+                                 process="frmProduto:referencia @this" value="Salvar"
+                                 oncomplete="PF('bar').show();fecharNotificacao();selecionarTexto();"/>
+                <p:defaultCommand target="confirmarProduto"/>
+            </h:form> 
+        </p:dialog>
+    </h:body>
+</html>

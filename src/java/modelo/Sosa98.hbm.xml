@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 18/08/2018 11:53:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="modelo.Sosa98" table="SOSA98">
+        <composite-id name="id" class="modelo.Sosa98Id">
+            <key-property name="tenumero" type="string">
+                <column name="TENUMERO" length="15" />
+            </key-property>
+            <key-property name="tenumseq" type="string">
+                <column name="TENUMSEQ" length="8" />
+            </key-property>
+        </composite-id>
+        <property name="tecomand" type="string">
+            <column name="TECOMAND" length="4" not-null="true" />
+        </property>
+        <property name="terefere" type="string">
+            <column name="TEREFERE" length="20" not-null="true" />
+        </property>
+        <property name="tequanti" type="java.lang.Double">
+            <column name="TEQUANTI" precision="15" scale="0" />
+        </property>
+        <property name="tedatcom" type="timestamp">
+            <column name="TEDATCOM" length="19" not-null="true" />
+        </property>
+        <property name="tevended" type="string">
+            <column name="TEVENDED" length="12" />
+        </property>
+        <property name="teobserv" type="string">
+            <column name="teobserv" length="400" />
+        </property>
+        <property name="tecdmesa" type="string">
+            <column name="tecdmesa" length="5" />
+        </property>
+        <property name="testatus" type="string">
+            <column name="testatus" length="1" />
+        </property>
+        <property name="teimprim" type="string" >
+            <column name="teimprim" length="1" />
+        </property>
+        <property name="tepedido" type="string" >
+            <column name="tepedido" length="6" />
+        </property>
+    </class>
+</hibernate-mapping>

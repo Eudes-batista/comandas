@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 18/08/2018 11:53:10 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="modelo.Lapt51" table="LAPT51" optimistic-lock="version">
+        <comment>Tabela de Grupo De Classifica&#231;&#227;o Dos Produtos</comment>
+        <id name="t51cdgrp" type="string">
+            <column name="T51CDGRP" length="5" />
+            <generator class="assigned" />
+        </id>
+        <property name="t51dsgrp" type="string">
+            <column name="T51DSGRP" length="18" not-null="true" />
+        </property>
+        <property name="t51modco" type="java.lang.Double">
+            <column name="T51MODCO" precision="15" scale="0" />
+        </property>
+        <property name="t51depro" type="java.lang.Double">
+            <column name="T51DEPRO" precision="15" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

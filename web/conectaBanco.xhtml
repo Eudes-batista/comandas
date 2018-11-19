@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Conexão com o Banco</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <style>
+            .jumbotron{padding: 10px;}
+        </style>
+    </h:head>
+    <h:body>
+        <h:form>
+            <div class="jumbotron">
+                <h3>Conexão com o Banco de dados</h3>
+                <div class="ui-fluid">
+                    <p:panelGrid id="panel" columns="1" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4">
+                        <p:messages id="msg" closable="true"/>
+                        <p:outputLabel value="Caminho do banco" for="caminho"/>
+                        <p:inputText id="caminho" value="#{bancoConecta.configuracao.caminho}" placeholder="Obrigatorio" 
+                                     required="true" requiredMessage="Campo Obrigatorio: Caminho"/>
+                        <p:outputLabel value="Empresa" for="empresa"/>
+                        <p:inputText id="empresa" value="#{bancoConecta.configuracao.empresa}" placeholder="Obrigatorio" 
+                                     required="true" requiredMessage="Campo Obrigatorio: Empresa"/>
+                        <p:outputLabel value="Tipo de Impressão" for="tipoImpressao"/>
+                        <p:selectOneMenu id="tipoImpressao" value="#{bancoConecta.configuracao.tipoImpressao}" placeholder="Obrigatorio" 
+                                         required="true" requiredMessage="Campo Obrigatorio: Tipo Impressão">
+                            <f:selectItem itemLabel="Selecione um Tipo de Impressão" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Rede" itemValue="rede"/>
+                            <f:selectItem itemLabel="Marca" itemValue="marca"/>
+                            <f:ajax event="valueChange" render="impressora" execute="@this"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Modelo da Impressora" for="impressora"/>
+                        <p:inputText id="impressora" disabled="#{bancoConecta.configuracao.tipoImpressao ne 'marca' }"  value="#{bancoConecta.configuracao.impressora}" placeholder="Obrigatorio" 
+                                         required="true" requiredMessage="Campo Obrigatorio: Modelo da Impressora" />
+                        <p:outputLabel value="Paga 10%?" for="dezporcento"/>
+                        <p:selectOneMenu id="dezporcento" value="#{bancoConecta.configuracao.cobraDezPorcento}" placeholder="Obrigatorio">
+                            <f:selectItem itemLabel="Sim" itemValue="SIM"/>
+                            <f:selectItem itemLabel="Não" itemValue=""/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-2">
+                        <p:commandButton value="Salvar" update="msg" process="panel @this" icon="ui-icon-check" actionListener="#{bancoConecta.salvar()}"/>
+                        <p:link value="Voltar para tela inicial do sistema" outcome="mesas.jsf"/>
+                    </p:panelGrid>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

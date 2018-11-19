@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <f:metadata>
+        <f:viewAction action="#{mesasBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Mesas</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="resources/imagens/mesa.png" type="image/x-icon" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="icon" sizes="192x192" href="resources/imagens/mesa.png"/>
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputStylesheet library="css" name="mesas.css" />
+        <script>
+            document.addEventListener("keydown", function (evt) {
+                if (evt.keyCode === 113) {
+                    document.getElementById("frmBarra:novaMesa").click();
+                    return;
+                }
+                if (evt.keyCode === 115) {
+                    document.getElementById("frmBarra:pesquisar").click();
+                    return;
+                }
+                if (evt.keyCode === 119) {
+                    PF('dialogoPrecontaRapida').show();
+                    return;
+                }
+            });
+            function atualizar() {
+                document.getElementById("frmBarra:atualizar").click();
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <!--CABECALHO-->
+        <div class="barra" style="padding: 10px;">
+            <h:form id="frmBarra">
+                <ul style="margin-top: 10px;">
+                    <li class="text-left" style="width: 22%;">
+                        <a class="texto-cabecalho" onclick="PF('atalhos').show();">Mesas</a>
+                    </li>
+                    <li class="text-right" style="width: 25%;">
+                        <p:inputText styleClass="form-control" placeholder="Pesquisar" value="#{mesasBean.pesquisa}" 
+                                     style="margin-top: 5px; " >
+                            <f:passThroughAttribute name="autofocus" value="true" />
+                            <f:ajax event="keyup" render="frm:tabelaMesa" execute="@this" listener="#{mesasBean.pesquisarMesas()}" />
+                        </p:inputText>
+                    </li>
+                    <li class="text-center" style="width: 10%;">
+                        <p:link id="novaMesa" class="btn-modal btn btn-success btn-block fa fa-plus" outcome="index.jsf" ></p:link>
+                        <p:tooltip for="novaMesa" value="Nova Mesa ( F2 )" showEffect="fade" hideEffect="fade"
+                                   position="bottom"/>
+                    </li>
+                    <li class="text-center" style="width: 10%;">
+                        <p:link id="atualizar" class="btn-modal btn btn-info btn-block fa fa-refresh" outcome="mesas.jsf" ></p:link>
+                        <p:tooltip for="atualizar" value="Atualizar ( F5 )" showEffect="fade" hideEffect="fade"
+                                   position="bottom"/>
+                    </li>
+                    <li class="text-center" style="width: 10%;">
+                        <p:commandLink id="pesquisar" class="btn-modal btn btn-info btn-block fa fa-search" oncomplete="PF('dialogoPesquisaComanda').show();" update="frmPesquisaComanda:tabelaComanda" process="@this"
+                                       actionListener="#{mesasBean.listarComandas()}"/>
+                        <p:tooltip for="pesquisar" value="Pesquisar Comandas( F4 )" showEffect="fade" hideEffect="fade"
+                                   position="bottom"/>
+                    </li>
+                </ul>
+            </h:form>      
+        </div>
+        <!--MESAS-->
+        <div class="container-fluid text-center rolagem" >
+            <div class="row">
+                <div class="col-md-12 ">
+                    <h:form id="frm">
+                        <h3 style="color: #fff;">#{empty mesasBean.mesas ? 'Nenhum registro encontrado.' : ''}</h3>
+                        <ul jsf:id="tabelaMesa">
+                            <ui:repeat value="#{mesasBean.mesas}" var="item">  
+                                <li>
+                                    <div jsf:id="listMesa" class="#{item.status eq 'V' ? 'mesa-vermelha': item.status eq 'L' ? 'mesa-laranja' : 'mesa'}">
+                                        <p:link id="mesaLink" outcome="comandas.jsf" disabled="#{mesasBean.getStatus(item)}">
+                                            <f:param name="id" value="#{item.mesa}"/>                                        
+                                            <h1 class="texto-mesa" style="padding-top: 20px;">M</h1>
+                                            <h2 class="texto-mesa">#{item.mesa}</h2>
+                                        </p:link> 
+                                        <p:tooltip for="mesaLink" value="#{item.status eq 'V' ? 'Mesa em preconta' : 'Em consumo'}"/>
+                                        <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirMesa(item)}"/>
+                                    </div>
+                                    <div style="margin-top: 5px;margin-left: -5px;">
+                                        <ul>
+                                            <li>
+                                                <p:commandLink id="imprimir" class="btn btn-warning btn-block" disabled="#{item.mesa eq 'RSVA' }" 
+                                                               update="frmPreconta:mesaPreconta" process="@this"
+                                                               oncomplete="PF('dialogoPreconta').show();" actionListener="#{mesasBean.setMesa(item)}">
+                                                    <i class="fa fa-print"></i>
+                                                </p:commandLink>
+                                                <p:tooltip for="imprimir" value="Imprimir Preconta" showEffect="fade" hideEffect="fade" position="bottom"/>
+                                            </li>
+                                            <li>
+                                                <p:commandLink id="enviar" class="btn btn-info btn-block" update="dlTransferencia" process="@this"
+                                                               oncomplete="PF('dialogoTransferencia').show();" actionListener="#{mesasBean.setMesaOrigem(item.mesa)}"
+                                                               disabled="#{item.mesa eq 'RSVA' or mesasBean.getStatus(item)}">
+                                                    <i class="fa fa-exchange"></i>
+                                                </p:commandLink>
+                                                <p:tooltip for="enviar" value="Transferir Mesa" showEffect="fade" hideEffect="fade"
+                                                           position="bottom"/>
+                                            </li>
+                                            <li>
+                                                <p:commandLink id="apagar" class="btn btn-danger btn-block" actionListener="#{mesasBean.receberCodigoAutorizacao(item,null)}" process="@this"
+                                                               oncomplete="PF('dialogoUsuario').show();" disabled="#{item.mesa eq 'RSVA' }">
+                                                    <i class="fa fa-trash"></i>
+                                                </p:commandLink>
+                                                <p:tooltip for="apagar" value="Apagar Mesa" showEffect="fade" hideEffect="fade"
+                                                           position="bottom"/>
+                                            </li>
+                                        </ul>
+                                    </div> 
+                                </li>
+                            </ui:repeat>     
+                        </ul>
+                    </h:form>  
+                </div>
+            </div>
+        </div>
+        <!--FORMULARIO DE AUTORIZAÇÃO-->
+        <p:dialog header="Autorização" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmDialogo"> 
+                <p:messages id="msgUsuario" closable="true" showIcon="false"/>
+                <div class="ui-fluid">                    
+                    <p:panelGrid id="panelUsuario" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:focus for="usuario"/>
+                        <p:outputLabel for="usuario" value="Usuario" class="modal-text"/>
+                        <p:inputText id="usuario"  label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" value="#{mesasBean.usuario}" style="text-transform: uppercase;"/>
+                        <p:outputLabel for="senha" value="Senha" class="modal-text"/>
+                        <p:password id="senha" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" value="#{mesasBean.senha}"/>
+                    </p:panelGrid>
+                </div>
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                    <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" value="Confirma" update="frmDialogo:panelUsuario frmDialogo:msgUsuario frm:tabelaMesa" process="frmDialogo:panelUsuario @this" actionListener="#{mesasBean.validarUsuario()}" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"/>
+                    <p:commandLink id="nao" class="btn-modal btn btn-danger btn-block" update="@this" process="@this" oncomplete="PF('dialogoUsuario').hide();">
+                        Cancelar
+                    </p:commandLink>
+                </p:panelGrid>
+                <p:defaultCommand target="sim" />
+            </h:form>
+            <script type="text/javascript">
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || args.fechar) {
+                        PF('dialogoUsuario').hide();
+                    }
+                }
+            </script>
+        </p:dialog>
+        <!--FORMULARIO DE TRANSFERENCIA DE MESA-->
+        <p:dialog header="Transferir Mesa #{mesasBean.mesaOrigem}" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlTransferencia" widgetVar="dialogoTransferencia" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmTransferencia">
+                <p:messages id="msgTrans" closable="true" showIcon="false"/>
+                <div class="ui-fluid">
+                    <p:panelGrid id="panelTrans" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:inputText id="mesaDestino" placeholder="mesa de destino" value="#{mesasBean.mesaDestino}" required="true" requiredMessage="mesa de destino Obrigatorio."/>
+                        <p:commandLink id="transferir" class="btn-modal btn btn-success btn-block" actionListener="#{mesasBean.transferiMesa()}"
+                                       process="panelTrans @this" update="msgTrans">
+                            Confirma
+                        </p:commandLink>
+                        <p:commandLink class="btn-modal btn btn-danger btn-block" update="@this" process="@this" oncomplete="PF('dialogoTransferencia').hide();">
+                            Cancelar
+                        </p:commandLink>
+                    </p:panelGrid>
+                </div>
+                <p:defaultCommand target="transferir" />
+            </h:form>
+        </p:dialog>     
+        <!--FORMULARIO DE PESQUISA DE COMANDAS-->
+        <p:dialog header="Pesquisa de comanda" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlPesquisaComanda" widgetVar="dialogoPesquisaComanda" dynamic="true" 
+                  closable="true" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" position="top">
+            <h:form id="frmPesquisaComanda">
+                <div class="ui-fluid">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText value="#{mesasBean.pesquisa}" class="form-control">
+                                    <f:passThroughAttribute name="placeholder" value="Pesquisa de Comanda"/>
+                                    <f:passThroughAttribute name="type" value="tel"/>
+                                    <f:ajax event="keyup" execute="@this" render="tabelaComanda" listener="#{mesasBean.pesquisarComanda()}"/>
+                                </h:inputText>                                
+                            </div>
+                        </div>
+                    </div>
+                    <h3 style="color: #fff;">#{empty mesasBean.comandas ? 'Nenhum registro encontrado.' : ''}</h3>
+                    <ul jsf:id="tabelaComanda">
+                        <ui:repeat  value="#{mesasBean.comandas}" var="item">   
+                            <li>    
+                                <div jsf:id="listaComanda" class="#{item.status eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
+                                    <p:link id="linkComanda" outcome="produtos.jsf" disabled="#{item.status eq 'P'}">
+                                        <h3 style="color: #fff; font-weight: bold;">#{item.comanda}</h3>
+                                        <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.total}">
+                                            <f:convertNumber for="label" pattern="#,##0.00"/>
+                                        </h:outputLabel>
+                                        <f:param name="mesa" value="#{item.mesa}"/>
+                                        <f:param name="comanda" value="#{item.comanda}"/>
+                                        <f:param name="pessoas" value="#{item.pessoasMesa}"/>
+                                        <f:param name="pedido" value="#{item.pedido}"/>
+                                        <h5 style="color: #fff; font-weight: bold;">M #{item.mesa}</h5>
+                                    </p:link>
+                                    <p:tooltip for="linkComanda" value="#{item.status eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
+                                    <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirComanda(item)}"/>
+                                </div>   
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+            </h:form>
+        </p:dialog> 
+        <!--FORMULARIO DE IMPRIMIR PRECONTA RAPIDA-->
+        <p:dialog header="Imprimir Preconta" class="mesa-modal" resizable="false"  modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlPrecontaRapida" widgetVar="dialogoPrecontaRapida" dynamic="true" 
+                  closable="true" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmPrecontaRapida">
+                <p:messages id="msgPrecontaRapida" showIcon="false" />
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p:inputText id="mesaPrecontaRapida" value="#{mesasBean.mesa.mesa}" placeholder="Mesa" required="true" requiredMessage="Mesa obrigatorio.">
+                                <f:passThroughAttribute name="type" value="tel" />
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p:inputText id="pessoasPagantesRapida" value="#{mesasBean.mesa.quantidadePessoasPagantes}" placeholder="Pessoas Pagantes">
+                                <f:passThroughAttribute name="type" value="tel" />
+                                <f:passThroughAttribute name="autofocus" value="true" />
+                            </p:inputText>
+                        </div>
+                    </div>
+                </div>
+                <p:commandLink id="precontaAtalhoRapido" style="display: none;" actionListener="#{mesasBean.imprimirPreconta()}" process="frmPrecontaRapida:mesaPrecontaRapida frmPreconta:pessoasPagantes @this"
+                               update="frm:tabelaMesa,frmPrecontaRapida" value="OK"/>                            
+                <p:defaultCommand target="precontaAtalhoRapido" />
+            </h:form>
+        </p:dialog>
+        <!--FORMULARIO DE IMPRIMIR PRECONTA -->
+        <p:dialog header="Imprimir Preconta" class="mesa-modal" resizable="false"  modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlPreconta" widgetVar="dialogoPreconta" dynamic="true" 
+                  closable="true" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmPreconta">
+                <div class="container-fluid">
+                    <div class="row divider">
+                        <div class="col-md-12 text-center">
+                            <p:inputText id="mesaPreconta" value="#{mesasBean.mesa.mesa}" placeholder="Mesa" disabled="true">
+                                <f:passThroughAttribute name="type" value="tel" />
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p:inputText id="pessoasPagantes" value="#{mesasBean.mesa.quantidadePessoasPagantes}" placeholder="Pessoas Pagantes">
+                                <f:passThroughAttribute name="type" value="tel" />
+                                <f:passThroughAttribute name="autofocus" value="true" />
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <p:commandLink id="precontaAtalho" class="btn-modal btn btn-success btn-block"  actionListener="#{mesasBean.imprimirPreconta()}" process="frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this"
+                                           oncomplete="PF('dialogoPreconta').hide();" update="frm:tabelaMesa" value="OK"/>                            
+                        </div>
+                    </div>
+                </div>
+                <p:defaultCommand target="precontaAtalho" />
+            </h:form>
+        </p:dialog>
+        <!--FORMULARIO DA AJUDA-->
+        <p:sidebar baseZIndex="10000" fullScreen="true" widgetVar="atalhos" style="background-color: rgba(50,130,150,.7) !important;">
+            <h3 class="texto-mesa" style="margin-top: 80px;cursor: pointer;" onclick="PF('atalhos').hide();">Atalhos da Mesa</h3>
+            <hr/>
+            <ul style="display: block !important;color: #fff;">
+                <li>
+                    <h4>Mesa</h4>
+                    <ul style="display: block !important;color: #fff;">
+                        <li><h5>F2 -> Nova Mesa</h5></li>
+                        <li><h5>F5 -> Atualizar</h5></li>
+                        <li><h5>F4 -> Pesquisar Comandas</h5></li>
+                        <li><h5>F8 -> Imprimir Preconta</h5></li>
+                    </ul>
+                </li>
+            </ul>
+        </p:sidebar>
+    </h:body>
+</html>

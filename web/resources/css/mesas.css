@@ -1,0 +1,162 @@
+body{
+    background: #fff;
+    background-attachment: fixed;
+    background-size: cover;
+
+
+}
+
+@media(max-width:700px){
+    .rolagem{
+        overflow: auto;
+        height: 630px;
+    }
+}
+.barra{
+    background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #43546B 75%);
+    /*background: linear-gradient(90deg,#fffd 10%, #d7eef7 60%);*/
+    color:#757575;
+    font-size: 20pt;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+}
+
+a{
+    color: #286090;
+}
+a:hover{
+    color: #286090;
+    text-decoration: none;
+}
+input{
+    background-color:transparent;
+    border: none;
+    border-bottom: 1px solid #858585;
+    outline: none !important;
+    color: #757575;
+    border-radius: 0px;
+    font-size: 25pt;
+    font-weight: bold;
+    width: 100%;
+    text-transform: uppercase;
+}
+input::placeholder{
+    color: #ccc;
+    font-size: 12pt;
+    text-transform: capitalize;
+}
+.btn{
+    margin-bottom: 5px;
+    background:rgba(65, 135, 160,.7);
+    transition: all 0.1s ease-in;
+    border: none;
+    color: #FFF !important;
+}
+.btn-modal{
+    margin-bottom: 5px;
+    background:rgba(250, 250, 250,.3);
+    transition: all 0.1s ease-in;
+    border: none;
+    color: #FFF !important;
+}
+
+.mesa{
+    background-color:#68b6c9;
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    /*box-shadow: 2px 2px rgba(150, 150, 150, .3);*/
+    cursor: pointer;
+    color:#fff;
+    border: none;
+    text-transform: uppercase;
+}
+.texto-cabecalho{
+    color: #FFF !important;
+    cursor: pointer ;
+}
+.texto-mesa{
+    color: #fff !important;
+}
+.mesa-vermelha{
+    background-color:#ee929d;
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    /*box-shadow: 2px 2px rgba(150, 150, 150, .3);*/
+    cursor: pointer;
+    color:#fff;
+    border: none;
+    text-transform: uppercase;
+}
+.mesa-laranja{
+    background-color:#fdc002;
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    /*box-shadow: 2px 2px rgba(150, 150, 150, .3);*/
+    cursor: pointer;
+    color:#fff;
+    border: none;
+    text-transform: uppercase;
+}
+.mesa-modal{
+    background: linear-gradient(135deg,#094b66 20%, #d7eef7 95%);
+    background-attachment: fixed;
+    background-size: cover;
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 2px 2px rgba(100, 100, 100, .5);
+    cursor: pointer;
+    color:#fff;
+    border: none;
+}
+.modal-text{
+    color:#FFF !important;
+    font-size: 12pt !important;
+    font-weight: bold !important;
+}
+/*.mesa:hover{
+    background-color:rgba(100,250,250, .5);
+}*/
+
+
+ul{
+    list-style: none;
+    margin-left: -30px;
+}
+ul li{
+    display: inline-block;
+    margin-right: 8px;
+}
+.ui-dialog{
+    font-family: tahoma !important;
+}
+.ui-dialog .ui-dialog-title{
+    color: #fff;
+}
+
+.ui-confirm-dialog{
+    background: linear-gradient(135deg,#094b66 20%, #d7eef7 80%,#fffd );
+    padding: 20px;
+    color:#fff !important;
+    font-weight: bold;
+    font-size: 30pt;
+    text-align: center;
+    width: 100% !important;
+}
+.ui-confirm-dialog-message{
+    color: #fff;
+}
+.row{
+    margin-bottom: 5px;
+}

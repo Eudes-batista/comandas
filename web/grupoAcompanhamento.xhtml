@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{grupoAcompanhamentoBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Cadastro de Grupos de Acompanhamentos</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
+        <link rel="stylesheet" href="resources/css/incluir-mesa.css" /> 
+        <script>
+            document.addEventListener("keydown", function (evt) {
+                if (evt.keyCode === 27) {
+                    window.location.href = "mesas.jsf";
+                }
+            });
+        </script>
+    </h:head>
+    <h:body>
+        <div class="container-fluid comanda">
+            <div class="row">
+                <div class="col-md-12 label-campo">
+                    <h3>Cadastro Grupo de Acompanhamentos</h3>
+                </div>
+                <h:form id="frm">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText id="nome" value="#{grupoAcompanhamentoBean.grupoAcompanhamento.nome}">
+                                    <f:passThroughAttribute name='placeholder' value='Nome do Grupo'/>
+                                    <f:passThroughAttribute name='autofocus' value='true'/>
+                                </h:inputText>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink id="salvar" class="btn btn-info" actionListener="#{grupoAcompanhamentoBean.salvar()}"
+                                               update="frm:tabela frm:nome" process="frm:nome @this">
+                                    Salvar
+                                </p:commandLink>
+                                <p:defaultCommand target="salvar" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="overflow: auto;height: 200px;">
+                                <h:dataTable id="tabela" value="#{grupoAcompanhamentoBean.grupoAcompanhamentos}" var="grupo" class="table label-campo">
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Codigo
+                                        </f:facet>
+                                        #{grupo.codigo}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            Nome
+                                        </f:facet>
+                                        #{grupo.nome}
+                                    </h:column>
+                                    <h:column>
+                                        <h:commandLink class="btn btn-danger" actionListener="#{grupoAcompanhamentoBean.excluir(grupo)}" onclick="return confirm('Deseja mesmo excluir?')">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                            <f:ajax render="frm:tabela" execute="@this" />
+                                        </h:commandLink>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-2 col-md-offset-7 text-right">
+                                <a href="mesas.jsf" class="btn btn-danger">Sair (ESC)</a>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</html>
+
