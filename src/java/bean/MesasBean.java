@@ -148,7 +148,7 @@ public class MesasBean implements Serializable {
         prepararPreconta(mesa);
     }
 
-    public void imprimirPreconta() {
+    public void imprimirPreconta() {        
         if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
             prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())));
             listarMesas();
@@ -186,7 +186,7 @@ public class MesasBean implements Serializable {
             }
         }
         fecharMesa(mesa1);
-        atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
+        atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);        
     }
     
     private Mesa inserirPessoasNaMesa(String mesa) {
@@ -291,7 +291,7 @@ public class MesasBean implements Serializable {
                 if (mesaDestino.equals("RSVA") || Pattern.compile("\\d").matcher(mesaDestino).find()) {
                     Mesa mesaDes = mesas.stream().filter(m -> m.getMesa().equals(mesaDestino)).findFirst().orElse(null);
                     if ((mesaDes != null && !mesaDes.getStatus().equals("V")) || mesaDes == null) {
-                        controle.transferirMesa(mesaOrigem.toUpperCase(), mesaDestino.toUpperCase());
+                        controle.transferirMesa(this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem))), mesaDestino.toUpperCase());
                         listarMesas();
                         PrimeFaces.current().ajax().update("frm:tabelaMesa");
                         PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");

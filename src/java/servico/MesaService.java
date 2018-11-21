@@ -14,7 +14,7 @@ public interface MesaService {
     public Object somarTotal(String mesa);
     public List<Object[]> listarComandasPorMesa(String mesa);
     public void excluirMesa(String mesa);
-    public void transferirMesa(String mesaOrigem,String mesaDestino);
+    public void transferirMesa(Mesa mesaOrigem,String mesaDestino);
     public void atualizarStatusPreconta(String mesa);
     public List<Object[]> listarLancamentos(String mesa);
     

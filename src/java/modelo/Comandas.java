@@ -20,6 +20,11 @@ public class Comandas implements Serializable{
         this.comanda = comanda;
     }
 
+    public Comandas(String comanda, String mesa) {
+        this.comanda = comanda;
+        this.mesa = mesa;
+    }
+    
     public Comandas(String comanda, Double Total, String status,String pessoasMesa,String pedido) {
         this.comanda = comanda;
         this.Total = Total;

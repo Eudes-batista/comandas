@@ -90,7 +90,10 @@ span a{
     height: 120px;
 }
 .ja-impressos{
-    color: yellow;
+    color: yellow !important;
+}
+.nao-impresso{
+    color: #fff !important;
 }
 .mesa-modal,.mensagem-impressao{
     background: linear-gradient(135deg,#094b66 20%, #d7eef7 80%,#fffd );    
@@ -156,7 +159,41 @@ span a{
         height: 812px !important;
         width: 100% !important;
     }
+    ::-webkit-scrollbar-track {
+        background-color: #F4F4F4;
+    }
+    ::-webkit-scrollbar {
+        background: background;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: background;
+    }
 }
 .ui-button-text{
     padding: 0px !important;
+}
+.row{margin-bottom: 5px;}
+.tabela-tra,.tabela-tra tbody,.tabela-tra tr,.tabela-tra td,.tabela-tra thead,.tabela-tra th{
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    /*color: #fff;*/
+    table-layout: auto !important;
+}
+.tabela-tra td{
+    border-top: 1px solid #fff !important;
+}
+.tabela-tra tr:hover{
+    background: rgba(100,100,100,.5) !important;   
+}
+::-webkit-scrollbar-track {
+    background-color: #F4F4F4;
+}
+::-webkit-scrollbar {
+    width: 6px;
+    background: #ccc;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: #dad7d7;
 }

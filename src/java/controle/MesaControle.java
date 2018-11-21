@@ -59,8 +59,9 @@ public class MesaControle implements MesaService, Serializable {
     }
 
     @Override
-    public void transferirMesa(String mesaOrigem, String mesaDestino) {
-        executarSql("update sosa98 set tecdmesa='" + mesaDestino + "' where tecdmesa='" + mesaOrigem + "'");
+    public void transferirMesa(Mesa mesaOrigem, String mesaDestino) {
+        executarSql("update sosa98 set tecdmesa='" + mesaDestino.toUpperCase() + "' where tecdmesa='" + mesaOrigem.getMesa() + "'");
+        executarSql("update espelho_comanda set mesa='" + mesaDestino.toUpperCase() + "' where pedido in(" + mesaOrigem.getPedido()+ ")");
     }
 
     @Override

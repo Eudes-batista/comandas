@@ -223,9 +223,15 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" 
-                                               update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}"
-                                               >
+                                <p:commandLink id="transferirItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-info btn-block" 
+                                               update="frmTransferenciaItens:tabelaTransferenciaItens" process="@this" oncomplete="PF('sidebarTransferenciaItens').show();">
+                                    <i class="fa fa-exchange"></i> Transferir Itens
+                                </p:commandLink>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}">
                                     <i class="fa fa-print"></i> imprimir
                                 </p:commandLink>
                             </div>
@@ -443,5 +449,8 @@
                 <p:defaultCommand target="confirmarProduto"/>
             </h:form> 
         </p:dialog>
+        <p:sidebar id="transferenciaItens" widgetVar="sidebarTransferenciaItens" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
+            <ui:include src="transferenciaItens.xhtml" />    
+        </p:sidebar>
     </h:body>
 </html>

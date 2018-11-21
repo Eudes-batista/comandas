@@ -2,9 +2,11 @@ package controle;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.Comandas;
+import modelo.Lancamento;
 import modelo.Sosa98;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
@@ -225,7 +227,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferirComandaParaMesa(String mesa, Comandas comanda) {
         executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getComanda() + "'");
-        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPedido()+ "'");
+        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPedido() + "'");
     }
 
     @Override
@@ -310,6 +312,19 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void alterarQuantidadeItem(double quantidade, String numero) {
         executarSql("update sosa98 set tequanti=" + quantidade + " where tenumero='" + numero + "'");
+    }
+
+    @Override
+    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos) {
+        List<Object[]> comandas = pesquisarComandaPorCodigo(comanda.getComanda());
+        String pedido = String.valueOf(comandas.get(0)[5]);
+        String numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
+        executarSql("update sosa98 set tepedido='" + pedido + "',tecdmesa='" + comanda.getMesa() + "',tecomand='" + comanda.getComanda() + "' where tenumero in(" + numeros + ")");
+        executarSql("update espelho_comanda set pedido='" + pedido + "',mesa='" + comanda.getMesa() + "',comanda='" + comanda.getComanda() + "' where numero in(" + numeros + ")");
+        List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
+        for (int i = 0; i < itensTransferencia.size(); i++) {
+            transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));
+        }
     }
 
 }

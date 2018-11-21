@@ -22,6 +22,7 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Acompanhamento;
+import modelo.Comandas;
 import modelo.Configuracao;
 import modelo.EspelhoComanda;
 import modelo.GrupoAcompanhamento;
@@ -33,6 +34,7 @@ import modelo.Sosa98;
 import modelo.Sosa98Id;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
@@ -83,6 +85,7 @@ public class ProdutoBean implements Serializable {
     private List<Lapt51> grupos;
     private List<Produto> produtos = new ArrayList<>();
     private List<Lancamento> lancamentosAdicionados = new ArrayList<>();
+    private List<Lancamento> lancamentosSelecionadadosTransferencia;
     private List<Acompanhamento> acompanhamentos;
     private List<GrupoAcompanhamento> grupoAcompanhamentos;
     private List<String> itensAcompanhamentos;
@@ -108,6 +111,7 @@ public class ProdutoBean implements Serializable {
     private Produto produto = new Produto();
     private Lancamento lancamento;
     private GrupoAcompanhamento grupoAcompanhamento;
+    private Comandas comandaTransferencia;
 
     public void init() {
         listarProdutos();
@@ -188,6 +192,7 @@ public class ProdutoBean implements Serializable {
             ));
         });
         totalizarItensAdicionado();
+        comandaTransferencia = new Comandas();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -517,5 +522,26 @@ public class ProdutoBean implements Serializable {
             listarProdutosAdicionados();
         }
     }
+    
+    public void transferirItensParaMesaComanda() {
+        if(lancamentosSelecionadadosTransferencia.isEmpty()){
+            Messages.addGlobalWarn("Nenhum item selecionado.");
+            return;
+        }
+        comandaTransferencia.setComanda(String.format("%04d", Integer.parseInt(comandaTransferencia.getComanda())));
+        comandaTransferencia.setMesa(String.format("%04d", Integer.parseInt(comandaTransferencia.getMesa())));
+        controleService.transferenciaItensParaMesaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia);
+        if(lancamentosAdicionados.size()==lancamentosSelecionadadosTransferencia.size()){
+            try {
+                Faces.redirect("mesas.jsf");
+            } catch (IOException ex) {
+                Messages.addGlobalError("Não foi possivel redirecionar para mesas.");
+            }
+        }else{
+            PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
+            listarProdutosAdicionados();
+        }
+    }
+    
 
 }
