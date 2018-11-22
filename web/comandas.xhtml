@@ -40,11 +40,6 @@
                     };
                 }
             };
-            function handleLoginRequest(xhr, status, args) {
-                if (!args.validationFailed || args.fechar) {
-                    PF('dialogoUsuario').hide();
-                }
-            }
             function selecionarMesaComanda(input) {
                 var valorSelecionada = input.value;
                 var inputMesa = document.getElementById("frmTransferencia:transferirMesa");
@@ -173,6 +168,13 @@
                 </p:panelGrid>
                 <p:defaultCommand target="confirma" />
             </h:form>
+            <script type="text/javascript">
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.fechar) {
+                        PF('dialogoUsuario').hide();
+                    }
+                }
+            </script>
         </p:dialog>
         <!--TRANSFERIR COMANDAS-->
         <p:dialog showHeader="false" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlTransferencia" widgetVar="dialogoTransferencia" dynamic="true" 

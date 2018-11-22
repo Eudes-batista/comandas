@@ -8,17 +8,58 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="resources/imagens/mesa.png" type="image/x-icon" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputStylesheet library="css" name="menu.css" />
         <link rel="icon" sizes="192x192" href="resources/imagens/mesa.png"/>
+        <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
+        <h:outputScript library="js" name="bootstrap.min.js"/>
+        <script>
+            window.onload = function () {
+                var iframe = document.getElementById("iframe");
+//                iframe.width = window.innerWidth;
+                iframe.height = window.innerHeight;
+                iframe.src = "dashboard.jsf";
+            };
+            function carregarPagina(pagina) {
+                var iframe = document.getElementById("iframe");
+                iframe.src = pagina;
+            }
+        </script>
     </h:head>
     <h:body>
-        <a href="mesas.jsf">Mesas</a><br/>
-        <a href="grupos.jsf">Grupos</a><br/>
-        <a href="config.jsf">Configurar Impressoras</a><br/>
-        <a href="conectaBanco.jsf">Configuração Sistema</a><br/>
-        <a href="grupoAcompanhamento.jsf">Grupo de Acompanhamentos</a><br/>
-        <a href="acompanhamento.jsf">Acompamanhtos</a><br/>
-        <a href="motivoCancelamento.jsf">Motivos de Cancelamentos</a><br/>
-        <a href="log.jsf">Log do Sistema</a>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="menu.jsf">Menu</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+
+                        <li><a onclick="carregarPagina('mesas.jsf');">Mesa</a></li>
+                        <li><a onclick="carregarPagina('dashboard.jsf');">Dashboard</a></li>
+                        <li><a onclick="carregarPagina('auditoria.jsf');">Auditoria</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cadastros<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="carregarPagina('grupos.jsf');">Grupos</a></li>
+                                <li><a onclick="carregarPagina('grupoAcompanhamento.jsf');">Grupo Acompanhamento</a></li>
+                                <li><a onclick="carregarPagina('acompanhamento.jsf');">Acompanhamento</a></li>
+                                <li><a onclick="carregarPagina('motivoCancelamento.jsf');">Motivos Cancelamento</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <iframe id="iframe" width="100%" height="100%"/>
     </h:body>
 </html>
 

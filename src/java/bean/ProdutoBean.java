@@ -298,7 +298,7 @@ public class ProdutoBean implements Serializable {
         controleService.excluir(lancamento.getNumero());
         if ("0".equals(lancamento.getImprimir())) {
             espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
-            itemAcompanhamentoService.excluirTodos(lancamento.getItem(),lancamento.getPedido());
+            itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
         }
         lancamentosAdicionados.remove(lancamento);
         totalizarItensAdicionado();
@@ -345,19 +345,27 @@ public class ProdutoBean implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
         if (validarGerente()) {
-            setUsuario("");
-            setSenha("");
-            if (condicao.equals("E")) {
-                excluirItem(this.lancamento);
-            } else if (condicao.equals("R")) {
-                reipressao(this.lancamento);
-            }
+            acaoAposValidarUsuario();
             fechar = true;
         } else {
             fechar = false;
             Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
         }
         context.addCallbackParam("fechar", fechar);
+    }
+
+    private void acaoAposValidarUsuario() {
+        switch (condicao) {
+            case "E":
+                excluirItem(this.lancamento);
+                break;
+            case "R":
+                reipressao(this.lancamento);
+                break;
+            case "T":
+                PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
+                break;
+        }
     }
 
     private String validarAntesImprimir(String referencia) {
@@ -391,9 +399,9 @@ public class ProdutoBean implements Serializable {
             espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(comanda);
             listarProdutosAdicionados();
         } catch (IOException ex) {
-            mensagem ="Impressora desligada ou cambo desconectado.";
+            mensagem = "Impressora desligada ou cambo desconectado.";
         } catch (DocumentException | PrinterException ex) {
-            mensagem ="Erro ao gerar cupom de pedido.";
+            mensagem = "Erro ao gerar cupom de pedido.";
         }
     }
 
@@ -433,6 +441,7 @@ public class ProdutoBean implements Serializable {
     public void reipressao(Lancamento lancamento) {
         String subgrupo = validarAntesImprimir(lancamento.getReferencia());
         imprimir(subgrupo, null, lancamento);
+        this.espelhoComandaBean.salvarPessoaReipressao(usuario, lancamento.getNumero());
     }
 
     private Map<String, List<Lancamento>> separarLancamentoPorGrupo() {
@@ -510,6 +519,7 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
+        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario);
         this.espelhoComandaBean.alterar();
     }
 
@@ -522,26 +532,23 @@ public class ProdutoBean implements Serializable {
             listarProdutosAdicionados();
         }
     }
-    
+
     public void transferirItensParaMesaComanda() {
-        if(lancamentosSelecionadadosTransferencia.isEmpty()){
+        if (lancamentosSelecionadadosTransferencia.isEmpty()) {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        comandaTransferencia.setComanda(String.format("%04d", Integer.parseInt(comandaTransferencia.getComanda())));
-        comandaTransferencia.setMesa(String.format("%04d", Integer.parseInt(comandaTransferencia.getMesa())));
         controleService.transferenciaItensParaMesaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia);
-        if(lancamentosAdicionados.size()==lancamentosSelecionadadosTransferencia.size()){
+        if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");
             } catch (IOException ex) {
                 Messages.addGlobalError("Não foi possivel redirecionar para mesas.");
             }
-        }else{
-            PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
-            listarProdutosAdicionados();
+            return;
         }
+        PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
+        listarProdutosAdicionados();
     }
-    
 
 }

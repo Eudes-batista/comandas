@@ -88,8 +88,9 @@ function tratarNumerosNegativos(valor) {
         return false;
     return true;
 }
-function acaoAposEnter(input,inputFocus){
-    input.addEventListener("keypress",function(evt){
+function acaoAposEnter(input, inputFocus) {
+    input.addEventListener("keypress", function (evt) {
         selecionarCampo(document.getElementById(inputFocus));
     });
 }
+

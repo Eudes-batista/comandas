@@ -16,6 +16,7 @@ public class ControlePdf {
     public static final Font FONT_PB = new Font(Font.getFamily("tahoma"), 10, Font.BOLD);
     public static final Font FONT_PP = new Font(Font.getFamily("tahoma"), 8, Font.NORMAL);
     public static final Font FONT_PPB = new Font(Font.getFamily("tahoma"), 8, Font.BOLD);
+    public static final Font FONT_PPP = new Font(Font.getFamily("tahoma"), 6, Font.NORMAL);
 
     private static Document documento = null;
 

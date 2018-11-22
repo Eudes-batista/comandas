@@ -1,17 +1,17 @@
-
 package modelo;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Comandas implements Serializable{
+public class Comandas implements Serializable {
 
-   private String comanda;
-   private String mesa;
-   private Double Total;
-   private String status;
-   private String pessoasMesa;
-   private String pedido;
+    private String comanda;
+    private String mesa;
+    private Double Total;
+    private String status;
+    private String pessoasMesa;
+    private String pedido;
+    private String quantidadePessoasPagantes;
 
     public Comandas() {
     }
@@ -24,8 +24,8 @@ public class Comandas implements Serializable{
         this.comanda = comanda;
         this.mesa = mesa;
     }
-    
-    public Comandas(String comanda, Double Total, String status,String pessoasMesa,String pedido) {
+
+    public Comandas(String comanda, Double Total, String status, String pessoasMesa, String pedido) {
         this.comanda = comanda;
         this.Total = Total;
         this.status = status;
@@ -33,7 +33,7 @@ public class Comandas implements Serializable{
         this.pedido = pedido;
     }
 
-    public Comandas(String comanda, Double Total, String status,String mesa, String pessoasMesa, String pedido) {
+    public Comandas(String comanda, Double Total, String status, String mesa, String pessoasMesa, String pedido) {
         this.comanda = comanda;
         this.mesa = mesa;
         this.Total = Total;
@@ -78,7 +78,7 @@ public class Comandas implements Serializable{
         }
         final Comandas other = (Comandas) obj;
         return Objects.equals(this.comanda, other.comanda);
-    }  
+    }
 
     public String getStatus() {
         return status;
@@ -110,5 +110,13 @@ public class Comandas implements Serializable{
 
     public void setPedido(String pedido) {
         this.pedido = pedido;
+    }
+
+    public String getQuantidadePessoasPagantes() {
+        return quantidadePessoasPagantes;
+    }
+
+    public void setQuantidadePessoasPagantes(String quantidadePessoasPagantes) {
+        this.quantidadePessoasPagantes = quantidadePessoasPagantes;
     }
 }

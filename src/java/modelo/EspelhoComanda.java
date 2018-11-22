@@ -92,6 +92,12 @@ public class EspelhoComanda implements Serializable {
     @Column(name = "responsavel_cancelamento", nullable = true, length = 50)
     private String respansavelCancelamento;
     
+    @Column(name = "responsavel_reipressao", nullable = true, length = 50)
+    private String respansavelReipressao;
+    
+    @Column(name = "responsavel_transferencia", nullable = true, length = 50)
+    private String respansavelTransferencia;
+    
     @Column(name = "quantidade_cancelada", nullable = true, precision = 6,scale = 3)
     private Double quantidadeCancelada;
 

@@ -224,7 +224,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <p:commandLink id="transferirItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-info btn-block" 
-                                               update="frmTransferenciaItens:tabelaTransferenciaItens" process="@this" oncomplete="PF('sidebarTransferenciaItens').show();">
+                                               update="frmTransferenciaItens:tabelaTransferenciaItens" process="@this" oncomplete="PF('dialogoUsuario').show();"
+                                               actionListener="#{produtoBean.receberCodigo(null,'T')}">
                                     <i class="fa fa-exchange"></i> Transferir Itens
                                 </p:commandLink>
                             </div>
@@ -300,9 +301,9 @@
                 </p:panelGrid>
                 <p:defaultCommand target="confirma" />
             </h:form>
-            <script type="text/javascript">
+              <script type="text/javascript">
                 function handleLoginRequest(xhr, status, args) {
-                    if (args.validationFailed || args.fechar) {
+                    if (args.fechar) {
                         PF('dialogoUsuario').hide();
                     }
                 }

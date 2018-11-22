@@ -177,8 +177,11 @@ public class PdfComanda implements PdfService {
             tabelaComissao.addCell(div);
             documento.add(tabelaComissao);
         }
+
+        double totalCupom = calcularPreconta.verificarDezPorcento() ? resultado : valorSubTotal;
+
         PdfPCell tituloTotal = controlePdf.criarCelula("Total", ControlePdf.FONT_P, 2, Element.ALIGN_RIGHT);
-        PdfPCell total = controlePdf.criarCelula(df.format(calcularPreconta.verificarDezPorcento() ? resultado : valorSubTotal), ControlePdf.FONT_PB, 2, Element.ALIGN_CENTER);
+        PdfPCell total = controlePdf.criarCelula(df.format(totalCupom), ControlePdf.FONT_PB, 2, Element.ALIGN_CENTER);
         PdfPCell vendedor = controlePdf.criarCelula("Garçom " + lancamentos.get(0).getVendedor(), ControlePdf.FONT_PB, 4, Element.ALIGN_LEFT);
 
         tabelaRodape.addCell(tituloTotal);

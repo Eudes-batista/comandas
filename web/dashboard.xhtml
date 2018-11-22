@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Facelet Title</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
+        <link rel="stylesheet" href="resources/css/dashboard.css" /> 
+        <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="dash-box dash-box-color-1">
+                        <div class="dash-box-icon">
+                            <i class="glyphicon glyphicon-usd"></i>
+                        </div>
+                        <div class="dash-box-body">
+                            <span class="dash-box-count">10.257,32</span>
+                            <span class="dash-box-title">Vendas</span>
+                        </div>
+
+                        <div class="dash-box-action">
+                            <button>Mais Informações</button>
+                        </div>				
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dash-box dash-box-color-2">
+                        <div class="dash-box-icon">
+                            <i class="glyphicon glyphicon-user"></i>
+                        </div>
+                        <div class="dash-box-body">
+                            <span class="dash-box-count">1524</span>
+                            <span class="dash-box-title">Clientes atendidos</span>
+                        </div>
+
+<!--                        <div class="dash-box-action">
+                            <button>More Info</button>
+                        </div>				-->
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dash-box dash-box-color-3">
+                        <div class="dash-box-icon">
+                            <i class="glyphicon glyphicon-link"></i>
+                        </div>
+                        <div class="dash-box-body">
+                            <span class="dash-box-count">34</span>
+                            <span class="dash-box-title">Clientes em reserva</span>
+                        </div>
+
+                        <div class="dash-box-action">
+                            <button>More Info</button>
+                        </div>				
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--        
+        select 
+   VENDEDOR,
+   COUNT(PEDIDO) AS QUANTIDADE_VENDAS, 
+   SUM(QUANTIDADE*EEPLQTB1) AS VENDAS_POR_GARCOM,
+   SUM(VALOR_PORCENTAGEM) AS PORCENTAGEM
+from 
+   espelho_comanda 
+LEFT OUTER JOIN
+   SCEA07 ON (EEREFERE = REFERENCIA AND EECODEMP = 'SIG')
+WHERE 
+   DATA 
+   BETWEEN '2018-11-21 00:00:00'  
+   AND     '2018-11-21 23:59:59' 
+GROUP BY 
+   VENDEDOR
+        -->
+        
+        
+    </h:body>
+</html>
+

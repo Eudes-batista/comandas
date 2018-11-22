@@ -1,6 +1,7 @@
 package bean;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -20,9 +21,13 @@ public class EspelhoComandaBean implements Serializable{
     @Getter @Setter
     public EspelhoComanda espelhoComanda;    
     
+    @Getter @Setter
+    public List<EspelhoComanda> espelhoComandas;    
+    
     public void init() {
         espelhoComanda=null;
         espelhoComanda=new EspelhoComanda();
+        listarAuditoria();
     }
     
     
@@ -41,4 +46,13 @@ public class EspelhoComandaBean implements Serializable{
     public EspelhoComanda buscarPorId(Integer numero){
         return this.espelhoComandaService.buscarPorId(numero);
     }
+    
+    public void salvarPessoaReipressao(String usuario,String item) {
+        this.espelhoComandaService.salvarPessoaQueAutorizouReipressao(usuario, item);
+    }
+ 
+    private void listarAuditoria() {
+        this.espelhoComandas = this.espelhoComandaService.listarAuditoria();
+    }
+    
 }

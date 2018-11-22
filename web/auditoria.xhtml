@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:metadata>
+        <f:viewAction action="#{mesasBean.listarComandas()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Auditoria</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="resources/imagens/food.png" type="image/x-icon" />
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputStylesheet library="css" name="auditoria.css" />
+        <script>
+            function focusValor(input){
+                document.getElementById(input).focus();
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <h:form id="frmAuditoria">
+            <div class="container-fluid">
+                <div class="row barra">
+                    <div class="col-md-9">
+                        <h2>Auditoria</h2>
+                    </div>                 
+                    <div class="col-md-2 text-right" style="margin-top: 15px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">
+                                <i class="fa fa-search"></i>
+                            </span>
+                            <h:inputText class="form-control" value="#{mesasBean.pesquisa}" >
+                                <f:passThroughAttribute name="type" value="tel"/>
+                                <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
+                                <f:passThroughAttribute name="aria-label" value="Username"/>
+                                <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
+                                <f:passThroughAttribute name="autofocus" value="true"/>
+                                <f:ajax event="keyup" render="tabela" execute="@this" listener="#{mesasBean.pesquisarComanda()}"/>
+                            </h:inputText>
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-right">
+                        <a href="auditoria.jsf" class="btn btn-info btn-modal" style="margin-top: 15px;">Atualizar</a>
+                    </div>                 
+                </div>
+            </div>
+            <p:dataTable id="tabela" value="#{mesasBean.comandas}" var="comanda" emptyMessage="Não há comandas."
+                         tableStyleClass="tabela-auditoria" rowIndexVar="index">
+                <p:column headerText="Mesa" priority="1" width="45">
+                    #{comanda.mesa}
+                </p:column>
+                <p:column headerText="Comanda" >
+                    #{comanda.comanda}
+                </p:column>
+                <p:column headerText="Pedido" >
+                    #{comanda.pedido}
+                </p:column>
+                <p:column headerText="Pessoas" style="text-align: center;" priority="2">
+                    #{comanda.pessoasMesa}
+                </p:column>
+                <p:column headerText="Status" style="text-align: center;" >
+                    <span style="color: #{comanda.status eq 'P' ? 'red' : '#000'}">#{comanda.status eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
+                </p:column>
+                <p:column headerText="Total" style="text-align: right;" >
+                    <h:outputLabel value="#{comanda.total}">
+                        <f:convertNumber pattern="###,##0.00"/>
+                    </h:outputLabel> 
+                </p:column>
+                <p:column headerText="T.+10%" style="text-align: center;">
+                    <h:outputLabel value="#{comanda.total * 1.1}">
+                        <f:convertNumber pattern="###,##0.00"/>
+                    </h:outputLabel> 
+                </p:column>
+                <p:column style="text-align: right;" width="60">
+                    <p:commandButton id="altera" value="PG" disabled="#{comanda.status ne 'P'}" 
+                                     oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"/>
+                    <p:overlayPanel id="panel"  for="altera" hideEffect="fade" style="background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%); width: 300px;" 
+                                     appendToBody="true" modal="true">
+                        <div class="ui-fluid">
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
+                                <p:outputLabel value="Total" style="color:#fff;"/>
+                                <h:outputLabel value="#{comanda.total * 1.1}" style="color:#fff; font-size: 15pt;">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel> 
+                                <p:outputLabel value="Pago" style="color:#fff;"/>
+                                <p:inputNumber id="valor" style="font-size: 15pt;" />
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                                <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"/>
+                            </p:panelGrid>
+                        </div> 
+                    </p:overlayPanel>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+    </h:body>
+</html>
+

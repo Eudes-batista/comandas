@@ -34,6 +34,7 @@ import relatorio.Relatorio;
 import servico.ComandaService;
 import servico.EmpresaService;
 import servico.EspelhoComandaService;
+import servico.ItemAcompanhamentoService;
 import servico.MesaService;
 import servico.UsuarioService;
 import util.GerenciaArquivo;
@@ -57,6 +58,8 @@ public class MesasBean implements Serializable {
     private EmpresaService empresaService;
     @ManagedProperty(value = "#{espelhoComandaService}")
     private EspelhoComandaService espelhoComandaService;
+    @ManagedProperty(value = "#{itemAcompanhamentoService}")
+    private ItemAcompanhamentoService itemAcompanhamentoService;
 
     private List<Mesa> mesas = new ArrayList<>();
     private List<Lancamento> lancamentos = new ArrayList<>();
@@ -148,7 +151,7 @@ public class MesasBean implements Serializable {
         prepararPreconta(mesa);
     }
 
-    public void imprimirPreconta() {        
+    public void imprimirPreconta() {
         if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
             prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())));
             listarMesas();
@@ -159,8 +162,8 @@ public class MesasBean implements Serializable {
     }
 
     private void prepararPreconta(String mesa1) {
-        this.mesa =inserirPessoasNaMesa(mesa1);
-        this.mesa.setQuantidadePessoasPagantes(mesa.getQuantidadePessoasPagantes() == null || "".equals(mesa.getQuantidadePessoasPagantes()) ?  "1" : mesa.getQuantidadePessoasPagantes());
+        this.mesa = inserirPessoasNaMesa(mesa1);
+        this.mesa.setQuantidadePessoasPagantes(mesa.getQuantidadePessoasPagantes() == null || "".equals(mesa.getQuantidadePessoasPagantes()) ? "1" : mesa.getQuantidadePessoasPagantes());
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
         Relatorio relatorio = new Relatorio(comandaService, empresaService, mesa1);
         if (gerenciaArquivo.bucarInformacoes().getConfiguracao().getTipoImpressao().equals("rede")) {
@@ -174,7 +177,7 @@ public class MesasBean implements Serializable {
             }
         } else {
             Empresa empresa = relatorio.getEmpresa();
-            Map<String, List<Object[]>> mapComanda = controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));;
+            Map<String, List<Object[]>> mapComanda = controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
             String impressora = gerenciaArquivo.getConfiguracao().getImpressora();
             PdfMesa pdfMesa = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
             try {
@@ -186,15 +189,14 @@ public class MesasBean implements Serializable {
             }
         }
         fecharMesa(mesa1);
-        atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);        
+        atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
     }
-    
+
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));
         this.mesas.set(indexMesa, this.mesa);
         return this.mesas.get(indexMesa);
     }
-    
 
     public void receberCodigoAutorizacao(Mesa mesa, Status condicao) {
         this.mesa = mesa;
@@ -331,8 +333,8 @@ public class MesasBean implements Serializable {
         mesa = null;
     }
 
-    private void atualizarDataPreContaPessoasPagantes(String data,Mesa mesa) {
-        this.espelhoComandaService.atualizarDataPreconta(data,mesa);
+    private void atualizarDataPreContaPessoasPagantes(String data, Mesa mesa) {
+        this.espelhoComandaService.atualizarDataPreconta(data, mesa);
     }
 
 }

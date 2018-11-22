@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <p:inputText id="mesaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.mesa}"
-                                 required="true"  requiredMessage="Campo mesa Obrigatorio.">
+                                 required="true"  requiredMessage="Campo mesa Obrigatorio." onblur="this.value = ('0000'+this.value).slice(-4);">
                         <f:passThroughAttribute name="placeholder" value="Mesa" />
                         <f:passThroughAttribute name="type" value="tel" />
                         <p:keyFilter for="mesaTransferencia" mask="num" />
@@ -41,7 +41,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <p:inputText id="comandaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.comanda}"
-                                 required="true"  requiredMessage="Campo comanda Obrigatorio.">
+                                 required="true"  requiredMessage="Campo comanda Obrigatorio." onblur="this.value = ('0000'+this.value).slice(-4);">
                         <f:passThroughAttribute name="placeholder" value="Comanda" />
                         <f:passThroughAttribute name="type" value="tel" />
                         <p:keyFilter for="comandaTransferencia" mask="num" />
