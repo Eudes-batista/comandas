@@ -44,6 +44,7 @@ public class EspelhoComandaBean implements Serializable {
         Double porcentagem = calcularPorcentagem(valorDaCompra, valorPago);
         this.valor = Double.parseDouble(new DecimalFormat("###,##0.00").format(porcentagem).replace(".","").replace(",","."));
         espelhoComandaService.atualizarPorcentagem(comandas.getPedido(),this.valor);
+        this.valor=0;
     }
 
     public void salvar() {

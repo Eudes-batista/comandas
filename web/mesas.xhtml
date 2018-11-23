@@ -243,8 +243,8 @@
                         </div>
                     </div>
                 </div>
-                <p:commandLink id="precontaAtalhoRapido" style="display: none;" actionListener="#{mesasBean.imprimirPreconta()}" process="frmPrecontaRapida:mesaPrecontaRapida frmPreconta:pessoasPagantes @this"
-                               update="frm:tabelaMesa,frmPrecontaRapida" value="OK"/>                            
+                <p:commandLink id="precontaAtalhoRapido" style="display: none;" actionListener="#{mesasBean.imprimirPreconta()}" process="frmPrecontaRapida"
+                               update="frm:tabelaMesa" value="OK"/>                            
                 <p:defaultCommand target="precontaAtalhoRapido" />
             </h:form>
         </p:dialog>

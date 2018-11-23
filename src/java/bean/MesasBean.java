@@ -285,25 +285,35 @@ public class MesasBean implements Serializable {
     }
 
     public void transferiMesa() {
-        if (mesaOrigem != null && mesaDestino != null) {
-            if (Pattern.compile("\\d").matcher(mesaDestino).find()) {
-                mesaDestino = String.format("%04d", Integer.parseInt(mesaDestino));
-            }
-            if (!mesaOrigem.equals(mesaDestino)) {
-                if (mesaDestino.equals("RSVA") || Pattern.compile("\\d").matcher(mesaDestino).find()) {
-                    Mesa mesaDes = mesas.stream().filter(m -> m.getMesa().equals(mesaDestino)).findFirst().orElse(null);
-                    if ((mesaDes != null && !mesaDes.getStatus().equals("V")) || mesaDes == null) {
-                        controle.transferirMesa(this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem))), mesaDestino.toUpperCase());
-                        listarMesas();
-                        PrimeFaces.current().ajax().update("frm:tabelaMesa");
-                        PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
-                    } else {
-                        Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
-                    }
-                } else {
-                    Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
-                }
-            }
+        if (mesaOrigem == null && mesaDestino == null) {return;}
+        formataNumeroMesaDestino();
+        if (verificarMesaDestinoIgualMesaOrigem()) {return;}
+        if (!mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(mesaDestino).find()) {
+            Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
+            return;
+        }
+        Mesa mesaDes = mesas.stream().filter(m -> m.getMesa().equals(mesaDestino)).findFirst().orElse(null);
+        if ((mesaDes != null && !mesaDes.getStatus().equals("V")) || mesaDes == null) {
+            controle.transferirMesa(this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem))), mesaDestino.toUpperCase());
+            listarMesas();
+            PrimeFaces.current().ajax().update("frm:tabelaMesa");
+            PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
+        } else {
+            Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
+        }
+    }
+
+    private boolean verificarMesaDestinoIgualMesaOrigem() {
+        if (mesaOrigem.equals(mesaDestino)) {
+            Messages.addGlobalWarn("Mesa de destino é a mesma de origem.");
+            return true;
+        }
+        return false;
+    }
+
+    private void formataNumeroMesaDestino() throws NumberFormatException {
+        if (Pattern.compile("\\d").matcher(mesaDestino).find()) {
+            mesaDestino = String.format("%04d", Integer.parseInt(mesaDestino));
         }
     }
 

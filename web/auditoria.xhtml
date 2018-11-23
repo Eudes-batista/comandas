@@ -87,7 +87,7 @@
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>
                                 <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" 
-                                               decimalPlaces="2" />
+                                               decimalPlaces="2" type="tel" decimalSeparator="."/>
                             </p:panelGrid>
                             <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"

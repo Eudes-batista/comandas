@@ -224,10 +224,6 @@ public class ComandasBean implements Serializable {
             return;
         }
         formatarMesaComQuatroDigitos();
-//        if (mesaDestino.equals(codigoMesa)) {
-//            Messages.addGlobalWarn("Mesa ou Comanda igual a de origem.");
-//            return;
-//        }
         if (!mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(mesaDestino).find()) {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
