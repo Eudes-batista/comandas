@@ -15,7 +15,7 @@
         <h:outputStylesheet library="css" name="bootstrap.css" />
         <h:outputStylesheet library="css" name="auditoria.css" />
         <script>
-            function focusValor(input){
+            function focusValor(input) {
                 document.getElementById(input).focus();
             }
         </script>
@@ -78,19 +78,21 @@
                     <p:commandButton id="altera" value="PG" disabled="#{comanda.status ne 'P'}" 
                                      oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"/>
                     <p:overlayPanel id="panel"  for="altera" hideEffect="fade" style="background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%); width: 300px;" 
-                                     appendToBody="true" modal="true">
+                                    appendToBody="true" modal="true" >
                         <div class="ui-fluid">
-                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
+                            <p:panelGrid id="panelPg" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                 <p:outputLabel value="Total" style="color:#fff;"/>
                                 <h:outputLabel value="#{comanda.total * 1.1}" style="color:#fff; font-size: 15pt;">
                                     <f:convertNumber pattern="###,##0.00"/>
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>
-                                <p:inputNumber id="valor" style="font-size: 15pt;" />
+                                <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" 
+                                               decimalPlaces="2" />
                             </p:panelGrid>
-                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-                                <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"/>
-                            </p:panelGrid>
+                            <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
+                                           actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
+                                           process="frmAuditoria:tabela:#{index}:valor @this" update="frmAuditoria:tabela"
+                                           partialSubmit="true"/>
                         </div> 
                     </p:overlayPanel>
                 </p:column>

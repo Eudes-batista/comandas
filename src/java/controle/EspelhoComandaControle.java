@@ -1,6 +1,7 @@
 package controle;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -91,6 +92,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     @Override
     public void atualizarPorcentagem(String pedido, double porcentagem) {
         executarSql("update espelho_comanda set porcentagem = " + porcentagem + " where pedido = '" + pedido + "'");
+        atualizarValorPorcentagemItens(pedido);
     }
 
     @Override
@@ -114,6 +116,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
             valorTotalItem = quantidadeItem * valorItem;
             porcentagemEmValor = porcentagem / 100;
             valorPorcentagemItem = valorTotalItem * porcentagemEmValor;
+            valorPorcentagemItem=Double.parseDouble(new DecimalFormat("###,##0.00").format(valorPorcentagemItem).replace(".","").replace(",","."));
             executarSql("update espelho_comanda set VALOR_PORCENTAGEM=" + valorPorcentagemItem + " where numero='" + String.valueOf(itens[0]) + "'");
         }
     }
