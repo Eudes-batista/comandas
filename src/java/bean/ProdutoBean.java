@@ -225,12 +225,12 @@ public class ProdutoBean implements Serializable {
 
     public void adicionarItem() {
         this.produto = this.produtoServico.buscarProduto(produto.getReferencia());
-        if (this.produto != null) {
-            adicionarItem(this.produto);
-        } else {
+        if (this.produto == null) {
             this.produto = new Produto();
             Messages.addGlobalWarn("Produto não encontrado.");
+            return;
         }
+        adicionarItem(this.produto);
     }
 
     public void salvoAcompanhamento() {

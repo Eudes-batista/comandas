@@ -301,7 +301,7 @@
                 </p:panelGrid>
                 <p:defaultCommand target="confirma" />
             </h:form>
-              <script type="text/javascript">
+            <script type="text/javascript">
                 function handleLoginRequest(xhr, status, args) {
                     if (args.fechar) {
                         PF('dialogoUsuario').hide();
@@ -450,6 +450,7 @@
                 <p:defaultCommand target="confirmarProduto"/>
             </h:form> 
         </p:dialog>
+        <!--MODAL DE TRANSFERENCIA DE ITENS-->
         <p:sidebar id="transferenciaItens" widgetVar="sidebarTransferenciaItens" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
             <ui:include src="transferenciaItens.xhtml" />    
         </p:sidebar>

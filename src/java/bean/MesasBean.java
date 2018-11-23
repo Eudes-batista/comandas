@@ -123,23 +123,23 @@ public class MesasBean implements Serializable {
 
     private void adicionarMesas(Map<String, List<Mesa>> mapMesas) {
         for (Map.Entry<String, List<Mesa>> map : mapMesas.entrySet()) {
-            String key = map.getKey();
-            List<Mesa> values = map.getValue();
+            String chave = map.getKey();
+            List<Mesa> valores = map.getValue();
             int countP = 0;
-            for (Mesa mesaStatus : values) {
-                if (mesaStatus.getStatus().equals("P")) {
+            for (Mesa mesa : valores) {
+                if (mesa.getStatus().equals("P")) {
                     countP++;
-                    if (countP > 0 && countP < values.size()) {
-                        mesas.remove(new Mesa(key));
-                        mesas.add(new Mesa(key, "L", mesaStatus.getPedido()));
-                    } else if (countP == values.size()) {
-                        mesas.remove(new Mesa(key));
-                        mesas.add(new Mesa(key, "V", mesaStatus.getPedido()));
+                    if (countP > 0 && countP < valores.size()) {
+                        mesas.remove(new Mesa(chave));
+                        mesas.add(new Mesa(chave, "L", mesa.getPedido()));
+                    } else if (countP == valores.size()) {
+                        mesas.remove(new Mesa(chave));
+                        mesas.add(new Mesa(chave, "V", mesa.getPedido()));
                         countP = 0;
                     }
                 }
-                if ((mesaStatus.getStatus().isEmpty() || mesaStatus.getStatus().equals("null")) && countP == 0) {
-                    mesas.add(new Mesa(key, "N", mesaStatus.getPedido()));
+                if ((mesa.getStatus().isEmpty() || mesa.getStatus().equals("null")) && countP == 0) {
+                    mesas.add(new Mesa(chave, "N", mesa.getPedido()));
                     break;
                 }
             }
