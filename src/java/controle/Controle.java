@@ -233,7 +233,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferirComandaParaComanda(Comandas comandaOrigem, String comandaDestino) {
         List<Object[]> comanda = pesquisarComandaPorCodigo(comandaDestino);
-        String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda;
+        String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda,status;
         int somaQauntidadePessoasMesa;
         if (comanda.isEmpty()) {
             sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getComanda() + "'";
@@ -244,9 +244,10 @@ public class Controle implements ComandaService, Serializable {
         }
         mesaDestino = String.valueOf(comanda.get(0)[3]);
         pedido = String.valueOf(comanda.get(0)[5]);
+        status = String.valueOf(comanda.get(0)[2]);
         somaQauntidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0)[4])) + Integer.parseInt(comandaOrigem.getPessoasMesa());
-        sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "' where tecomand='" + comandaOrigem.getComanda() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "' where pedido in('" + comandaOrigem.getPedido() + "','" + pedido + "')";
+        sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='"+status+"' where tecomand='" + comandaOrigem.getComanda() + "'";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='"+status+"' where pedido in('" + comandaOrigem.getPedido() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
         List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);

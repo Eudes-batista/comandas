@@ -213,6 +213,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(this.quantidade);
         lancamentoItem.setPreco(p.getPreco());
+        lancamentoItem.setPrecoTotal(p.getPreco()*quantidade);
         lancamentoItem.setVendedor(this.vendedor);
         lancamentoItem.setImprimir("0");
         lancamentoItem.setStatus(this.status);
@@ -287,8 +288,11 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setStatus(lancamento.getStatus());
         espelhoComanda.setObservacao(lancamento.getObservacao());
         espelhoComanda.setStatusItem("N");
+        espelhoComanda.setValorItem(lancamento.getPreco());
         if (!new GerenciaArquivo().bucarInformacoes().getConfiguracao().getCobraDezPorcento().isEmpty()) {
             espelhoComanda.setPorcentagem(10d);
+            double valorComDezPOrcento = lancamento.getPrecoTotal() * 0.10;
+            espelhoComanda.setValorPorcentagem(valorComDezPOrcento);
         }
         espelhoComandaBean.setEspelhoComanda(espelhoComanda);
         espelhoComandaBean.salvar();

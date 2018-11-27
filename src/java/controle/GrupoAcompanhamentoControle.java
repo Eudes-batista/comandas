@@ -72,7 +72,7 @@ public class GrupoAcompanhamentoControle implements GrupoAcompanhamentoService {
         session = HibernateUtil.getSessionFactory().openSession();
         int count=1;
         if(session != null){
-           Object qtd= session.createSQLQuery("select count(*) as quantidade from grupo_acompanhamento").uniqueResult();
+           Object qtd= session.createSQLQuery("select first 1 CODIGO  from grupo_acompanhamento order by codigo desc").uniqueResult();
            if(qtd != null){
                count =Integer.parseInt(String.valueOf(qtd))+1;
            }

@@ -36,7 +36,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarStatusImpressao(String comanda) {
-        executarSql("update espelho_comanda set impressao='P' where comanda='" + comanda + "'");
+        executarSql("update espelho_comanda set impressao='1' where comanda='" + comanda + "'");
     }
 
     @Override
@@ -110,15 +110,28 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         List<Object[]> listarProdutosPedido = listarProdutosPedido(pedido);
         for (Object[] itens : listarProdutosPedido) {
             double valorItem, quantidadeItem, porcentagem, valorTotalItem, porcentagemEmValor, valorPorcentagemItem;
+        
             valorItem = Double.parseDouble(String.valueOf(itens[1]));
+            
             quantidadeItem = Double.parseDouble(String.valueOf(itens[2]));
+            
             porcentagem = Double.parseDouble(String.valueOf(itens[3]));
+            
             valorTotalItem = quantidadeItem * valorItem;
+            
             porcentagemEmValor = porcentagem / 100;
+            
             valorPorcentagemItem = valorTotalItem * porcentagemEmValor;
+            
             valorPorcentagemItem=Double.parseDouble(new DecimalFormat("###,##0.00").format(valorPorcentagemItem).replace(".","").replace(",","."));
+            
             executarSql("update espelho_comanda set VALOR_PORCENTAGEM=" + valorPorcentagemItem + " where numero='" + String.valueOf(itens[0]) + "'");
         }
+    }
+
+    @Override
+    public void atualizarStatusItens(String pedidos) {
+        executarSql("update espelho_comanda set status_item='C' where pedido in("+pedidos+")");
     }
 
 }

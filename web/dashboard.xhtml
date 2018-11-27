@@ -1,14 +1,45 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:metadata>
+        <f:viewAction action="#{DashboardBean.init()}" />
+    </f:metadata>
     <h:head>
         <title>Facelet Title</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
         <link rel="stylesheet" href="resources/css/dashboard.css" /> 
-        <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
+        <h:outputScript library="js" name="jquery-3.2.1.min.js" />
+        <h:outputScript library="js" name="Chart.js" />
+        <script>
+            window.onload = function () {
+                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico";
+                $.getJSON(url, function (data) {
+                    var context = document.getElementById("bar-chart");
+                    var chart = new Chart(context, {
+                        type: "bar",
+                        data: {
+                            labels: ["Vendas Hoje"],
+                            datasets: data
+                        }
+                    });
+                });
+                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico/vendedores";
+                $.getJSON(url, function (data) {
+                    var context = document.getElementById("bar10-chart");
+                    var chart = new Chart(context, {
+                        type: "bar",
+                        data: {
+                            labels: ["Rejeição de 10%"],
+                            datasets: data
+                        }
+                    });
+                });
+            };
+        </script>
     </h:head>
     <h:body>
         <div class="container">
@@ -19,8 +50,14 @@
                             <i class="glyphicon glyphicon-usd"></i>
                         </div>
                         <div class="dash-box-body">
-                            <span class="dash-box-count">10.257,32</span>
-                            <span class="dash-box-title">Vendas</span>
+                            <span class="dash-box-count">
+                                <h:outputLabel value="#{DashboardBean.totalVenda.VENDAS}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </span>
+                            <span class="dash-box-title">
+                                Vendas
+                            </span>
                         </div>
 
                         <div class="dash-box-action">
@@ -34,51 +71,42 @@
                             <i class="glyphicon glyphicon-user"></i>
                         </div>
                         <div class="dash-box-body">
-                            <span class="dash-box-count">1524</span>
+                            <span class="dash-box-count">#{DashboardBean.quantidadeClientesAtendidos}</span>
                             <span class="dash-box-title">Clientes atendidos</span>
                         </div>
-
-<!--                        <div class="dash-box-action">
-                            <button>More Info</button>
-                        </div>				-->
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="dash-box dash-box-color-3">
                         <div class="dash-box-icon">
-                            <i class="glyphicon glyphicon-link"></i>
+                            <i class="glyphicon glyphicon-list"></i>
                         </div>
                         <div class="dash-box-body">
-                            <span class="dash-box-count">34</span>
-                            <span class="dash-box-title">Clientes em reserva</span>
+                            <span class="dash-box-count">
+                                <h:outputLabel value="#{DashboardBean.totalVenda.ITENS}">
+                                    <f:convertNumber />
+                                </h:outputLabel>
+                            </span>
+                            <span class="dash-box-title">Itens Vendidos</span>
                         </div>
 
                         <div class="dash-box-action">
-                            <button>More Info</button>
+                            <button>Mais Informações</button>
                         </div>				
                     </div>
                 </div>
             </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6" align="center" style="width:400px;height:300px" >
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                    <div class="col-md-6" align="center" style="width:400px;height:300px" >
+                        <canvas id="bar10-chart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-<!--        
-        select 
-   VENDEDOR,
-   COUNT(PEDIDO) AS QUANTIDADE_VENDAS, 
-   SUM(QUANTIDADE*EEPLQTB1) AS VENDAS_POR_GARCOM,
-   SUM(VALOR_PORCENTAGEM) AS PORCENTAGEM
-from 
-   espelho_comanda 
-LEFT OUTER JOIN
-   SCEA07 ON (EEREFERE = REFERENCIA AND EECODEMP = 'SIG')
-WHERE 
-   DATA 
-   BETWEEN '2018-11-21 00:00:00'  
-   AND     '2018-11-21 23:59:59' 
-GROUP BY 
-   VENDEDOR
-        -->
-        
-        
     </h:body>
 </html>
 

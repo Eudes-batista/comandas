@@ -53,7 +53,7 @@ public class Log implements Serializable {
     public StringBuilder recuperarLog() {
     StringBuilder str = new StringBuilder();
         try {
-            Files.lines(path).forEach(l -> str.append(l));
+            Files.lines(path).forEach(l -> str.append(l).append("\n"));
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao ler informação no arquivo de  log.txt");
         }

@@ -100,6 +100,9 @@ public class EspelhoComanda implements Serializable {
     
     @Column(name = "quantidade_cancelada", nullable = true, precision = 6,scale = 3)
     private Double quantidadeCancelada;
+    
+    @Column(name = "valor_item", precision = 18, scale = 3, nullable = false)
+    private Double valorItem;
 
     @Override
     public int hashCode() {

@@ -48,50 +48,50 @@
                 </div>
             </div>
             <p:dataTable id="tabela" value="#{mesasBean.comandas}" var="comanda" emptyMessage="Não há comandas."
-                         tableStyleClass="tabela-auditoria" rowIndexVar="index">
-                <p:column headerText="Mesa" priority="1" width="45">
+                         tableStyleClass="tabela-auditoria" rowIndexVar="index" reflow="true" >
+                <p:column headerText="Mesa" priority="1" width="45" >
                     #{comanda.mesa}
                 </p:column>
-                <p:column headerText="Comanda" >
+                <p:column headerText="Comanda">
                     #{comanda.comanda}
                 </p:column>
                 <p:column headerText="Pedido" >
                     #{comanda.pedido}
                 </p:column>
-                <p:column headerText="Pessoas" style="text-align: center;" priority="2">
+                <p:column headerText="Pessoas" >
                     #{comanda.pessoasMesa}
                 </p:column>
-                <p:column headerText="Status" style="text-align: center;" >
+                <p:column headerText="Status" sortBy="#{comanda.status}">
                     <span style="color: #{comanda.status eq 'P' ? 'red' : '#000'}">#{comanda.status eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
                 </p:column>
-                <p:column headerText="Total" style="text-align: right;" >
-                    <h:outputLabel value="#{comanda.total}">
+                <p:column headerText="Total" >
+                    <h:outputLabel value="#{comanda.total}" class="total">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
-                <p:column headerText="T.+10%" style="text-align: center;">
+                <p:column headerText="T.+10%" >
                     <h:outputLabel value="#{comanda.total * 1.1}">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
-                <p:column style="text-align: right;" width="60">
+                <p:column width="60">
                     <p:commandButton id="altera" value="PG" disabled="#{comanda.status ne 'P'}" 
                                      oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"/>
                     <p:overlayPanel id="panel"  for="altera" hideEffect="fade" style="background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%); width: 300px;" 
                                     appendToBody="true" modal="true" >
                         <div class="ui-fluid">
+                            <p:messages id="msg" closable="true" showIcon="false"/>
                             <p:panelGrid id="panelPg" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                 <p:outputLabel value="Total" style="color:#fff;"/>
                                 <h:outputLabel value="#{comanda.total * 1.1}" style="color:#fff; font-size: 15pt;">
                                     <f:convertNumber pattern="###,##0.00"/>
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>
-                                <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" 
-                                               decimalPlaces="2" type="tel" decimalSeparator="."/>
+                                <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" />
                             </p:panelGrid>
                             <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
-                                           process="frmAuditoria:tabela:#{index}:valor @this" update="frmAuditoria:tabela"
+                                           process="frmAuditoria:tabela:#{index}:valor @this" update="msg"
                                            partialSubmit="true"/>
                         </div> 
                     </p:overlayPanel>

@@ -24,7 +24,7 @@ public class AcompanhamentoControle implements AcompanhamentoService {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             session.getTransaction().begin();
-            session.saveOrUpdate(acompanhamento);
+            session.save(acompanhamento);
             session.getTransaction().commit();
             session.close();
         }
@@ -69,7 +69,7 @@ public class AcompanhamentoControle implements AcompanhamentoService {
         session = HibernateUtil.getSessionFactory().openSession();
         int count=1;
         if(session != null){
-           Object qtd= session.createSQLQuery("select count(*) as quantidade from acompanhamento").uniqueResult();
+           Object qtd= session.createSQLQuery("select first 1 CODIGO  from acompanhamento order by codigo desc").uniqueResult();
            if(qtd != null){
                count =Integer.parseInt(String.valueOf(qtd))+1;
            }

@@ -16,7 +16,7 @@ body{
 ,.mesa,.mesa-vermelha
 ,.mesa-modal,.modal-text
 ,.ui-dialog .ui-dialog-title
-,input,.ui-confirm-dialog-message
+,.ui-confirm-dialog-message
 ,.nao-ja-impressos,.ui-confirm-dialog,.acompanhamentos{
     color: #FFF !important;   
 }

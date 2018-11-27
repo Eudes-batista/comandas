@@ -10,10 +10,8 @@ public class HibernateUtil {
     
     public static SessionFactory getSessionFactory() {
         try {
-            GerenciaArquivo arquivo = new GerenciaArquivo();          
             Configuration c = new Configuration();
             c.configure("hibernate.cfg.xml");
-            c.setProperty("hibernate.connection.url", "jdbc:firebirdsql:" +arquivo.bucarInformacoes().getConfiguracao().getCaminho());
             if(sessionFactory==null){
                 sessionFactory= c.buildSessionFactory();
             }

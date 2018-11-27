@@ -64,7 +64,7 @@ public class MotivoCancelamentoControle implements MotivoCancelamentoService, Se
         session = HibernateUtil.getSessionFactory().openSession();
         int count=1;
         if(session != null){
-           Object qtd= session.createSQLQuery("select count(*) as quantidade from motivo_cancelamento").uniqueResult();
+           Object qtd= session.createSQLQuery("select first 1 CODIGO  from motivo_cancelamento order by codigo desc").uniqueResult();
            if(qtd != null){
                count =Integer.parseInt(String.valueOf(qtd))+1;
            }

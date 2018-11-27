@@ -29,6 +29,7 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
+import relatorio.PdfDetalhado;
 import relatorio.PdfMesa;
 import relatorio.Relatorio;
 import servico.ComandaService;
@@ -36,6 +37,7 @@ import servico.EmpresaService;
 import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
 import servico.MesaService;
+import servico.PdfService;
 import servico.UsuarioService;
 import util.GerenciaArquivo;
 import util.GerenciaEntrada;
@@ -95,6 +97,7 @@ public class MesasBean implements Serializable {
                 comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
             });
         }
+        comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));
     }
 
     public void pesquisarComanda() {
@@ -105,6 +108,7 @@ public class MesasBean implements Serializable {
                 comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
             });
         }
+        comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));
     }
 
     private void listarMesas() {
@@ -148,12 +152,12 @@ public class MesasBean implements Serializable {
     }
 
     public void imprimirPreconta(String mesa) {
-        prepararPreconta(mesa);
+        prepararPreconta(mesa, "normal");
     }
 
     public void imprimirPreconta() {
         if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
-            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())));
+            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())), "normal");
             listarMesas();
             this.mesa = null;
             this.mesa = new Mesa();
@@ -161,7 +165,17 @@ public class MesasBean implements Serializable {
         }
     }
 
-    private void prepararPreconta(String mesa1) {
+    public void imprimirPrecontaDetalhada() {
+        if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
+            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())), "detalhada");
+            listarMesas();
+            this.mesa = null;
+            this.mesa = new Mesa();
+            PrimeFaces.current().executeScript("PF('dialogoPrecontaRapida').hide();");
+        }
+    }
+
+    private void prepararPreconta(String mesa1, String tipo) {
         this.mesa = inserirPessoasNaMesa(mesa1);
         this.mesa.setQuantidadePessoasPagantes(mesa.getQuantidadePessoasPagantes() == null || "".equals(mesa.getQuantidadePessoasPagantes()) ? "1" : mesa.getQuantidadePessoasPagantes());
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
@@ -179,16 +193,21 @@ public class MesasBean implements Serializable {
             Empresa empresa = relatorio.getEmpresa();
             Map<String, List<Object[]>> mapComanda = controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
             String impressora = gerenciaArquivo.getConfiguracao().getImpressora();
-            PdfMesa pdfMesa = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
+            PdfService pdfService;
+            if (tipo.equals("normal")) {
+                pdfService = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
+            } else {
+                pdfService = new PdfDetalhado(empresa, mapComanda, comandaService, mesa, itemAcompanhamentoService);
+            }
             try {
-                new ControleImpressao(impressora).imprime(pdfMesa.gerarPdf());
+                new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
             } catch (FileNotFoundException | DocumentException ex) {
                 Messages.addGlobalError("Erro ao encontra o arquivo config.txt");
             } catch (IOException | PrinterException ex) {
                 Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
             }
         }
-        fecharMesa(mesa1);
+        fecharMesa(this.mesa);
         atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
     }
 
@@ -282,12 +301,17 @@ public class MesasBean implements Serializable {
         logMesa.registrarExclusao(this.mesa.getMesa(), usuario);
         controle.excluirMesa(this.mesa.getMesa());
         mesas.remove(new Mesa(this.mesa.getMesa()));
+        espelhoComandaService.atualizarStatusItens(this.mesa.getPedido());
     }
 
     public void transferiMesa() {
-        if (mesaOrigem == null && mesaDestino == null) {return;}
+        if (mesaOrigem == null && mesaDestino == null) {
+            return;
+        }
         formataNumeroMesaDestino();
-        if (verificarMesaDestinoIgualMesaOrigem()) {return;}
+        if (verificarMesaDestinoIgualMesaOrigem()) {
+            return;
+        }
         if (!mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(mesaDestino).find()) {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
@@ -317,7 +341,7 @@ public class MesasBean implements Serializable {
         }
     }
 
-    public void fecharMesa(String mesa) {
+    public void fecharMesa(Mesa mesa) {
         controle.atualizarStatusPreconta(mesa);
         listarMesas();
     }
