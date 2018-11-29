@@ -77,13 +77,7 @@ public class ComandasBean implements Serializable {
     }
 
     private void listarComandas() {
-        comandas.clear();
-        List<Object[]> listaComandas = controleService.listarComandasPorMesas(codigoMesa);
-        if (!listaComandas.isEmpty()) {
-            listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),""));
-            });
-        }
+        this.comandas = controleService.listarComandasPorMesas(codigoMesa);
         this.itemAcompanhamentos = itemAcompanhamentoService.pesquisarTodos();
     }
 
@@ -208,7 +202,7 @@ public class ComandasBean implements Serializable {
         if (validarGerente()) {
             setUsuario("");
             setSenha("");
-            controleService.excluirMesa(this.codigoMesa, this.comanda.getComanda());
+            controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
             comandas.remove(this.comanda);
             totalMesa();
             fechar = true;
@@ -228,8 +222,8 @@ public class ComandasBean implements Serializable {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
         }
-        Comandas cm = comandas.stream().filter(c -> c.getComanda().equals(comandaOrigem)).findAny().orElse(null);
-        if (cm != null && !cm.getStatus().equals("P")) {
+        Comandas cm = comandas.stream().filter(c -> c.getCOMANDA().equals(comandaOrigem)).findAny().orElse(null);
+        if (cm != null && !cm.getSTATUS().equals("P")) {
             transferirMesaComanda(cm);
             atualizarERedirecionar();
             return;
@@ -266,13 +260,7 @@ public class ComandasBean implements Serializable {
     }
 
     public void pesquisarComanda() {
-        comandas.clear();
-        List<Object[]> listaComandas = controleService.listarComandasPorCodigo(codigoMesa, pesquisa);
-        if (!listaComandas.isEmpty()) {
-            listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),""));
-            });
-        }
+        this.comandas = controleService.listarComandasPorCodigo(codigoMesa, pesquisa);
     }
 
     public void fecharComanda(String comanda) {

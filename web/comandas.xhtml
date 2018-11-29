@@ -103,36 +103,36 @@
                         <ul jsf:id="tabelaComanda">
                             <ui:repeat  value="#{comandasBean.comandas}" var="item">   
                                 <li>    
-                                    <div class="#{item.status eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
+                                    <div class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
                                         <h:link outcome="produtos.jsf" >
-                                            <h3 style="color: #fff; font-weight: bold;">#{item.comanda}</h3>
-                                            <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold; color: #fff;" value="#{item.total}">
+                                            <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
+                                            <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold; color: #fff;" value="#{item.TOTAL}">
                                                 <f:convertNumber for="label" pattern="#,##0.00"/>
                                             </h:outputLabel>
-                                            <f:param name="mesa" value="#{item.mesa}"/>
-                                            <f:param name="comanda" value="#{item.comanda}"/>
-                                            <f:param name="pessoas" value="#{item.pessoasMesa}"/>
-                                            <f:param name="pedido" value="#{item.pedido}"/>
-                                            <f:param name="status" value="#{item.status}"/>
+                                            <f:param name="mesa" value="#{item.MESA}"/>
+                                            <f:param name="comanda" value="#{item.COMANDA}"/>
+                                            <f:param name="pessoas" value="#{item.PESSOAS}"/>
+                                            <f:param name="pedido" value="#{item.PEDIDO}"/>
+                                            <f:param name="status" value="#{item.STATUS}"/>
                                         </h:link>
                                         <ul style="margin-top: 5px;">
                                             <li>
-                                                <p:commandLink class="btn-modal btn btn-warning btn-block fa fa-print" actionListener="#{comandasBean.imprimirPreconta(item.comanda)}"
+                                                <p:commandLink class="btn-modal btn btn-warning btn-block fa fa-print" actionListener="#{comandasBean.imprimirPreconta(item.COMANDA)}"
                                                                process="@this" update="frm:tabelaComanda" disabled="#{comandasBean.codigoMesa eq 'RSVA'}">
                                                     <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />
                                                 </p:commandLink>
                                             </li>
                                             <li>
                                                 <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" oncomplete="PF('dialogoTransferencia').show();"
-                                                               update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.comanda)}"
-                                                               partialSubmit="true" disabled="#{item.status eq 'P'}"/>
+                                                               update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.COMANDA)}"
+                                                               partialSubmit="true" disabled="#{item.STATUS eq 'P'}"/>
                                             </li>
                                             <li>
                                                 <p:commandLink class="btn-modal btn btn-danger btn-block fa fa-trash" actionListener="#{comandasBean.receberCodigoExcluxao(item)}" oncomplete="PF('dialogoUsuario').show();"
                                                                process="@this"/>
                                             </li>
                                             <li>
-                                                <p:commandLink class="btn-modal btn btn-default btn-block fa fa-eye" actionListener="#{comandasBean.listarProdutosAdicionados(item.comanda)}"
+                                                <p:commandLink class="btn-modal btn btn-default btn-block fa fa-eye" actionListener="#{comandasBean.listarProdutosAdicionados(item.COMANDA)}"
                                                                process="@this" update="frmVisualizarItens" oncomplete="PF('dialogoVisualizarItens').show();"/>
                                             </li>
                                         </ul>
@@ -188,7 +188,7 @@
                         <h:panelGroup id="panelTrans">
                             <div class="row">
                                 <div class="cold-md-12">
-                                    <p:selectOneRadio id="selecaoTransferencia" layout="responsive" columns="2" onchange="selecionarMesaComanda(this);"
+                                    <p:selectOneRadio id="selecaoTransferencia" columns="2" onchange="selecionarMesaComanda(this);"
                                                       widgetVar="radio" value="#{comandasBean.tipoTransferencia}">
                                         <f:selectItem itemLabel="Mesa" itemValue="mesa" />
                                         <f:selectItem itemLabel="Comanda" itemValue="comanda"/>

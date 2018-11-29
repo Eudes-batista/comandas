@@ -114,7 +114,7 @@ public class PdfDetalhado implements PdfService {
             PdfPCell tituloComanda = controlePdf.criarCelula("Comanda", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
 
 //        ***********VALOR MESA/COMANDA*************
-            PdfPCell mesa = controlePdf.criarCelula(this.mesa.getMesa(), ControlePdf.FONT_PPB, 1, Element.ALIGN_LEFT);
+            PdfPCell mesa = controlePdf.criarCelula(this.mesa.getMESA(), ControlePdf.FONT_PPB, 1, Element.ALIGN_LEFT);
             PdfPCell comanda = controlePdf.criarCelula(numeroComanda, ControlePdf.FONT_PPB, 1, Element.ALIGN_CENTER);
 
 //        ***********TITULO ITENS*************
@@ -233,7 +233,7 @@ public class PdfDetalhado implements PdfService {
         tabelaRodape.setWidthPercentage(100f);
         tabelaRodape.setWidths(new float[]{25, 125, 25, 30});
 
-        String quantidadePessoasPagantes = this.mesa.getQuantidadePessoasPagantes();
+        String quantidadePessoasPagantes = this.mesa.getPAGANTES();
         String garcons = vendedores.size() > 1 ? "Garçons " : "Garçom ";
 
         PdfPCell tituloPessaosPagantes = controlePdf.criarCelula("Pagantes: " + quantidadePessoasPagantes, ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);

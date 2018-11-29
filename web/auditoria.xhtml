@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <f:metadata>
-        <f:viewAction action="#{mesasBean.listarComandas()}"/>
+        <f:viewAction action="#{auditoriaBean.listarComandas()}"/>
     </f:metadata>
     <h:head>
         <title>Auditoria</title>
@@ -32,13 +32,13 @@
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <h:inputText class="form-control" value="#{mesasBean.pesquisa}" >
+                            <h:inputText class="form-control" value="#{auditoriaBean.pesquisa}" >
                                 <f:passThroughAttribute name="type" value="tel"/>
                                 <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
                                 <f:passThroughAttribute name="aria-label" value="Username"/>
                                 <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
                                 <f:passThroughAttribute name="autofocus" value="true"/>
-                                <f:ajax event="keyup" render="tabela" execute="@this" listener="#{mesasBean.pesquisarComanda()}"/>
+                                <f:ajax event="keyup" render="tabela" execute="@this" listener="#{auditoriaBean.pesquisarComanda()}"/>
                             </h:inputText>
                         </div>
                     </div>
@@ -47,38 +47,35 @@
                     </div>                 
                 </div>
             </div>
-            <p:dataTable id="tabela" value="#{mesasBean.comandas}" var="comanda" emptyMessage="Não há comandas."
+            <p:dataTable id="tabela" value="#{auditoriaBean.comandas}" var="comanda" emptyMessage="Não há comandas."
                          tableStyleClass="tabela-auditoria" rowIndexVar="index" reflow="true" >
                 <p:column headerText="Mesa" priority="1" width="45" >
-                    #{comanda.mesa}
+                    #{comanda.MESA}
                 </p:column>
                 <p:column headerText="Comanda">
-                    #{comanda.comanda}
+                    #{comanda.COMANDA}
                 </p:column>
                 <p:column headerText="Pedido" >
-                    #{comanda.pedido}
-                </p:column>
-                <p:column headerText="Garçom" >
-                    #{comanda.vendedor}
+                    #{comanda.PEDIDO}
                 </p:column>
                 <p:column headerText="Pessoas" >
-                    #{comanda.pessoasMesa}
+                    #{comanda.PESSOAS}
                 </p:column>
-                <p:column headerText="Status" sortBy="#{comanda.status}">
-                    <span style="color: #{comanda.status eq 'P' ? 'red' : '#000'}">#{comanda.status eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
+                <p:column headerText="Status" sortBy="#{comanda.STATUS}">
+                    <span style="color: #{comanda.STATUS eq 'P' ? 'red' : '#000'}">#{comanda.STATUS eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
                 </p:column>
                 <p:column headerText="Total" >
-                    <h:outputLabel value="#{comanda.total}" class="total">
+                    <h:outputLabel value="#{comanda.TOTAL}" class="total">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
                 <p:column headerText="T.+10%" >
-                    <h:outputLabel value="#{comanda.total * 1.1}">
+                    <h:outputLabel value="#{comanda.TOTAL * 1.1}">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
                 <p:column width="60">
-                    <p:commandButton id="altera" value="PG" disabled="#{comanda.status ne 'P'}" 
+                    <p:commandButton id="altera" value="PG" disabled="#{comanda.STATUS ne 'P'}" 
                                      oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"/>
                     <p:overlayPanel id="panel"  for="altera" hideEffect="fade" style="background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%); width: 300px;" 
                                     appendToBody="true" modal="true" >
@@ -86,7 +83,7 @@
                             <p:messages id="msg" closable="true" showIcon="false"/>
                             <p:panelGrid id="panelPg" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                 <p:outputLabel value="Total" style="color:#fff;"/>
-                                <h:outputLabel value="#{comanda.total * 1.1}" style="color:#fff; font-size: 15pt;">
+                                <h:outputLabel value="#{comanda.TOTAL * 1.1}" style="color:#fff; font-size: 15pt;">
                                     <f:convertNumber pattern="###,##0.00"/>
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>

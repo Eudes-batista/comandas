@@ -90,25 +90,13 @@ public class MesasBean implements Serializable {
     }
 
     public void listarComandas() {
-        comandas.clear();
-        List<Object[]> listaComandas = comandaService.listarComandas();
-        if (!listaComandas.isEmpty()) {
-            listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),String.valueOf(c[6])));
-            });
-        }
-        comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));
+        this.comandas = comandaService.listarComandas();
+        comandas.sort((c1, c2) -> c1.getCOMANDA().compareTo(c2.getCOMANDA()));
     }
 
     public void pesquisarComanda() {
-        comandas.clear();
-        List<Object[]> listaComandas = comandaService.pesquisarComandaPorCodigo(pesquisa);
-        if (!listaComandas.isEmpty()) {
-            listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),String.valueOf(c[6])));
-            });
-        }
-        comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));
+        this.comandas = comandaService.pesquisarComandaPorCodigo(pesquisa);
+        comandas.sort((c1, c2) -> c1.getCOMANDA().compareTo(c2.getCOMANDA()));
     }
 
     private void listarMesas() {
@@ -122,7 +110,7 @@ public class MesasBean implements Serializable {
     }
 
     private Map<String, List<Mesa>> separarMesas(List<Mesa> listarMesas) {
-        return listarMesas.stream().collect(Collectors.groupingBy(Mesa::getMesa));
+        return listarMesas.stream().collect(Collectors.groupingBy(Mesa::getMESA));
     }
 
     private void adicionarMesas(Map<String, List<Mesa>> mapMesas) {
@@ -131,24 +119,24 @@ public class MesasBean implements Serializable {
             List<Mesa> valores = map.getValue();
             int countP = 0;
             for (Mesa mesa : valores) {
-                if (mesa.getStatus().equals("P")) {
+                if (mesa.getSTATUS().equals("P")) {
                     countP++;
                     if (countP > 0 && countP < valores.size()) {
                         mesas.remove(new Mesa(chave));
-                        mesas.add(new Mesa(chave, "L", mesa.getPedido()));
+                        mesas.add(new Mesa(chave, "L", mesa.getPEDIDO()));
                     } else if (countP == valores.size()) {
                         mesas.remove(new Mesa(chave));
-                        mesas.add(new Mesa(chave, "V", mesa.getPedido()));
+                        mesas.add(new Mesa(chave, "V", mesa.getPEDIDO()));
                         countP = 0;
                     }
                 }
-                if ((mesa.getStatus().isEmpty() || mesa.getStatus().equals("null")) && countP == 0) {
-                    mesas.add(new Mesa(chave, "N", mesa.getPedido()));
+                if ((mesa.getSTATUS().isEmpty() || mesa.getSTATUS().equals("null")) && countP == 0) {
+                    mesas.add(new Mesa(chave, "N", mesa.getPEDIDO()));
                     break;
                 }
             }
         }
-        mesas.sort((m1, m2) -> m1.getMesa().compareTo(m2.getMesa()));
+        mesas.sort((m1, m2) -> m1.getMESA().compareTo(m2.getMESA()));
     }
 
     public void imprimirPreconta(String mesa) {
@@ -156,8 +144,8 @@ public class MesasBean implements Serializable {
     }
 
     public void imprimirPreconta() {
-        if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
-            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())), "normal");
+        if (!"RSVA".equals(this.mesa.getMESA()) && Pattern.compile("\\d").matcher(this.mesa.getMESA()).find()) {
+            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), "normal");
             listarMesas();
             this.mesa = null;
             this.mesa = new Mesa();
@@ -166,8 +154,8 @@ public class MesasBean implements Serializable {
     }
 
     public void imprimirPrecontaDetalhada() {
-        if (!"RSVA".equals(this.mesa.getMesa()) && Pattern.compile("\\d").matcher(this.mesa.getMesa()).find()) {
-            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMesa())), "detalhada");
+        if (!"RSVA".equals(this.mesa.getMESA()) && Pattern.compile("\\d").matcher(this.mesa.getMESA()).find()) {
+            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), "detalhada");
             listarMesas();
             this.mesa = null;
             this.mesa = new Mesa();
@@ -177,7 +165,7 @@ public class MesasBean implements Serializable {
 
     private void prepararPreconta(String mesa1, String tipo) {
         this.mesa = inserirPessoasNaMesa(mesa1);
-        this.mesa.setQuantidadePessoasPagantes(mesa.getQuantidadePessoasPagantes() == null || "".equals(mesa.getQuantidadePessoasPagantes()) ? "1" : mesa.getQuantidadePessoasPagantes());
+        this.mesa.setPAGANTES(mesa.getPAGANTES() == null || "".equals(mesa.getPAGANTES()) ? "1" : mesa.getPAGANTES());
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
         Relatorio relatorio = new Relatorio(comandaService, empresaService, mesa1);
         if (gerenciaArquivo.bucarInformacoes().getConfiguracao().getTipoImpressao().equals("rede")) {
@@ -282,7 +270,7 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaComandas() {
         try {
-            Faces.redirect("comandas.jsf?id=" + this.mesa.getMesa());
+            Faces.redirect("comandas.jsf?id=" + this.mesa.getMESA());
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
         }
@@ -290,7 +278,7 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaLancamentoItens() {
         try {
-            String uri = "produtos.jsf?comanda=" + this.comanda.getComanda() + "&mesa=" + this.comanda.getMesa() + "&pessoas=" + this.comanda.getPessoasMesa() + "&pedido=" + this.comanda.getPedido() + "&status=" + this.comanda.getStatus();
+            String uri = "produtos.jsf?comanda=" + this.comanda.getCOMANDA() + "&mesa=" + this.comanda.getMESA() + "&pessoas=" + this.comanda.getPESSOAS() + "&pedido=" + this.comanda.getPEDIDO() + "&status=" + this.comanda.getSTATUS();
             Faces.redirect(uri);
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
@@ -298,10 +286,10 @@ public class MesasBean implements Serializable {
     }
 
     private void excluirMesa() {
-        logMesa.registrarExclusao(this.mesa.getMesa(), usuario);
-        controle.excluirMesa(this.mesa.getMesa());
-        mesas.remove(new Mesa(this.mesa.getMesa()));
-        espelhoComandaService.atualizarStatusItens(this.mesa.getPedido());
+        logMesa.registrarExclusao(this.mesa.getMESA(), usuario);
+        controle.excluirMesa(this.mesa.getMESA());
+        mesas.remove(new Mesa(this.mesa.getMESA()));
+        espelhoComandaService.atualizarStatusItens(this.mesa.getPEDIDO());
     }
 
     public void transferiMesa() {
@@ -316,8 +304,8 @@ public class MesasBean implements Serializable {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
         }
-        Mesa mesaDes = mesas.stream().filter(m -> m.getMesa().equals(mesaDestino)).findFirst().orElse(null);
-        if ((mesaDes != null && !mesaDes.getStatus().equals("V")) || mesaDes == null) {
+        Mesa mesaDes = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
+        if ((mesaDes != null && !mesaDes.getSTATUS().equals("V")) || mesaDes == null) {
             controle.transferirMesa(this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem))), mesaDestino.toUpperCase());
             listarMesas();
             PrimeFaces.current().ajax().update("frm:tabelaMesa");
@@ -346,20 +334,20 @@ public class MesasBean implements Serializable {
         listarMesas();
     }
 
-    public boolean getStatus(Mesa mesa) {
-        return this.mesas != null && mesa != null && mesa.getStatus().equals("V");
+    public boolean getSTATUS(Mesa mesa) {
+        return this.mesas != null && mesa != null && mesa.getSTATUS().equals("V");
     }
 
     public void abrirMesa(Mesa mesa) {
-        if (getStatus(mesa)) {
+        if (getSTATUS(mesa)) {
             receberCodigoAutorizacao(mesa, Status.MESA);
             PrimeFaces.current().executeScript("PF('dialogoUsuario').show();");
         }
     }
 
     public void abrirComanda(Comandas comanda) {
-        mesa = mesas.get(mesas.indexOf(new Mesa(comanda.getMesa())));
-        if (getStatus(mesa)) {
+        mesa = mesas.get(mesas.indexOf(new Mesa(comanda.getMESA())));
+        if (getSTATUS(mesa)) {
             receberCodigoAutorizacao(mesa, Status.COMANDA);
             this.comanda = comanda;
             PrimeFaces.current().executeScript("PF('dialogoUsuario').show();");

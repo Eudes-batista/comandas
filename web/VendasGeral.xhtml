@@ -81,7 +81,12 @@
                                             <f:convertNumber pattern="###,##0.00"/>
                                         </h:outputText>
                                     </div>
-                                    <div class="col-md-5 valores-rejeicao">Sem 10% <h:outputText value="#{vendaDetalheBean.getQuantidadeRejeicaoDezPorcento(vendaGarcom.GARCOM)}"></h:outputText> Vendas</div>
+                                    <div class="col-md-5 valores-rejeicao">
+                                        <p:commandLink oncomplete="PF('dialogoRejeicaoDezPorcento').show();" style="color: #fff;">
+                                            Sem 10% 
+                                            <h:outputText value="#{vendaDetalheBean.getQuantidadeRejeicaoDezPorcento(vendaGarcom.GARCOM)}"></h:outputText> Vendas
+                                        </p:commandLink> 
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -89,10 +94,17 @@
                 </div>
             </div>
         </div>
-        <p:dialog showHeader="false" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlVisualizarItens" widgetVar="dialogoVisualizarItens" dynamic="true" 
-                  closable="true" closeOnEscape="true"
-                  showEffect="fade" hideEffect="fade">
-            <h3>Itens Vendidos</h3>
+        <p:dialog header="Itens Vendidos"  resizable="false"  modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlVisualizarItens" widgetVar="dialogoVisualizarItens" dynamic="true" 
+                  closable="true" closeOnEscape="true" showEffect="fade" hideEffect="fade">
+            <h:form id="formItens">
+                
+            </h:form>
+        </p:dialog>
+        <p:dialog header="Rejeição dos 10%" resizable="false"  modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlRejeicaoDezPorcento" widgetVar="dialogoRejeicaoDezPorcento" dynamic="true" 
+                  closable="true" closeOnEscape="true" showEffect="fade" hideEffect="fade">
+            <h:form id="formRejeicao">
+                
+            </h:form>
         </p:dialog>
     </h:body>
 </html>

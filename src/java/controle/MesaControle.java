@@ -60,8 +60,8 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public void transferirMesa(Mesa mesaOrigem, String mesaDestino) {
-        executarSql("update sosa98 set tecdmesa='" + mesaDestino.toUpperCase() + "' where tecdmesa='" + mesaOrigem.getMesa() + "'");
-        executarSql("update espelho_comanda set mesa='" + mesaDestino.toUpperCase() + "' where pedido in(" + mesaOrigem.getPedido()+ ")");
+        executarSql("update sosa98 set tecdmesa='" + mesaDestino.toUpperCase() + "' where tecdmesa='" + mesaOrigem.getMESA()+ "'");
+        executarSql("update espelho_comanda set mesa='" + mesaDestino.toUpperCase() + "' where pedido in(" + mesaOrigem.getPEDIDO()+ ")");
     }
 
     @Override
@@ -78,8 +78,8 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public void atualizarStatusPreconta(Mesa mesa) {
-        executarSql("update sosa98 set testatus='P' where tecdmesa='" + mesa.getMesa() + "'");
-        executarSql("update espelho_comanda set status='P' where pedido in("+mesa.getPedido()+")");
+        executarSql("update sosa98 set testatus='P' where tecdmesa='" + mesa.getMESA()+ "'");
+        executarSql("update espelho_comanda set status='P' where pedido in("+mesa.getPEDIDO()+")");
     }
 
     private void executarSql(String sql) {

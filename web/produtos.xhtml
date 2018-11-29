@@ -223,17 +223,17 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:commandLink id="transferirItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-info btn-block" 
-                                               update="frmTransferenciaItens:tabelaTransferenciaItens" process="@this" oncomplete="PF('dialogoUsuario').show();"
-                                               actionListener="#{produtoBean.receberCodigo(null,'T')}">
-                                    <i class="fa fa-exchange"></i> Transferir Itens
+                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}">
+                                    <i class="fa fa-print"></i> imprimir
                                 </p:commandLink>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}">
-                                    <i class="fa fa-print"></i> imprimir
+                                <p:commandLink id="transferirItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-info btn-block" 
+                                               update="frmTransferenciaItens:tabelaTransferenciaItens" process="@this" oncomplete="PF('dialogoUsuario').show();"
+                                               actionListener="#{produtoBean.receberCodigo(null,'T')}">
+                                    <i class="fa fa-exchange"></i> Transferir Itens
                                 </p:commandLink>
                             </div>
                         </div>

@@ -7,9 +7,9 @@ import modelo.Sosa98;
 
 public interface ComandaService {
 
-    public List<Object[]> listarComandasPorMesas(String mesa);
+    public List<Comandas> listarComandasPorMesas(String mesa);
 
-    public List<Object[]> listarComandasPorCodigo(String mesa,String comanda);
+    public List<Comandas> listarComandasPorCodigo(String mesa,String comanda);
 
     public List<Object[]> ListarLancamentos(String codigo,String mesa);
     
@@ -25,9 +25,9 @@ public interface ComandaService {
     
     public List<Object[]> listarComandas(String codigo);
     
-    public List<Object[]> listarComandas();
+    public List<Comandas> listarComandas();
     
-    public List<Object[]> pesquisarComandaPorCodigo(String codigo);
+    public List<Comandas> pesquisarComandaPorCodigo(String codigo);
 
     public String gerarSequencia(String comanda);
     

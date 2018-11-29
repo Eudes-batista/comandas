@@ -30,7 +30,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <p:inputText id="mesaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.mesa}"
+                    <p:inputText id="mesaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.MESA}"
                                  required="true"  requiredMessage="Campo mesa Obrigatorio." onblur="this.value = ('0000'+this.value).slice(-4);">
                         <f:passThroughAttribute name="placeholder" value="Mesa" />
                         <f:passThroughAttribute name="type" value="tel" />
@@ -40,7 +40,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <p:inputText id="comandaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.comanda}"
+                    <p:inputText id="comandaTransferencia" class="form-control" value="#{produtoBean.comandaTransferencia.COMANDA}"
                                  required="true"  requiredMessage="Campo comanda Obrigatorio." onblur="this.value = ('0000'+this.value).slice(-4);">
                         <f:passThroughAttribute name="placeholder" value="Comanda" />
                         <f:passThroughAttribute name="type" value="tel" />

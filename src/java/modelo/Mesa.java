@@ -13,27 +13,27 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode(of = {"mesa"})
+@EqualsAndHashCode(of = {"MESA"})
 public class Mesa implements Serializable {
 
-    private String mesa;
-    private String status;
-    private String quantidadePessoasPagantes;
-    private String pedido;
+    private String MESA;
+    private String STATUS;
+    private String PAGANTES;
+    private String PEDIDO;
 
     public Mesa(String mesa) {
-        this.mesa = mesa;
+        this.MESA = mesa;
     }
 
     public Mesa(String mesa, String status) {
-        this.mesa = mesa;
-        this.status = status;
+        this.MESA = mesa;
+        this.STATUS = status;
     }
 
     public Mesa(String mesa, String status, String pedido) {
-        this.mesa = mesa;
-        this.status = status;
-        this.pedido = pedido;
+        this.MESA = mesa;
+        this.STATUS = status;
+        this.PEDIDO = pedido;
     }
     
     

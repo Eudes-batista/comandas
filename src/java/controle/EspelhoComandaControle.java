@@ -41,7 +41,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarDataPreconta(String data, Mesa mesa) {
-        executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getQuantidadePessoasPagantes() + "' where pedido in(" + mesa.getPedido() + ")");
+        executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getPAGANTES()+ "' where pedido in(" + mesa.getPEDIDO()+ ")");
     }
 
     @Override

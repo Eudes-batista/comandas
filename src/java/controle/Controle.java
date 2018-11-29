@@ -9,8 +9,11 @@ import modelo.Comandas;
 import modelo.Lancamento;
 import modelo.Sosa98;
 import org.hibernate.NonUniqueResultException;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.transform.Transformers;
 import org.omnifaces.util.Messages;
 import servico.ComandaService;
 import util.GerenciaArquivo;
@@ -25,11 +28,11 @@ public class Controle implements ComandaService, Serializable {
     private final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
 
     @Override
-    public List<Object[]> listarComandasPorMesas(String mesa) {
+    public List<Comandas> listarComandasPorMesas(String mesa) {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO ")
                 .append("from  sosa98 ")
                 .append("left outer join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("')")
                 .append(" left outer join espelho_comanda on(numero=tenumero)")
@@ -37,7 +40,9 @@ public class Controle implements ComandaService, Serializable {
                 .append("tecdmesa='").append(mesa).append("' ")
                 .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
                 .append("order by testatus desc");
-        List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
+        SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
+        Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
+        List<Comandas> lista = query.list();
         session.close();
         return lista;
     }
@@ -69,11 +74,11 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public List<Object[]> listarComandasPorCodigo(String mesa, String comanda) {
+    public List<Comandas> listarComandasPorCodigo(String mesa, String comanda) {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) TOTAL,testatus STATUS,tecdmesa MESA,pessoas_mesa PESSOAS,tepedido AS PEDIDO ")
                 .append("from  sosa98 ")
                 .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("')")
                 .append(" inner join espelho_comanda on(numero=tenumero) ")
@@ -82,7 +87,9 @@ public class Controle implements ComandaService, Serializable {
                 .append(" tecomand like '%").append(comanda).append("%' ")
                 .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
                 .append("order by testatus desc");
-        List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
+        SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
+        Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
+        List<Comandas> lista = query.list();
         session.close();
         return lista;
     }
@@ -99,35 +106,39 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public List<Object[]> listarComandas() {
+    public List<Comandas> listarComandas() {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
+                .append("tecomand AS COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO ")
                 .append("from  sosa98 ")
-                .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
-                .append("inner join espelho_comanda on(numero=tenumero)")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
-                .append("order by testatus desc");
-        List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
+                .append(" inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
+                .append(" inner join espelho_comanda on(numero=tenumero)")
+                .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido")
+                .append(" order by testatus desc");
+        SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
+        Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
+        List<Comandas> lista = query.list();
         session.close();
         return lista;
     }
 
     @Override
-    public List<Object[]> pesquisarComandaPorCodigo(String codigo) {
+    public List<Comandas> pesquisarComandaPorCodigo(String codigo) {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
-                .append("from  sosa98 ")
-                .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
-                .append("inner join espelho_comanda on(numero=tenumero) ")
-                .append("where ")
-                .append("tecomand like '%").append(codigo).append("%' ")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
-                .append("order by testatus desc");
-        List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO")
+                .append(" from  sosa98 ")
+                .append(" inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
+                .append(" inner join espelho_comanda on(numero=tenumero) ")
+                .append(" where ")
+                .append(" tecomand like '%").append(codigo).append("%' ")
+                .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido")
+                .append(" order by testatus desc");
+        SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
+        Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
+        List<Comandas> lista = query.list();
         session.close();
         return lista;
     }
@@ -226,28 +237,28 @@ public class Controle implements ComandaService, Serializable {
 
     @Override
     public void transferirComandaParaMesa(String mesa, Comandas comanda) {
-        executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getComanda() + "'");
-        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPedido() + "'");
+        executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getCOMANDA() + "'");
+        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPEDIDO() + "'");
     }
 
     @Override
     public void transferirComandaParaComanda(Comandas comandaOrigem, String comandaDestino) {
-        List<Object[]> comanda = pesquisarComandaPorCodigo(comandaDestino);
-        String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda,status;
+        List<Comandas> comanda = pesquisarComandaPorCodigo(comandaDestino);
+        String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda, status;
         int somaQauntidadePessoasMesa;
         if (comanda.isEmpty()) {
-            sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getComanda() + "'";
-            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "' where pedido ='" + comandaOrigem.getPedido() + "'";
+            sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
+            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
             executarSql(sqlSoa98);
             executarSql(sqlEspelhoComanda);
             return;
         }
-        mesaDestino = String.valueOf(comanda.get(0)[3]);
-        pedido = String.valueOf(comanda.get(0)[5]);
-        status = String.valueOf(comanda.get(0)[2]);
-        somaQauntidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0)[4])) + Integer.parseInt(comandaOrigem.getPessoasMesa());
-        sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='"+status+"' where tecomand='" + comandaOrigem.getComanda() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='"+status+"' where pedido in('" + comandaOrigem.getPedido() + "','" + pedido + "')";
+        mesaDestino = String.valueOf(comanda.get(0).getMESA());
+        pedido = String.valueOf(comanda.get(0).getPEDIDO());
+        status = String.valueOf(comanda.get(0).getSTATUS());
+        somaQauntidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) + Integer.parseInt(comandaOrigem.getPESSOAS());
+        sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
         List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
@@ -317,16 +328,16 @@ public class Controle implements ComandaService, Serializable {
 
     @Override
     public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos) {
-        List<Object[]> comandas = pesquisarComandaPorCodigo(comanda.getComanda());
+        List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
         String pedido;
         if (comandas.isEmpty()) {
-            pedido = new ControlePedido(this, comanda.getComanda()).gerarNumero();
+            pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
         } else {
-            pedido = String.valueOf(comandas.get(0)[5]);
+            pedido = String.valueOf(comandas.get(0).getPEDIDO());
         }
         String numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
-        executarSql("update          sosa98 set tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMesa() + "' ,tecomand='" + comanda.getComanda() + "' where tenumero in(" + numeros + ")");
-        executarSql("update espelho_comanda set   pedido='" + pedido + "' ,mesa='" + comanda.getMesa() + "' ,comanda='" + comanda.getComanda() + "' where   numero in(" + numeros + ")");
+        executarSql("update          sosa98 set tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+        executarSql("update espelho_comanda set   pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
         List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
         for (int i = 0; i < itensTransferencia.size(); i++) {
             transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));

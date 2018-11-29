@@ -5,66 +5,66 @@ import java.util.Objects;
 
 public class Comandas implements Serializable {
 
-    private String comanda;
-    private String mesa;
-    private Double Total;
-    private String status;
-    private String pessoasMesa;
-    private String pedido;
-    private String quantidadePessoasPagantes;
-    private String vendedor;
+    private String COMANDA;
+    private String MESA;
+    private Double TOTAL;
+    private String STATUS;
+    private String PESSOAS;
+    private String PEDIDO;
+    private String PAGANTES;
+    private String VENDEDOR;
 
     public Comandas() {
     }
 
     public Comandas(String comanda) {
-        this.comanda = comanda;
+        this.COMANDA = comanda;
     }
 
     public Comandas(String comanda, String mesa) {
-        this.comanda = comanda;
-        this.mesa = mesa;
+        this.COMANDA = comanda;
+        this.MESA = mesa;
     }
 
     public Comandas(String comanda, Double Total, String status, String pessoasMesa, String pedido, String vendedor) {
-        this.comanda = comanda;
-        this.Total = Total;
-        this.status = status;
-        this.pessoasMesa = pessoasMesa;
-        this.pedido = pedido;
-        this.vendedor = vendedor;
+        this.COMANDA = comanda;
+        this.TOTAL = Total;
+        this.STATUS = status;
+        this.PESSOAS = pessoasMesa;
+        this.PEDIDO = pedido;
+        this.VENDEDOR = vendedor;
     }
 
     public Comandas(String comanda, Double Total, String status, String mesa, String pessoasMesa, String pedido,String vendedor) {
-        this.comanda = comanda;
-        this.mesa = mesa;
-        this.Total = Total;
-        this.status = status;
-        this.pessoasMesa = pessoasMesa;
-        this.pedido = pedido;
-        this.vendedor = vendedor;
+        this.COMANDA = comanda;
+        this.MESA = mesa;
+        this.TOTAL = Total;
+        this.STATUS = status;
+        this.PESSOAS = pessoasMesa;
+        this.PEDIDO = pedido;
+        this.VENDEDOR = vendedor;
     }
 
-    public String getComanda() {
-        return comanda;
+    public String getCOMANDA() {
+        return COMANDA;
     }
 
-    public void setComanda(String comanda) {
-        this.comanda = comanda;
+    public void setCOMANDA(String COMANDA) {
+        this.COMANDA = COMANDA;
     }
 
-    public Double getTotal() {
-        return Total;
+    public Double getTOTAL() {
+        return TOTAL;
     }
 
-    public void setTotal(Double Total) {
-        this.Total = Total;
+    public void setTOTAL(Double TOTAL) {
+        this.TOTAL = TOTAL;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.comanda);
+        hash = 97 * hash + Objects.hashCode(this.COMANDA);
         return hash;
     }
 
@@ -80,54 +80,54 @@ public class Comandas implements Serializable {
             return false;
         }
         final Comandas other = (Comandas) obj;
-        return Objects.equals(this.comanda, other.comanda);
+        return Objects.equals(this.COMANDA, other.COMANDA);
     }
 
-    public String getVendedor() {
-        return vendedor;
+    public String getVENDEDOR() {
+        return VENDEDOR;
     }
 
-    public void setVendedor(String vendedor) {
-        this.vendedor = vendedor;
+    public void setVENDEDOR(String VENDEDOR) {
+        this.VENDEDOR = VENDEDOR;
     }
 
-    public String getStatus() {
-        return status;
+    public String getSTATUS() {
+        return STATUS;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setSTATUS(String STATUS) {
+        this.STATUS = STATUS;
     }
 
-    public String getMesa() {
-        return mesa;
+    public String getMESA() {
+        return MESA;
     }
 
-    public void setMesa(String mesa) {
-        this.mesa = mesa;
+    public void setMESA(String MESA) {
+        this.MESA = MESA;
     }
 
-    public String getPessoasMesa() {
-        return pessoasMesa;
+    public String getPESSOAS() {
+        return PESSOAS;
     }
 
-    public void setPessoasMesa(String pessoasMesa) {
-        this.pessoasMesa = pessoasMesa;
+    public void setPESSOAS(String PESSOAS) {
+        this.PESSOAS = PESSOAS;
     }
 
-    public String getPedido() {
-        return pedido;
+    public String getPEDIDO() {
+        return PEDIDO;
     }
 
-    public void setPedido(String pedido) {
-        this.pedido = pedido;
+    public void setPEDIDO(String PEDIDO) {
+        this.PEDIDO = PEDIDO;
     }
 
-    public String getQuantidadePessoasPagantes() {
-        return quantidadePessoasPagantes;
+    public String getPAGANTES() {
+        return PAGANTES;
     }
 
-    public void setQuantidadePessoasPagantes(String quantidadePessoasPagantes) {
-        this.quantidadePessoasPagantes = quantidadePessoasPagantes;
+    public void setPAGANTES(String PAGANTES) {
+        this.PAGANTES = PAGANTES;
     }
 }

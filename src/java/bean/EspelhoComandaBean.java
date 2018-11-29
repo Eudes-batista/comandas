@@ -16,23 +16,17 @@ import servico.EspelhoComandaService;
 
 @ManagedBean(name = "espelhoComandaBean")
 @ViewScoped
+@Getter
+@Setter
 public class EspelhoComandaBean implements Serializable {
 
-    @Getter
-    @Setter
     @ManagedProperty(value = "#{espelhoComandaService}")
     private EspelhoComandaService espelhoComandaService;
 
-    @Getter
-    @Setter
     public EspelhoComanda espelhoComanda;
 
-    @Getter
-    @Setter
     public double valor;
 
-    @Getter
-    @Setter
     public List<EspelhoComanda> espelhoComandas;
 
     public void init() {
@@ -41,17 +35,17 @@ public class EspelhoComandaBean implements Serializable {
     }
 
     public void atualizarPorcemtagemEvalorPorcentagemItens(Comandas comandas) {
-        if(this.valor < comandas.getTotal()){
+        if (this.valor < comandas.getTOTAL()) {
             Messages.addGlobalWarn("Valor menor que o da venda.");
             return;
         }
         Double valorPago = this.valor;
-        Double valorDaCompra = comandas.getTotal();
+        Double valorDaCompra = comandas.getTOTAL();
         Double porcentagem = calcularPorcentagem(valorDaCompra, valorPago);
-        this.valor = Double.parseDouble(new DecimalFormat("###,##0.00").format(porcentagem).replace(".","").replace(",","."));
-        espelhoComandaService.atualizarPorcentagem(comandas.getPedido(),this.valor);
+        this.valor = Double.parseDouble(new DecimalFormat("###,##0.00").format(porcentagem).replace(".", "").replace(",", "."));
+        espelhoComandaService.atualizarPorcentagem(comandas.getPEDIDO(), this.valor);
         PrimeFaces.current().ajax().update("frmAuditoria:tabela");
-        this.valor=0;
+        this.valor = 0;
     }
 
     public void salvar() {
@@ -81,10 +75,9 @@ public class EspelhoComandaBean implements Serializable {
     public double calcularPorcentagem(double valorCompra, double valorPago) {
         return (valorPago / (valorCompra / 100d) - 100);
     }
-    
+
     public void atualizarStatusItemParaCancelado(String pedidos) {
         espelhoComandaService.atualizarStatusItens(pedidos);
     }
-    
 
 }

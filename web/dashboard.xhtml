@@ -16,7 +16,7 @@
         <h:outputScript library="js" name="Chart.js" />
         <script>
             window.onload = function () {
-                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico";
+                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico";
                 $.getJSON(url, function (data) {
                     var context = document.getElementById("bar-chart");
                     var chart = new Chart(context, {
@@ -27,7 +27,7 @@
                         }
                     });
                 });
-                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico/vendedores";
+                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico/vendedores";
                 $.getJSON(url, function (data) {
                     var context = document.getElementById("bar10-chart");
                     var chart = new Chart(context, {
@@ -38,7 +38,7 @@
                         }
                     });
                 });
-                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico/comissao";
+                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico/comissao";
                 $.getJSON(url, function (data) {
                     var context = document.getElementById("bar20-chart");
                     var chart = new Chart(context, {
