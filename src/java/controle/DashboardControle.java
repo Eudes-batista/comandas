@@ -119,4 +119,29 @@ public class DashboardControle implements DashboardService, Serializable {
 
     }
 
+    @Override
+    public List<VendaGarcom> listarComissaoGarcom() {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            stringBuilder = new StringBuilder();
+            String data = LocalDate.now().toString();
+            stringBuilder.append("select ")
+                    .append(" VENDEDOR as GARCOM,")
+                    .append(" SUM(VALOR_PORCENTAGEM) AS VENDAS")
+                    .append(" from espelho_comanda ")
+                    .append(" where")
+                    .append(" DATA_PRECONTA BETWEEN ").append("'").append(data).append(" 00:00:00' ")
+                    .append(" AND '").append(data).append(" 23:59:59'")
+                    .append(" AND STATUS_ITEM ='").append("N").append("'")
+                    .append(" AND STATUS ='").append("P").append("'")
+                    .append(" group by ")
+                    .append(" VENDEDOR ORDER BY VENDAS ASC");
+            SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
+            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
+            return setResultTransformer.list();
+        }
+        return null;
+
+    }
+
 }

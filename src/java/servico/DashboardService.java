@@ -11,4 +11,5 @@ public interface DashboardService {
     public List<ClienteAtendido> listarClientesAtendidos();
     public List<VendaGarcom> listarVendasPorGarcom();
     public List<RejeicaoPorcentagemVendedor> listarRejeicaoPorcentagemVendedor();
+    public List<VendaGarcom> listarComissaoGarcom();
 }

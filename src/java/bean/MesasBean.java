@@ -94,7 +94,7 @@ public class MesasBean implements Serializable {
         List<Object[]> listaComandas = comandaService.listarComandas();
         if (!listaComandas.isEmpty()) {
             listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
+                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),String.valueOf(c[6])));
             });
         }
         comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));
@@ -105,7 +105,7 @@ public class MesasBean implements Serializable {
         List<Object[]> listaComandas = comandaService.pesquisarComandaPorCodigo(pesquisa);
         if (!listaComandas.isEmpty()) {
             listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
+                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),String.valueOf(c[6])));
             });
         }
         comandas.sort((c1, c2) -> c1.getComanda().compareTo(c2.getComanda()));

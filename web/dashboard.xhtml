@@ -16,18 +16,18 @@
         <h:outputScript library="js" name="Chart.js" />
         <script>
             window.onload = function () {
-                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico";
+                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico";
                 $.getJSON(url, function (data) {
                     var context = document.getElementById("bar-chart");
                     var chart = new Chart(context, {
                         type: "bar",
                         data: {
-                            labels: ["Vendas Hoje"],
+                            labels: ["Vendas por Garçom em R$"],
                             datasets: data
                         }
                     });
                 });
-                var url = "http://" + document.domain + ":8090/comandas/relatorio/grafico/vendedores";
+                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico/vendedores";
                 $.getJSON(url, function (data) {
                     var context = document.getElementById("bar10-chart");
                     var chart = new Chart(context, {
@@ -38,11 +38,29 @@
                         }
                     });
                 });
+                var url = "http://" + document.domain + ":8080/comandas/relatorio/grafico/comissao";
+                $.getJSON(url, function (data) {
+                    var context = document.getElementById("bar20-chart");
+                    var chart = new Chart(context, {
+                        type: "bar",
+                        data: {
+                            labels: ["Comissao em R$"],
+                            datasets: data
+                        }
+                    });
+                });
             };
         </script>
     </h:head>
     <h:body>
-        <div class="container">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 style="color:#aaa;">Vendas de Hoje</h3>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4">
                     <div class="dash-box dash-box-color-1">
@@ -61,7 +79,7 @@
                         </div>
 
                         <div class="dash-box-action">
-                            <button>Mais Informações</button>
+                            <button onclick="location.href='VendasGeral.jsf'">Mais Informações</button>
                         </div>				
                     </div>
                 </div>
@@ -96,13 +114,22 @@
                     </div>
                 </div>
             </div>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-6" align="center" style="width:400px;height:300px" >
-                        <canvas id="bar-chart"></canvas>
+                    <div class="col-md-4" align="center"  >
+                        <div style="width:100%;height:300px">
+                            <canvas id="bar-chart"></canvas>
+                        </div>
                     </div>
-                    <div class="col-md-6" align="center" style="width:400px;height:300px" >
-                        <canvas id="bar10-chart"></canvas>
+                    <div class="col-md-4" align="center" >
+                        <div style="width:100%;height:300px">
+                            <canvas id="bar10-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4" align="center" >
+                        <div style="width:100%;height:300px">
+                            <canvas id="bar20-chart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>

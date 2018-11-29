@@ -4,7 +4,7 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.FirebirdDialect</property>
     <property name="hibernate.connection.driver_class">org.firebirdsql.jdbc.FBDriver</property>
-    <property name="hibernate.connection.url">jdbc:firebirdsql:localhost:c:\omega\dba\zoom.GDB</property>
+    <property name="hibernate.connection.url">jdbc:firebirdsql:localhost:E:\omega\dba\pitanga.GDB</property>
     <property name="hibernate.connection.username">SYSDBA</property>
     <property name="hibernate.connection.password">masterkey</property>
     <property name="hibernate.current_session_context_class">thread</property>
@@ -13,10 +13,9 @@
     <property name="hibernate.hbm2ddl.auto">update</property>
     <mapping resource="modelo/Sosa98.hbm.xml"/>
     <mapping resource="modelo/Lapt51.hbm.xml"/>
-    <mapping class="modelo.Lancamento"/>
+    <mapping class="modelo.Acompanhamento"/>
     <mapping class="modelo.EspelhoComanda"/>
     <mapping class="modelo.GrupoAcompanhamento"/>
-    <mapping class="modelo.Acompanhamento"/>
     <mapping class="modelo.ItemAcompanhamento"/>
     <mapping class="modelo.MotivoCancelamento"/>
   </session-factory>

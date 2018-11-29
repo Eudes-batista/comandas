@@ -26,7 +26,7 @@ public class GerenciaEntrada implements Serializable {
         return true;
     }
 
-    private void enviarParaConexaoBanco() {
+    public void enviarParaConexaoBanco() {
         try {
             Faces.redirect("conectaBanco.jsf");
         } catch (IOException ex) {

@@ -58,8 +58,8 @@ public class GerenciaArquivo {
                 pw.println(configuracao.getCaminho());
                 pw.println(configuracao.getEmpresa());
                 pw.println(configuracao.getTipoImpressao());
-                pw.println(configuracao.getImpressora() == null ?"":configuracao.getImpressora());
-                pw.println(configuracao.getCobraDezPorcento()== null ?"":configuracao.getCobraDezPorcento());
+                pw.println(configuracao.getImpressora() == null ? "" : configuracao.getImpressora());
+                pw.println(configuracao.getCobraDezPorcento() == null ? "" : configuracao.getCobraDezPorcento());
                 salvarAsConfiguracoesDoBancoDeDados(configuracao.getCaminho());
                 Messages.addGlobalInfo("salvo com sucesso!!");
             } catch (IOException ex) {
@@ -91,41 +91,41 @@ public class GerenciaArquivo {
     public Configuracao getConfiguracao() {
         return configuracao;
     }
-    
-    public URI buscarCaminho() throws URISyntaxException{
+
+    public URI buscarCaminho() throws URISyntaxException {
         return getClass().getResource("/hibernate.cfg.xml").toURI();
     }
-    
-    public List<String> pegarInformacoesHibernateConfig() throws URISyntaxException,IOException{
+
+    public List<String> pegarInformacoesHibernateConfig() throws URISyntaxException, IOException {
         File file = new File(buscarCaminho());
         BufferedReader br = new BufferedReader(new FileReader(file));
         List<String> dados = new ArrayList<>();
-        while(br.ready()){
+        while (br.ready()) {
             dados.add(br.readLine());
         }
         return dados;
     }
-    
-    public List<String> mudarCaminhoDoBancoDeDados(List<String> dados,String caminhoDoBancoDeDados) {
-        int count=0;
+
+    public List<String> mudarCaminhoDoBancoDeDados(String caminhoDoBancoDeDados) throws URISyntaxException, IOException {
+        List<String> dados = pegarInformacoesHibernateConfig();
+        int count = 0;
         for (String dado : dados) {
-             if(dado.contains("<property name=\"hibernate.connection.url\">")){
-                 String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:"+caminhoDoBancoDeDados+"</property>;";
-                 dados.set(count, caminho);
-             }
-             count++;
+            if (dado.contains("<property name=\"hibernate.connection.url\">")) {
+                String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:" + caminhoDoBancoDeDados + "</property>";
+                dados.set(count, caminho);
+            }
+            count++;
         }
         return dados;
     }
-    
+
     public void salvarAsConfiguracoesDoBancoDeDados(String caminhoDoBancoDeDados) throws URISyntaxException, IOException {
-        List<String> informacoesDoArquivoAtual = pegarInformacoesHibernateConfig();
-        List<String> configuracoesAlteradas = mudarCaminhoDoBancoDeDados(informacoesDoArquivoAtual, caminhoDoBancoDeDados);
+        List<String> configuracoesAlteradas = mudarCaminhoDoBancoDeDados(caminhoDoBancoDeDados);
         PrintWriter pw = new PrintWriter(new File(buscarCaminho()));
         for (String configuracoesAlterada : configuracoesAlteradas) {
             pw.println(configuracoesAlterada);
-            pw.flush();
         }
+        pw.flush();
         pw.close();
     }
 

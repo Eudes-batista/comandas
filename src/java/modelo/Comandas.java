@@ -12,6 +12,7 @@ public class Comandas implements Serializable {
     private String pessoasMesa;
     private String pedido;
     private String quantidadePessoasPagantes;
+    private String vendedor;
 
     public Comandas() {
     }
@@ -25,21 +26,23 @@ public class Comandas implements Serializable {
         this.mesa = mesa;
     }
 
-    public Comandas(String comanda, Double Total, String status, String pessoasMesa, String pedido) {
+    public Comandas(String comanda, Double Total, String status, String pessoasMesa, String pedido, String vendedor) {
         this.comanda = comanda;
         this.Total = Total;
         this.status = status;
         this.pessoasMesa = pessoasMesa;
         this.pedido = pedido;
+        this.vendedor = vendedor;
     }
 
-    public Comandas(String comanda, Double Total, String status, String mesa, String pessoasMesa, String pedido) {
+    public Comandas(String comanda, Double Total, String status, String mesa, String pessoasMesa, String pedido,String vendedor) {
         this.comanda = comanda;
         this.mesa = mesa;
         this.Total = Total;
         this.status = status;
         this.pessoasMesa = pessoasMesa;
         this.pedido = pedido;
+        this.vendedor = vendedor;
     }
 
     public String getComanda() {
@@ -78,6 +81,14 @@ public class Comandas implements Serializable {
         }
         final Comandas other = (Comandas) obj;
         return Objects.equals(this.comanda, other.comanda);
+    }
+
+    public String getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(String vendedor) {
+        this.vendedor = vendedor;
     }
 
     public String getStatus() {

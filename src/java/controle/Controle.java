@@ -103,11 +103,11 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
                 .append("from  sosa98 ")
                 .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
                 .append("inner join espelho_comanda on(numero=tenumero)")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
                 .append("order by testatus desc");
         List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
         session.close();
@@ -119,13 +119,13 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("tecomand,sum(tequanti*EEPLQTB1),testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
                 .append("from  sosa98 ")
                 .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
                 .append("inner join espelho_comanda on(numero=tenumero) ")
                 .append("where ")
                 .append("tecomand like '%").append(codigo).append("%' ")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,tevended ")
                 .append("order by testatus desc");
         List<Object[]> lista = session.createSQLQuery(sb.toString()).list();
         session.close();

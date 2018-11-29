@@ -81,7 +81,7 @@ public class ComandasBean implements Serializable {
         List<Object[]> listaComandas = controleService.listarComandasPorMesas(codigoMesa);
         if (!listaComandas.isEmpty()) {
             listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
+                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),""));
             });
         }
         this.itemAcompanhamentos = itemAcompanhamentoService.pesquisarTodos();
@@ -270,7 +270,7 @@ public class ComandasBean implements Serializable {
         List<Object[]> listaComandas = controleService.listarComandasPorCodigo(codigoMesa, pesquisa);
         if (!listaComandas.isEmpty()) {
             listaComandas.forEach((c) -> {
-                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5])));
+                comandas.add(new Comandas(String.valueOf(c[0]), Double.parseDouble(String.valueOf(c[1])), String.valueOf(c[2]), String.valueOf(c[3]), String.valueOf(c[4]), String.valueOf(c[5]),""));
             });
         }
     }
