@@ -201,8 +201,9 @@ public class MesasBean implements Serializable {
 
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));
-        this.mesas.set(indexMesa, this.mesa);
-        return this.mesas.get(indexMesa);
+        Mesa mesaAxu =this.mesas.get(indexMesa);
+        mesaAxu.setPAGANTES(this.mesa.getPAGANTES());
+        return mesaAxu;
     }
 
     public void receberCodigoAutorizacao(Mesa mesa, Status condicao) {

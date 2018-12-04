@@ -122,12 +122,13 @@ public class ComandasBean implements Serializable {
     public void imprimirPreconta(String comanda) {
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
         Relatorio relatorio = new Relatorio(controleService, empresaService, codigoMesa);
+        Comandas comandaInformacoes = this.comandas.get(this.comandas.indexOf(new Comandas(comanda)));
         if (gerenciaArquivo.bucarInformacoes().getConfiguracao().getTipoImpressao().equals("rede")) {
             StringBuilder montarCupom = relatorio.montarCupomComanda(comanda);
             try {
                 Ini ini = new Ini(new File(impressaoBean.buscarCaminho()));
                 ControleRelatorio.imprimir(ini.get("LOCAL").get("impressora"), montarCupom);
-                fecharComanda(comanda);
+                fecharComanda(comandaInformacoes);
             } catch (IOException ex) {
                 Messages.addGlobalError("Erro ao econtra o arquivo " + ex.getMessage());
             }
@@ -151,7 +152,7 @@ public class ComandasBean implements Serializable {
                 ControleImpressao controleImpressao = new ControleImpressao(impressora);
                 File file = pdfComanda.gerarPdf();
                 controleImpressao.imprime(file);
-                fecharComanda(comanda);
+                fecharComanda(comandaInformacoes);
             } catch (FileNotFoundException ex) {
                 Messages.addGlobalError("Erro ao econtra o arquivo " + ex.getMessage());
             } catch (DocumentException | PrinterException | IOException ex) {
@@ -263,7 +264,7 @@ public class ComandasBean implements Serializable {
         this.comandas = controleService.listarComandasPorCodigo(codigoMesa, pesquisa);
     }
 
-    public void fecharComanda(String comanda) {
+    public void fecharComanda(Comandas comanda) {
         controleService.atualizarStatusPreconta(comanda);
     }
 

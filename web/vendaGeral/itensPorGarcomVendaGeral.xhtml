@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:form id="formItens">
+        <p:dataTable emptyMessage="Nehum registro encontrado." reflow="true" value="#{vendaDetalheBean.vendaItens}" var="vendaDetalheItens">
+            <p:column headerText="Pedido">
+                #{vendaDetalheItens.PEDIDO}
+            </p:column>
+            <p:column headerText="CODIGO">
+                #{vendaDetalheItens.REFERENCIA}
+            </p:column>
+            <p:column headerText="DESCRICAO">
+                #{vendaDetalheItens.DESCRICAO}
+            </p:column>
+            <p:column headerText="Quantidade">
+                <h:outputText value="#{vendaDetalheItens.QUANTIDADE}">
+                    <f:convertNumber />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Valor">
+                <h:outputText value="#{vendaDetalheItens.VALOR}">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Total">
+                <h:outputText value="#{vendaDetalheItens.TOTAL}">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Data">
+                <h:outputText value="#{vendaDetalheItens.DATA}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                </h:outputText>
+            </p:column>
+            <p:columnGroup type="footer">
+                <p:row>
+                    <c:set value="#{vendaDetalheBean.vendaItens.stream().map(v -> v.getTOTAL()).sum()}" var="total"/>
+                    <p:column colspan="5" style="text-align:right" footerText="Total:" />
+                    <p:column style="text-align: center" >
+                        <f:facet name="footer">
+                            <h:outputText value="#{total}">
+                                <f:convertNumber pattern="###,##0.00" />
+                            </h:outputText>
+                        </f:facet> 
+                    </p:column>
+                    <p:column />
+                </p:row>
+            </p:columnGroup>
+        </p:dataTable>
+    </h:form>
+</ui:composition>
+

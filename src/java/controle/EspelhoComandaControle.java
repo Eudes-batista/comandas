@@ -134,4 +134,5 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         executarSql("update espelho_comanda set status_item='C' where pedido in("+pedidos+")");
     }
 
+
 }

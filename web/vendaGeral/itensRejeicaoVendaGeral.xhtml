@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="formRejeicao">
+        <p:dataTable emptyMessage="Nehum registro encontrado." reflow="true" value="#{vendaDetalheBean.vendaDetalheRejeicaos}" var="vendaDetalheRejeicao">
+            <p:column headerText="Pedido">
+                #{vendaDetalheRejeicao.PEDIDO}
+            </p:column>
+            <p:column headerText="CODIGO">
+                #{vendaDetalheRejeicao.REFERENCIA}
+            </p:column>
+            <p:column headerText="DESCRICAO">
+                #{vendaDetalheRejeicao.DESCRICAO}
+            </p:column>
+            <p:column headerText="Quantidade">
+                <h:outputText value="#{vendaDetalheRejeicao.QUANTIDADE}">
+                    <f:convertNumber />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Valor">
+                <h:outputText value="#{vendaDetalheRejeicao.VALOR}">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Total">
+                <h:outputText value="#{vendaDetalheRejeicao.TOTAL}">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Porcentagem">
+                <h:outputText value="#{vendaDetalheRejeicao.PORCENTAGEM} %">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Valor da %">
+                <h:outputText value="R$ #{vendaDetalheRejeicao.VALOR_PORCENTAGEM}">
+                    <f:convertNumber pattern="###,##0.00" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Data">
+                <h:outputText value="#{vendaDetalheRejeicao.DATA}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                </h:outputText>
+            </p:column>
+        </p:dataTable>
+    </h:form>
+</ui:composition>
+

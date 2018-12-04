@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{clienteAtendidoBean.init()}"/>
+    </f:metadata>
+    <h:head>
+        <title>Cliente Atendidos</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
+        <link rel="stylesheet" href="resources/css/dashboard.css" /> 
+        <link rel="stylesheet" href="resources/css/vendas.css"/>
+        <h:outputScript library="js" name="jquery-3.2.1.min.js" />
+        <h:outputScript library="js" name="Chart.js" />
+    </h:head>
+    <h:body>
+        <div class="container-fluid">
+            <!--BARRA CABECALHO-->
+            <div class="row barra">
+                <div class="col-md-5">
+                    <h3 style="color: #fff">Fluxo de Clientes</h3>
+                </div>
+                <div class="col-md-1" style="font-size: 13pt;margin-top: 15px; text-align: right;color: #fff;">
+                    <h5>Data Inicial</h5>
+                </div>
+                <h:form id="filtro">
+                    <p:growl id="msg" showDetail="true" />
+                    <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;">
+                        <h:inputText id="dataInicial" class="form-control" value="#{clienteAtendidoBean.filtroVendaDetalhe.dataInicial}"
+                                     converter="converterData">
+                            <f:passThroughAttribute name="type" value="date"/>
+                            <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
+                        </h:inputText>
+                    </div>
+                    <div class="col-md-1" style="font-size: 13pt;margin-top: 15px; text-align: right;color: #fff;">
+                        <h5>Data Final</h5>
+                    </div>
+                    <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;margin-bottom: 10px;">
+                        <h:inputText id="dataFinal" class="form-control" value="#{clienteAtendidoBean.filtroVendaDetalhe.dataFinal}"
+                                     converter="converterData">
+                            <f:passThroughAttribute name="type" value="date"/>
+                            <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
+                        </h:inputText>
+                    </div>
+                    <div class="col-md-1">
+                        <p:commandLink value="Pesquisar" class="btn btn-info btn-modal btn-block" update="grafico" process="@this filtro" 
+                                       style="margin-top: 15px;text-decoration: none;" oncomplete="mostrarGrafico();"/>
+                    </div>
+                </h:form>  
+            </div>
+            <h:form id="grafico">
+                <div style="width: 80%;height: 400px;margin-left: auto;margin-right: auto;margin-top: 50px;">
+                    <canvas id="line-chart"></canvas>
+                </div>
+                <script>
+                    //<![CDATA[  
+                    window.onload = function () {
+                        mostrarGrafico();
+                    };
+                    function mostrarGrafico() {
+                        var context = document.getElementById("line-chart");
+                        var quantidadePessoasMeses = #{clienteAtendidoBean.quantidadePessoas};
+                        var nomeDosMeses = [
+                            {nome: "Jan", index: 1}
+                            , {nome: "Fev", index: 2}
+                            , {nome: "Mar", index: 3}
+                            , {nome: "Abr", index: 4}
+                            , {nome: "Mai", index: 5}
+                            , {nome: "Jun", index: 6}
+                            , {nome: "Jul", index: 7}
+                            , {nome: "Ago", index: 8}
+                            , {nome: "Set", index: 9}
+                            , {nome: "Out", index: 10}
+                            , {nome: "Nov", index: 11}
+                            , {nome: "Dez", index: 12}];
+                        var quantidadePessoas = [];
+                        var nomesMeses = [];
+                        for (var i = 0; i < quantidadePessoasMeses.length; i++) {
+                            for (var j = 0; j < nomeDosMeses.length; j++) {
+                                if (quantidadePessoasMeses[i].mes === nomeDosMeses[j].index) {
+                                    quantidadePessoas[j] = quantidadePessoasMeses[i].quantidade;
+                                } else {
+                                    if (!quantidadePessoas[j])
+                                        quantidadePessoas[j] = 0;
+                                }
+                                nomesMeses[j] = nomeDosMeses[j].nome;
+                            }
+                        }
+                        var chart = new Chart(context, {
+                            type: "line",
+                            data: {
+                                labels: nomesMeses,
+                                datasets: [{
+                                        label: "Clientes Atendidos",
+                                        data: quantidadePessoas,
+                                        borderWidth: 2,
+                                        borderColor: "rgba(117, 170, 255,0.5)",
+                                        backgroundColor: 'rgba(125, 218, 237, 0.2)'
+
+                                    }]
+                            }
+                        });
+                    }
+                    //]]>
+                </script>
+            </h:form> 
+        </div>
+    </h:body>
+</html>
+

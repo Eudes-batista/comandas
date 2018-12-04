@@ -17,4 +17,5 @@ public interface EspelhoComandaService {
     public List<Object[]> listarProdutosPedido(String pedido);
     public void atualizarValorPorcentagemItens(String pedido);
     public void atualizarStatusItens(String pedidos);
+    
 }

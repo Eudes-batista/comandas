@@ -229,7 +229,8 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <p:inputText id="mesaPrecontaRapida" value="#{mesasBean.mesa.MESA}" placeholder="Mesa" required="true" requiredMessage="Mesa obrigatorio.">
+                            <p:inputText id="mesaPrecontaRapida" value="#{mesasBean.mesa.MESA}" placeholder="Mesa" required="true" requiredMessage="Mesa obrigatorio."
+                                         onkeyup="this.value = ('0000'+this.value).slice(-4);">
                                 <f:passThroughAttribute name="type" value="tel" />
                             </p:inputText>
                         </div>

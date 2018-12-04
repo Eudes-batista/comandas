@@ -1,12 +1,12 @@
 package controle;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import modelo.dto.FiltroVendaDetalhe;
 import modelo.dto.RejeicaoPorcentagemVendedor;
-import modelo.dto.VendaDetalheRejeicao;
+import modelo.dto.VendaDetalhe;
 import modelo.dto.VendaGarcom;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -23,13 +23,12 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
     private StringBuilder sql;
 
     @Override
-    public List<VendaGarcom> listarVendaGarcom() {
+    public List<VendaGarcom> listarVendaGarcom(FiltroVendaDetalhe filtroVendaDetalhe) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             sql = new StringBuilder();
-            String data = LocalDate.now().toString();
             sql.append("select ")
-                    .append("COUNT(PEDIDO) as itens,")
+                    .append(" SUM(QUANTIDADE) as itens,")
                     .append(" SUM(QUANTIDADE*VALOR_ITEM) as vendas,")
                     .append(" VENDEDOR as garcom,")
                     .append(" SUM(VALOR_PORCENTAGEM) as COMISSAO")
@@ -37,7 +36,7 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" espelho_comanda")
                     .append(" where")
                     .append(" STATUS = 'P' AND STATUS_ITEM = 'N' AND")
-                    .append(" DATA_PRECONTA BETWEEN '").append(data).append(" 00:00:00'").append(" and '").append(data).append(" 23:59:59'")
+                    .append(" DATA_PRECONTA BETWEEN '").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00'").append(" and '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" GROUP BY")
                     .append(" VENDEDOR");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
@@ -48,7 +47,7 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
     }
 
     @Override
-    public List<RejeicaoPorcentagemVendedor> listarReijeicaoPorcentagemPorVendedor(String vendedor, String dataIncial, String dataFinal) {
+    public List<RejeicaoPorcentagemVendedor> listarReijeicaoPorcentagemPorVendedor(FiltroVendaDetalhe filtroVendaDetalhe) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             sql = new StringBuilder();
@@ -57,11 +56,11 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" from espelho_comanda ")
                     .append(" where")
                     .append(" PORCENTAGEM <").append(10)
-                    .append(" AND DATA BETWEEN ").append("'").append(dataIncial).append(" 00:00:00' ")
-                    .append(" AND '").append(dataFinal).append(" 23:59:59'")
+                    .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00' ")
+                    .append(" AND '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" AND STATUS_ITEM ='").append("N").append("'")
                     .append(" AND STATUS ='").append("P").append("'")
-                    .append(" AND VENDEDOR ='").append(vendedor).append("'")
+                    .append(" AND VENDEDOR ='").append(filtroVendaDetalhe.getCargom()).append("'")
                     .append(" group by ")
                     .append(" PEDIDO ");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
@@ -72,27 +71,66 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
     }
 
     @Override
-    public List<VendaDetalheRejeicao> listarRejeicaoDezPorcentoPorGarcom(String vendedor, String dataIncial, String dataFinal) {
+    public List<VendaDetalhe> listarRejeicaoDezPorcentoPorGarcom(FiltroVendaDetalhe filtroVendaDetalhe) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             sql = new StringBuilder();
             sql.append("select ")
                     .append(" PEDIDO as PEDIDO")
+                    .append(",REFERENCIA as REFERENCIA")
                     .append(",PRDESCRI as DESCRICAO")
+                    .append(",QUANTIDADE as QUANTIDADE")
                     .append(",VALOR_ITEM as VALOR")
-                    .append(",CAST(PORCENTAGEM as DECIMAL(6,2)) || '%' as PORCENTAGEM")
-                    .append(",'R$ ' || CAST(VALOR_PORCENTAGEM as DECIMAL(6,2))  VALOR_PORCENTAGEM")
+                    .append(",SUM(VALOR_ITEM*QUANTIDADE) as TOTAL")
+                    .append(",PORCENTAGEM as PORCENTAGEM")
+                    .append(",VALOR_PORCENTAGEM VALOR_PORCENTAGEM")
                     .append(",DATA  as DATA")
                     .append(" from espelho_comanda ")
+                    .append(" inner join")
+                    .append(" scea01 on(prrefere=referencia)")
                     .append(" where")
                     .append(" PORCENTAGEM <").append(10)
-                    .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(dataIncial).append(" 00:00:00' ")
-                    .append(" AND '").append(dataFinal).append(" 23:59:59'")
+                    .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00' ")
+                    .append(" AND '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" AND STATUS_ITEM ='").append("N").append("'")
                     .append(" AND STATUS ='").append("P").append("'")
-                    .append(" AND VENDEDOR ='").append(vendedor).append("'");
+                    .append(" AND VENDEDOR ='").append(filtroVendaDetalhe.getCargom()).append("'")
+                    .append(" group by")
+                    .append("    PEDIDO,REFERENCIA,PRDESCRI,QUANTIDADE,VALOR_ITEM,PORCENTAGEM,VALOR_PORCENTAGEM,DATA");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
-            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalheRejeicao.class));
+            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
+            return setResultTransformer.list();
+        }
+        return null;
+    }
+
+    @Override
+    public List<VendaDetalhe> listarItensVendidosPorGarcom(FiltroVendaDetalhe filtroVendaDetalhe) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            sql = new StringBuilder();
+            sql.append("select ")
+                    .append(" PEDIDO as PEDIDO")
+                    .append(",REFERENCIA as REFERENCIA")
+                    .append(",PRDESCRI as DESCRICAO")
+                    .append(",QUANTIDADE as QUANTIDADE")
+                    .append(",VALOR_ITEM as VALOR")
+                    .append(",SUM(VALOR_ITEM*QUANTIDADE) as TOTAL")
+                    .append(",DATA  as DATA")
+                    .append(" from espelho_comanda ")
+                    .append(" inner join")
+                    .append(" scea01 on(prrefere=referencia)")
+                    .append(" where")
+                    .append(" DATA_PRECONTA BETWEEN ").append("'").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00' ")
+                    .append(" AND '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
+                    .append(" AND STATUS_ITEM ='").append("N").append("'")
+                    .append(" AND STATUS ='").append("P").append("'")
+                    .append(" AND VENDEDOR ='").append(filtroVendaDetalhe.getCargom()).append("'")
+                    .append(" group by")
+                    .append("    PEDIDO,REFERENCIA,PRDESCRI,QUANTIDADE,VALOR_ITEM,DATA")
+                    .append(" order by PEDIDO");
+            SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
+            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
             return setResultTransformer.list();
         }
         return null;

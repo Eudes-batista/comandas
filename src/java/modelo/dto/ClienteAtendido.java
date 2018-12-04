@@ -9,6 +9,7 @@ public class ClienteAtendido implements Serializable{
     
     private String PEDIDO;
     private String PESSOAS;
+    private Double QUANTIDADE;
 
     public ClienteAtendido() {
     }
@@ -17,5 +18,17 @@ public class ClienteAtendido implements Serializable{
         this.PEDIDO = PEDIDO;
         this.PESSOAS = PESSOAS;
     }
+
+    public ClienteAtendido(String PEDIDO, String PESSOAS, Double QUANTIDADE) {
+        this.PEDIDO = PEDIDO;
+        this.PESSOAS = PESSOAS;
+        this.QUANTIDADE = QUANTIDADE;
+    }
+
+    public ClienteAtendido(Double QUANTIDADE) {
+        this.QUANTIDADE = QUANTIDADE;
+    }
+    
+    
 
 }

@@ -41,7 +41,7 @@ public interface ComandaService {
     
     public void atualizarStatusImpressao(String comanda);
     
-    public void atualizarStatusPreconta(String comanda);
+    public void atualizarStatusPreconta(Comandas comanda);
     
     public boolean verificarStatusMesa(String comanda);
     

@@ -1,3 +1,10 @@
+.btn-modal{
+    margin-bottom: 5px;
+    background:rgba(250, 250, 250,.3);
+    transition: all 0.1s ease-in;
+    border: none;
+    color: #FFF !important;
+}
 a{
     text-decoration: underline;
 }
@@ -159,17 +166,6 @@ ul li{
 .dash-box-color-3 .dash-box-icon > i {
     background: #8150e4;
 }
-
-.mesa-modal{
-    color: #fff !important;
-    text-align: center;
-    width: 155px;
-    height: 165px;
-    margin-top: 10px;
-    border-radius: 10px;
-    text-transform: uppercase; 
-    background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%);
-    background-attachment: fixed;
-    background-size: cover;
-    box-shadow: 2px 2px rgba(100, 100, 100, .5);
+.ui-datatable .ui-datatable-data{
+    text-align: center !important;
 }

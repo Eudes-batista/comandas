@@ -19,9 +19,7 @@ public class DashboardBean implements Serializable{
     
     private TotalVenda totalVenda;
     private int quantidadeClientesAtendidos;
-    
-    private String nome="Texto que vai dar certo"; 
-    
+        
     public void init() {
         totalVenda= dashboardService.listarTotasVendasDoDia();
         quantidadeClientesAtendidos = dashboardService.listarClientesAtendidos().stream().mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();

@@ -519,11 +519,15 @@ public class ProdutoBean implements Serializable {
     }
 
     private void alterarEspelhoComandaItemExcluido() {
+        EspelhoComanda espelhoComanda = this.espelhoComandaBean.espelhoComanda;
         this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(lancamento.getNumero())));
         this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
         this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario);
+        this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
+        this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
+        this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
         this.espelhoComandaBean.alterar();
     }
 

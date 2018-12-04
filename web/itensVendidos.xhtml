@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <f:metadata>
+        <f:viewAction action="#{itemVendidoBean.init()}" />
+    </f:metadata>
+    <h:head>
+        <title>Itens Vendidos</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="resources/imagens/food.png" type="image/x-icon" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css"/>
+        <link rel="stylesheet" href="resources/css/vendas.css"/>
+    </h:head>
+    <h:body>
+        <div class="container-fluid">
+            <!--BARRA CABECALHO-->
+            <div class="row barra">
+                <div class="col-md-4">
+                    <h3 style="color: #fff">Itens Vendidos</h3>
+                </div>
+                <div class="col-md-1" style="font-size: 13pt;margin-top: 15px; text-align: right;color: #fff;">
+                    <h5>Data Inicial</h5>
+                </div>
+                <h:form id="filtro">
+                    <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;">
+                        <h:inputText class="form-control" value="#{itemVendidoBean.filtroVendaDetalhe.dataInicial}" converter="converterData">
+                            <f:passThroughAttribute name="type" value="date"/>
+                            <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
+                        </h:inputText>
+                    </div>
+                    <div class="col-md-1" style="font-size: 13pt;margin-top: 15px; text-align: right;color: #fff;">
+                        <h5>Data Final</h5>
+                    </div>
+                    <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;margin-bottom: 10px;">
+                        <h:inputText class="form-control" value="#{itemVendidoBean.filtroVendaDetalhe.dataFinal}" converter="converterData">
+                            <f:passThroughAttribute name="type" value="date"/>
+                            <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
+                        </h:inputText>
+                    </div>
+                    <div class="col-md-2">
+                        <p:commandLink value="Pesquisar" class="btn btn-info btn-modal btn-block"
+                                       style="margin-top: 15px;text-decoration: none;" update="frmItemVendido" process="filtro" actionListener="#{itemVendidoBean.listarItensVendidos()}"/>
+                    </div>
+                </h:form>  
+            </div>
+            <div class="row">
+                <h:form id="frmItemVendido">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Referencia</th>
+                                    <th>Descrição</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{itemVendidoBean.itemVendidos}" var="itemVendido">
+                                    <tr>
+                                        <td>#{itemVendido.REFERENCIA}</td>
+                                        <td>#{itemVendido.DESCRICAO}</td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.QUANTIDADE}">
+                                                <f:convertNumber />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.VALOR}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.TOTAL}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>  
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5">
+                                        <div align="left">
+                                            <a href="itensCanceladosPorGarcom.jsf" class="btn btn-link">Itens Cancelados</a>
+                                        </div>                                    
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </h:body>
+</html>
+
