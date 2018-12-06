@@ -166,12 +166,14 @@ public class Relatorio {
 
     public Empresa getEmpresa() {
         Object[] listaEmpresa = empresaService.buscarEmpresa(new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa());
-        return new Empresa(String.valueOf(listaEmpresa[0]), String.valueOf(listaEmpresa[1]),
+        Empresa empresa = new Empresa(String.valueOf(listaEmpresa[0]), String.valueOf(listaEmpresa[1]),
                 String.valueOf(listaEmpresa[2]), String.valueOf(listaEmpresa[3]),
                 String.valueOf(listaEmpresa[4]), String.valueOf(listaEmpresa[5]),
                 String.valueOf(listaEmpresa[6]), String.valueOf(listaEmpresa[7]),
                 String.valueOf(listaEmpresa[8]), String.valueOf(listaEmpresa[9]),
                 String.valueOf(listaEmpresa[10]));
+        empresa.setCodigo(String.valueOf(listaEmpresa[11]));
+        return empresa;
     }
 
     public void setMesa(String mesa) {
@@ -182,4 +184,9 @@ public class Relatorio {
         return mesa;
     }
 
+    public Relatorio setEmpresaService(EmpresaService empresaService) {
+        this.empresaService = empresaService;
+        return this;
+    }
+    
 }

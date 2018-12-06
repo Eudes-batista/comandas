@@ -8,9 +8,12 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import modelo.Empresa;
 import modelo.dto.FiltroVendaDetalhe;
 import modelo.dto.RejeicaoPorcentagemVendedor;
 import modelo.dto.VendaGarcom;
+import relatorio.Relatorio;
+import servico.EmpresaService;
 import servico.RelatorioVendaService;
 
 @ManagedBean(name = "relatorioVendaBean")
@@ -21,11 +24,14 @@ public class RelatorioVendaBean implements Serializable {
 
     @ManagedProperty(value = "#{relatorioVendaService}")
     private RelatorioVendaService relatorioVendaService;
+    @ManagedProperty(value = "#{empresaService}")
+    private EmpresaService empresaService;
 
     private List<VendaGarcom> vendaGarcoms;
     private List<RejeicaoPorcentagemVendedor> rejeicaoPorcentagemVendedores;
 
     private FiltroVendaDetalhe filtroVendaDetalhe;
+    private Empresa empresa;
 
     private int totalItens;
     private double totalComissao;
@@ -43,6 +49,8 @@ public class RelatorioVendaBean implements Serializable {
         listarVendasGarcom();
         listarRejeicaoGarcons();
         calcularQuantidadeClientesAtendidos();
+        Relatorio relatorio = new Relatorio();
+        this.empresa = relatorio.setEmpresaService(empresaService).getEmpresa();
     }
 
     private void calcularQuantidadeClientesAtendidos() {
@@ -53,12 +61,11 @@ public class RelatorioVendaBean implements Serializable {
         this.vendaGarcoms = this.relatorioVendaService.listarVendasGarcom(filtroVendaDetalhe);
         calcularTotais();
     }
-    
+
     private void listarRejeicaoGarcons() {
-        this.rejeicaoPorcentagemVendedores=this.relatorioVendaService.listarRejeicoesPorGarcom(filtroVendaDetalhe);
+        this.rejeicaoPorcentagemVendedores = this.relatorioVendaService.listarRejeicoesPorGarcom(filtroVendaDetalhe);
     }
-    
-    
+
     private void calcularTotais() {
         this.totalItens = this.vendaGarcoms.stream().mapToInt(v -> v.getITENS().intValue()).sum();
         this.totalComissao = this.vendaGarcoms.stream().mapToDouble(VendaGarcom::getCOMISSAO).sum();

@@ -25,6 +25,7 @@ public class Empresa implements Serializable {
     private String uf;
     private String telefone;
     private String numero;
+    private String codigo;
 
     public Empresa(String cnpj) {
         this.cnpj = cnpj;
@@ -132,6 +133,14 @@ public class Empresa implements Serializable {
         this.numero = numero;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
