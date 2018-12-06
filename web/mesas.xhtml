@@ -274,8 +274,10 @@
                         <div class="col-md-12 text-center">
                             <p:commandLink id="precontaAtalho" class="btn-modal btn btn-success btn-block"  actionListener="#{mesasBean.imprimirPreconta()}" process="frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this"
                                            oncomplete="PF('dialogoPreconta').hide();" update="frm:tabelaMesa" value="Normal"/>                            
-                            <p:commandLink id="precontaDetalhada" class="btn-modal btn btn-success btn-block"  actionListener="#{mesasBean.imprimirPrecontaDetalhada()}" 
+                            <p:commandLink id="precontaDetalhada" class="btn-modal btn btn-warning btn-block"  actionListener="#{mesasBean.imprimirPrecontaDetalhada()}" 
                                            process="frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this" oncomplete="PF('dialogoPreconta').hide();" update="frm:tabelaMesa" value="Detalhada"/>                            
+                            <p:commandLink id="parcial" class="btn-modal btn btn-info btn-block"  actionListener="#{mesasBean.imprimirParcial()}" 
+                                           process="frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this" oncomplete="PF('dialogoPreconta').hide();" update="frm:tabelaMesa" value="Parcial"/>                            
                         </div>
                     </div>
                 </div>

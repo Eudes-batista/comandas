@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.dto.ClienteAtendidoPorMes;
@@ -36,7 +38,8 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
         connection = ((SessionFactoryImplementor) HibernateUtil.getSessionFactory()).getConnectionProvider().getConnection();
         stringBuilder = new StringBuilder();
         stringBuilder.append("select ")
-                .append(" SUM(cast(pessoas_mesa as INTEGER)) as QUANTIDADE")
+                .append(" PEDIDO as PEDIDO")
+                .append(",cast(pessoas_mesa as INTEGER) as QUANTIDADE")
                 .append(",extract(MONTH from DATA_PRECONTA)  as mes ")
                 .append(" from espelho_comanda ")
                 .append(" where")
@@ -45,13 +48,25 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
                 .append(" AND STATUS_ITEM ='").append("N").append("'")
                 .append(" AND STATUS ='").append("P").append("'")
                 .append(" group by ")
-                .append(" extract(MONTH from DATA_PRECONTA)");
+                .append("   PEDIDO,DATA_PRECONTA,pessoas_mesa");
         Statement preparedStatement = connection.createStatement();
         ResultSet resultSet = preparedStatement.executeQuery(stringBuilder.toString());
         List<ClienteAtendidoPorMes> clienteAtendidos = new ArrayList<>();
+        Map<Integer, Integer> mapPessoas = new HashMap<>();
         while (resultSet.next()) {
-            clienteAtendidos.add(new  ClienteAtendidoPorMes(Integer.parseInt(String.valueOf(resultSet.getObject("QUANTIDADE"))),Integer.parseInt(String.valueOf(resultSet.getObject("mes")))));
+            Integer mes = Integer.parseInt(String.valueOf(resultSet.getObject("mes")));
+            Integer quantidades = mapPessoas.get(mes);
+            boolean existe = true;
+            if (quantidades == null) {
+                quantidades = Integer.parseInt(String.valueOf(resultSet.getObject("QUANTIDADE")));
+                existe = false;
+            }
+            if (existe) {
+                quantidades += Integer.parseInt(String.valueOf(resultSet.getObject("QUANTIDADE")));
+            }
+            mapPessoas.put(mes, quantidades);
         }
+        mapPessoas.forEach((chave, valor) -> clienteAtendidos.add(new ClienteAtendidoPorMes(valor, chave)));
         return clienteAtendidos;
     }
 

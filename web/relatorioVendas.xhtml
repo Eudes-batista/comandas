@@ -5,7 +5,7 @@
       xmlns:jsf="http://xmlns.jcp.org/jsf"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewAction action="#{relatorioVendaBean.init()}"/>
     </f:metadata>
@@ -19,65 +19,59 @@
         <h:outputScript library="js" name="jquery-3.2.1.min.js" />
         <h:outputScript library="js" name="Chart.js" />
         <script>
+            document.addEventListener('keydown', function (evt) {
+                if (evt.keyCode === 121) {
+                    document.getElementById("filtro:confimarFiltro").click();
+                }
+            });
             function printContent(el) {
                 var restorepage = $('body').html();
                 var printcontent = $('#' + el).clone();
                 $('body').empty().html(printcontent);
                 window.print();
+                window.close();
                 $('body').html(restorepage);
             }
             function imprimir() {
-                var filtro = document.getElementById("filtro");
-                filtro.style.display = "none";
-                var print = document.getElementById("print");
-                print.style.display = "block";
-                var principal = document.getElementById("principal");
-                principal.style.display = "block";
+                mostrarFomularios("none", "block");
+                printContent('print');
+                //<![CDATA[  
+                if (window.innerWidth >= 360 && window.innerWidth <= 767) {
+                    setTimeout(function () {
+                        mostrarFomularios("block", "none");
+                        document.getElementById("filtro:dataInicial").focus();
+                    }, 2000);
+                } else {
+                    mostrarFomularios("block", "none");
+                    document.getElementById("filtro:dataInicial").focus();
+                }
+                //]]>
             }
-            function filtar() {
+            function mostrarFomularios(isfiltro, relatorio) {
                 var filtro = document.getElementById("filtro");
-                filtro.style.display = "block";
+                filtro.style.display = isfiltro;
                 var print = document.getElementById("print");
-                print.style.display = "none";
+                print.style.display = relatorio;
                 var principal = document.getElementById("principal");
-                principal.style.display = "none";
+                principal.style.display = relatorio;
             }
         </script>
     </h:head>
-
     <h:body>
-        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;width: 500px;margin-top: 20px;padding: 20px;">
+        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;width: 300px;margin-top: 20px;padding: 20px;">
             <h3>Filtro</h3>
             <h:form id="filtro">
-                <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" /><br />
+                <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
+                       autofocus="true"/><br />
                 <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataFinal}" type="date" class="form-control" placeholder="Data Final" /><br />
-                <button jsf:id="confimarFiltro" class="btn btn-success btn-block" type="button">
-                    <i class="glyphicon glyphicon-print"></i> Imprimir
-                    <f:ajax event="click" render="corpo:linhas corpo:periodo" execute="filtro" listener="#{relatorioVendaBean.listarVendasGarcom()}" onevent="imprimir()"/>
-                </button>
+                <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
+                               update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo"
+                               process="filtro" actionListener="#{relatorioVendaBean.filtrar()}">
+                    <i class="fa fa-print"></i> Imprimir ( F10 )
+                </p:commandLink>
             </h:form>
         </div>
         <div class="container-fluid" id="principal" style="display: none;">
-            <!--BARRA CABECALHO-->
-            <div class="row barra ">
-                <h:form id="cabecalho">
-                    <div class="col-xs-12 text-left">
-                        <div class="col-xs-3">
-                            <h3 style="color: #fff">Relatorio Geral</h3>
-                        </div>
-                        <div class="col-xs-2">
-                            <div class="text-center">
-                                <button style="margin-top: 15px" type="button" class="btn btn-default btn-block" onclick="printContent('print');">Imprimir</button>
-                            </div>
-                        </div>
-                        <div class="col-xs-2">
-                            <div class="text-center">
-                                <button style="margin-top: 15px" type="button" class="btn btn-default btn-block" onclick="filtar()">Filtrar</button>
-                            </div>
-                        </div>
-                    </div>  
-                </h:form>  
-            </div>
             <h:form id="corpo">
                 <div id="print" style="display: none;">
                     <div class="row">
@@ -92,10 +86,10 @@
                         <div class="coml-xs-8  cabecalho">
                             <div class="row">
                                 <div class="col-xs-8"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
-                                    <span style="font-weight: bold;">RELATÓRIO DE VENDAS</span> <br/>
+                                    <span style="font-weight: bold;">RELATÓRIO GERAL</span> <br/>
                                     <span style="font-size: 8pt;padding: 20px;">
                                         <h:panelGroup id="periodo">
-                                            Período: #{relatorioVendaBean.filtroVendaDetalhe.dataInicial} à {relatorioVendaBean.filtroVendaDetalhe.dataFinal}    
+                                            Período: #{relatorioVendaBean.filtroVendaDetalhe.dataInicial} à #{relatorioVendaBean.filtroVendaDetalhe.dataFinal}    
                                         </h:panelGroup>  
                                     </span>
                                 </div>
@@ -135,12 +129,24 @@
                                         </tr>
                                     </ui:repeat>  
                                 </tbody>
-                                <tfoot style="font-weight: bold;">
+                                <tfoot jsf:id="rodapeVendas" style="font-weight: bold;">
                                     <tr>
-                                        <c:set value="#{relatorioVendaBean.vendaGarcoms.stream().mapToInt(v -> v.getITENS()).sum()}" var="totalItens" />
-                                        <td colspan="2" style="text-align: right;">#{totalItens}</td>
-                                        <td  style="text-align: right;">5.500</td>
-                                        <td  style="text-align: right;">35.578,21</td>
+                                        <td style="text-align: left;">
+                                            Totais:
+                                        </td>
+                                        <td style="text-align: right;">
+                                            #{relatorioVendaBean.totalItens}
+                                        </td>
+                                        <td  style="text-align: right;">
+                                            <h:outputText value="#{relatorioVendaBean.totalComissao}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </td>
+                                        <td  style="text-align: right;">
+                                            <h:outputText value="#{relatorioVendaBean.totalVendas}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -153,52 +159,22 @@
                                             <th>Qtd.</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Jose</td>
-                                            <td>5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maria</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jose</td>
-                                            <td>5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maria</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jose</td>
-                                            <td>5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maria</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jose</td>
-                                            <td>5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maria</td>
-                                            <td>2</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Jose</td>
-                                            <td>5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Maria</td>
-                                            <td>2</td>
-                                        </tr>
+                                    <tbody jsf:id="linhasRejeicao" >
+                                        <ui:repeat value="#{relatorioVendaBean.rejeicaoPorcentagemVendedores}" var="rejeicao" > 
+                                            <tr>
+                                                <td>#{rejeicao.VENDEDOR}</td>
+                                                <td>#{rejeicao.QTD}</td>
+                                            </tr>
+                                        </ui:repeat>
                                     </tbody>
                                 </table>
                                 <div class="col-xs-12">
                                     <div class="col-xs-6 text-right"><span>Clientes Atendidos</span></div>
-                                    <div class="col-xs-6"><span></span>5527</div>
+                                    <div class="col-xs-6">
+                                        <h:panelGroup id="clienteAtendido">
+                                            #{relatorioVendaBean.quantidadeClientesAtendidos}                                            
+                                        </h:panelGroup> 
+                                    </div>
                                 </div>
                             </div>
                         </div>
