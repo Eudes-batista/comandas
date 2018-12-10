@@ -17,6 +17,7 @@
         <script>
             function focusValor(input) {
                 document.getElementById(input).focus();
+                document.getElementById(input).select();
             }
         </script>
     </h:head>
@@ -87,12 +88,13 @@
                                     <f:convertNumber pattern="###,##0.00"/>
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>
-                                <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" />
+                                <p:inputNumber id="valor" style="font-size: 15pt;" value="#{espelhoComandaBean.valor}" onclick="this.select();"/>
                             </p:panelGrid>
-                            <p:commandLink value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
+                            <p:commandLink id="confirmaValor" value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
                                            process="frmAuditoria:tabela:#{index}:valor @this" update="msg"
                                            partialSubmit="true"/>
+                            <p:defaultCommand target="confirmaValor" />
                         </div> 
                     </p:overlayPanel>
                 </p:column>

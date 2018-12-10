@@ -6,6 +6,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.dto.ClienteAtendido;
+import modelo.dto.Couvert;
 import modelo.dto.RejeicaoPorcentagemVendedor;
 import modelo.dto.TotalVenda;
 import modelo.dto.VendaGarcom;
@@ -69,6 +70,30 @@ public class DashboardControle implements DashboardService, Serializable {
         return null;
     }
 
+    @Override
+    public List<ClienteAtendido> listarClientesEmAtendimento() {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            stringBuilder = new StringBuilder();
+            String data = LocalDate.now().toString();
+            stringBuilder.append("select ")
+                    .append(" pedido as pedido")
+                    .append(",pessoas_mesa as pessoas")
+                    .append(" from espelho_comanda ")
+                    .append(" where")
+                    .append(" DATA BETWEEN ").append("'").append(data).append(" 00:00:00' ")
+                    .append(" AND '").append(data).append(" 23:59:59'")
+                    .append(" AND STATUS_ITEM ='").append("N").append("'")
+                    .append(" AND STATUS =''")
+                    .append(" group by ")
+                    .append(" pedido,pessoas_mesa ");
+            SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
+            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ClienteAtendido.class));
+            return setResultTransformer.list();
+        }
+        return null;        
+    }
+    
     @Override
     public List<VendaGarcom> listarVendasPorGarcom() {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -142,6 +167,34 @@ public class DashboardControle implements DashboardService, Serializable {
         }
         return null;
 
+    }
+
+    @Override
+    public Couvert listarTotalCouvert() {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            stringBuilder = new StringBuilder();
+            String data = LocalDate.now().toString();
+            stringBuilder.append("select ")
+                    .append(" prdescri as DESCRICAO,")
+                    .append(" sum(quantidade*valor_item) as VALOR")
+                    .append(" from espelho_comanda ")
+                    .append(" left outer join")
+                    .append(" scea01")
+                    .append(" on(prrefere=referencia)")
+                    .append(" where")
+                    .append(" prdescri like '%COUVERT%'")
+                    .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(data).append(" 00:00:00' ")
+                    .append(" AND '").append(data).append(" 23:59:59'")
+                    .append(" AND STATUS_ITEM ='").append("N").append("'")
+                    .append(" AND STATUS ='").append("P").append("'")
+                    .append(" group by ")
+                    .append(" prdescri");
+            SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
+            Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(Couvert.class));
+            return (Couvert) setResultTransformer.uniqueResult();
+        }
+        return null;         
     }
 
 }

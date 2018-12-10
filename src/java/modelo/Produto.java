@@ -7,17 +7,25 @@ public class Produto implements Serializable {
 
     private String REFERENCIA;
     private String DESCRICAO;
-    private double PRECO;
+    private Double PRECO;
+    private String GRUPO;
 
     public Produto() {
     }
 
-    public Produto(String referencia, String descricao, double preco) {
+    public Produto(String referencia, String descricao, Double preco) {
         this.REFERENCIA = referencia;
         this.DESCRICAO = descricao;
         this.PRECO = preco;
     }
 
+    public Produto(String REFERENCIA, String DESCRICAO, Double PRECO, String GRUPO) {
+        this.REFERENCIA = REFERENCIA;
+        this.DESCRICAO = DESCRICAO;
+        this.PRECO = PRECO;
+        this.GRUPO = GRUPO;
+    }
+    
     public String getReferencia() {
         return REFERENCIA;
     }
@@ -34,11 +42,11 @@ public class Produto implements Serializable {
         this.DESCRICAO = descricao;
     }
 
-    public double getPreco() {
+    public Double getPreco() {
         return PRECO;
     }
 
-    public void setPreco(double preco) {
+    public void setPreco(Double preco) {
         this.PRECO = preco;
     }
 
@@ -67,6 +75,14 @@ public class Produto implements Serializable {
     @Override
     public String toString() {
         return "Produto{" + "referencia=" + REFERENCIA + ", descricao=" + DESCRICAO + ", preco=" + PRECO +"}'";
+    }
+
+    public String getGRUPO() {
+        return GRUPO;
+    }
+
+    public void setGRUPO(String GRUPO) {
+        this.GRUPO = GRUPO;
     }
     
 }

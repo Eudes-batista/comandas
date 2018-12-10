@@ -140,29 +140,16 @@ public class ProdutoBean implements Serializable {
     }
 
     public void listarProdutos() {
-        produtos.clear();
-        produtoServico.lsitarProdutos().forEach(p -> {
-            String descricao = String.valueOf(p[1]);
-            if (descricao.length() >= 25) {
-                descricao = descricao.substring(0, 25);
-            }
-            produtos.add(new Produto(String.valueOf(p[0]), descricao, Double.parseDouble(String.valueOf(p[2]))));
-        });
+        produtos = produtoServico.lsitarProdutos();
     }
 
     public void listarProdutoPorGrupo(Lapt51 lapt51) {
-        produtos.clear();
-        produtoServico.lsitarProdutoPorGrupo(lapt51.getT51cdgrp()).forEach(p -> {
-            produtos.add(new Produto(String.valueOf(p[2]), String.valueOf(p[0]), Double.parseDouble(String.valueOf(p[1]))));
-        });
+        produtos = produtoServico.lsitarProdutoPorGrupo(lapt51.getT51cdgrp());
         mudarQuantidade();
     }
 
     public void pesquisarProduto() {
-        produtos.clear();
-        produtoServico.listarPorReferenciaDescricaoCodigoBarra(pesquisa == null ? "" : pesquisa.toUpperCase()).forEach(p -> {
-            produtos.add(new Produto(String.valueOf(p[1]), String.valueOf(p[0]), Double.parseDouble(String.valueOf(p[2]))));
-        });
+        produtos = produtoServico.listarPorReferenciaDescricaoCodigoBarra(pesquisa == null ? "" : pesquisa.toUpperCase());
         mudarQuantidade();
     }
 
@@ -213,7 +200,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(this.quantidade);
         lancamentoItem.setPreco(p.getPreco());
-        lancamentoItem.setPrecoTotal(p.getPreco()*quantidade);
+        lancamentoItem.setPrecoTotal(p.getPreco() * quantidade);
         lancamentoItem.setVendedor(this.vendedor);
         lancamentoItem.setImprimir("0");
         lancamentoItem.setStatus(this.status);

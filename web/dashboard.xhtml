@@ -83,7 +83,7 @@
                         </div>				
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="dash-box dash-box-color-2">
                         <div class="dash-box-icon">
                             <i class="glyphicon glyphicon-user"></i>
@@ -97,7 +97,7 @@
                         </div>	
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <div class="dash-box dash-box-color-3">
                         <div class="dash-box-icon">
                             <i class="glyphicon glyphicon-list"></i>
@@ -114,6 +114,40 @@
                         <div class="dash-box-action">
                             <button onclick="location.href = 'itensVendidos.jsf'">Mais Informações</button>
                         </div>				
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="dash-box dash-box-color-4">
+                        <div class="dash-box-icon">
+                            <i class="glyphicon glyphicon-user"></i>
+                        </div>
+                        <div class="dash-box-body">
+                            <span class="dash-box-count">
+                                <h:outputLabel value="#{DashboardBean.quantidadeClientesEmAtendimentos}">
+                                    <f:convertNumber />
+                                </h:outputLabel>
+                            </span>
+                            <span class="dash-box-title">Clientes em Atendimento</span>
+                        </div>
+
+                        <div class="dash-box-action"/>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="dash-box dash-box-color-5">
+                        <div class="dash-box-icon">
+                            <i class="glyphicon glyphicon-user"></i>
+                        </div>
+                        <div class="dash-box-body">
+                            <span class="dash-box-count">
+                                <h:outputLabel value="#{DashboardBean.couvert.VALOR}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputLabel>
+                            </span>
+                            <span class="dash-box-title">COUVERT</span>
+                        </div>
+
+                        <div class="dash-box-action"/>
                     </div>
                 </div>
             </div>

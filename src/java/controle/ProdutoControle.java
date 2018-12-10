@@ -28,46 +28,51 @@ public class ProdutoControle implements ProdutoService, Serializable {
     private Session session = null;
 
     @Override
-    public List<Object[]> lsitarProdutos() {
+    public List<Produto> lsitarProdutos() {
         session = HibernateUtil.getSessionFactory().openSession();
-        List<Object[]> produtos = session.createSQLQuery("select first 30 prrefere,prdescri,EEPLQTB1 from scea01 left outer join scea07 on(eerefere=prrefere) group by prrefere,prdescri,EEPLQTB1 order by prdescri").list();
         if (session != null) {
+            Query query = session.createSQLQuery("select first 30 prrefere as REFERENCIA,prdescri as DESCRICAO,EEPLQTB1 as PRECO,T51DSGRP as GRUPO from scea07 left outer join scea01 on(prrefere=eerefere) left outer join LAPT51 on(T51CDGRP=PRCGRUPO) group by prrefere,prdescri,EEPLQTB1,T51DSGRP order by prdescri").setResultTransformer(Transformers.aliasToBean(Produto.class));
+            List<Produto> produtos = query.list();
             session.close();
+            return produtos;
         }
-        return produtos;
-    }
-    @Override
-    public List<Object[]> lsitarProdutoPorGrupo(String grupo) {
-        session = HibernateUtil.getSessionFactory().openSession();
-        List<Object[]> produtos = session.createSQLQuery("select first 30 prdescri,EEPLQTB1,prrefere from scea01 left outer join scea07 on(eerefere=prrefere) where PRCGRUPO='"+grupo+"' group by prdescri,EEPLQTB1,prrefere order by prdescri").list();
-        if (session != null) {
-            session.close();
-        }
-        return produtos;
+        return null;
     }
 
     @Override
-    public List<Object[]> listarPorReferenciaDescricaoCodigoBarra(String pesquisa) {
+    public List<Produto> lsitarProdutoPorGrupo(String grupo) {
         session = HibernateUtil.getSessionFactory().openSession();
-        List<Object[]> produtos = session.createSQLQuery("select first 30 prdescri,prrefere,EEPLQTB1 from scea01 left outer join scea07 on(eerefere=prrefere) where prrefere='"+pesquisa+"' or prdescri like '%"+pesquisa+"%' or prcodbar='"+pesquisa+"' group by prdescri,EEPLQTB1,prrefere order by prdescri").list();
         if (session != null) {
+            Query query = session.createSQLQuery("select first 30 prrefere as REFERENCIA,prdescri as DESCRICAO,EEPLQTB1 as PRECO,T51DSGRP as GRUPO from scea07 left outer join scea01 on(prrefere=eerefere) left outer join LAPT51 on(T51CDGRP=PRCGRUPO) where PRCGRUPO='" + grupo + "' group by prrefere,prdescri,EEPLQTB1,T51DSGRP order by prdescri").setResultTransformer(Transformers.aliasToBean(Produto.class));
+            List<Produto> produtos = query.list();
             session.close();
+            return produtos;
         }
-        return produtos;        
+        return null;
+    }
+
+    @Override
+    public List<Produto> listarPorReferenciaDescricaoCodigoBarra(String pesquisa) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Query query = session.createSQLQuery("select first 30 prrefere as REFERENCIA,prdescri as DESCRICAO,EEPLQTB1 as PRECO,T51DSGRP as GRUPO from scea07 left outer join scea01 on(prrefere=eerefere) left outer join LAPT51 on(T51CDGRP=PRCGRUPO) where prrefere='" + pesquisa + "' or prdescri like '%" + pesquisa + "%' or prcodbar='" + pesquisa + "' group by prrefere,prdescri,EEPLQTB1,T51DSGRP order by prdescri").setResultTransformer(Transformers.aliasToBean(Produto.class));
+            List<Produto> produtos = query.list();
+            session.close();
+            return produtos;
+        }
+        return null;
     }
 
     @Override
     public Produto buscarProduto(String referencia) {
         session = HibernateUtil.getSessionFactory().openSession();
-        SQLQuery consulta = session.createSQLQuery("select prrefere as referencia,prdescri as descricao,EEPLQTB1 as preco from scea01 left outer join scea07 on(eerefere=prrefere) where prrefere='"+referencia+"' or prcodbar='"+referencia+"' group by prrefere,prdescri,EEPLQTB1");
+        SQLQuery consulta = session.createSQLQuery("select prrefere as referencia,prdescri as descricao,EEPLQTB1 as preco from scea01 left outer join scea07 on(eerefere=prrefere) where prrefere='" + referencia + "' or prcodbar='" + referencia + "' group by prrefere,prdescri,EEPLQTB1");
         Query consultaTransformada = consulta.setResultTransformer(Transformers.aliasToBean(Produto.class));
-        Produto produto =(Produto)consultaTransformada.uniqueResult();
+        Produto produto = (Produto) consultaTransformada.uniqueResult();
         if (session != null) {
             session.close();
         }
-        return produto;        
+        return produto;
     }
-    
-    
 
 }

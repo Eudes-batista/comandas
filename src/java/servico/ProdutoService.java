@@ -13,9 +13,9 @@ import modelo.Produto;
  * @author Administrador
  */
 public interface ProdutoService {
-    public List<Object[]> lsitarProdutos();
-    public List<Object[]> lsitarProdutoPorGrupo(String grupo);
-    public List<Object[]> listarPorReferenciaDescricaoCodigoBarra(String pesquisa);
+    public List<Produto> lsitarProdutos();
+    public List<Produto> lsitarProdutoPorGrupo(String grupo);
+    public List<Produto> listarPorReferenciaDescricaoCodigoBarra(String pesquisa);
     public Produto buscarProduto(String referencia);
     
 }

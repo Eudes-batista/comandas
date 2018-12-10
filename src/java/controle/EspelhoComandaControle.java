@@ -41,7 +41,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarDataPreconta(String data, Mesa mesa) {
-        executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getPAGANTES()+ "' where pedido in(" + mesa.getPEDIDO()+ ")");
+        executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getPAGANTES() + "' where pedido in(" + mesa.getPEDIDO() + ")");
     }
 
     @Override
@@ -99,8 +99,8 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     public List<Object[]> listarProdutosPedido(String pedido) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem from espelho_comanda left outer join \n"
-                    + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') where pedido = '" + pedido + "' ").list();
+            return session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
+                    + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') left outer join scea01 on (prrefere = eerefere) where pedido = '" + pedido + "' ").list();
         }
         return null;
     }
@@ -110,29 +110,34 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         List<Object[]> listarProdutosPedido = listarProdutosPedido(pedido);
         for (Object[] itens : listarProdutosPedido) {
             double valorItem, quantidadeItem, porcentagem, valorTotalItem, porcentagemEmValor, valorPorcentagemItem;
-        
+
             valorItem = Double.parseDouble(String.valueOf(itens[1]));
-            
+
             quantidadeItem = Double.parseDouble(String.valueOf(itens[2]));
-            
+
             porcentagem = Double.parseDouble(String.valueOf(itens[3]));
-            
+
+            String descricao = String.valueOf(itens[4]);
+
             valorTotalItem = quantidadeItem * valorItem;
-            
+
             porcentagemEmValor = porcentagem / 100;
-            
+
             valorPorcentagemItem = valorTotalItem * porcentagemEmValor;
-            
-            valorPorcentagemItem=Double.parseDouble(new DecimalFormat("###,##0.00").format(valorPorcentagemItem).replace(".","").replace(",","."));
-            
-            executarSql("update espelho_comanda set VALOR_PORCENTAGEM=" + valorPorcentagemItem + " where numero='" + String.valueOf(itens[0]) + "'");
+
+            valorPorcentagemItem = Double.parseDouble(new DecimalFormat("###,##0.00").format(valorPorcentagemItem).replace(".", "").replace(",", "."));
+            if (!descricao.contains("couvert".toUpperCase())) {
+                executarSql("update espelho_comanda set VALOR_PORCENTAGEM=" + valorPorcentagemItem + " where numero='" + String.valueOf(itens[0]) + "'");
+                return;
+            }
+            executarSql("update espelho_comanda set porcentagem = " + 0 + ",VALOR_PORCENTAGEM=" + 0 + " where numero = '" + String.valueOf(itens[0]) + "'");
+
         }
     }
 
     @Override
     public void atualizarStatusItens(String pedidos) {
-        executarSql("update espelho_comanda set status_item='C' where pedido in("+pedidos+")");
+        executarSql("update espelho_comanda set status_item='C' where pedido in(" + pedidos + ")");
     }
-
 
 }

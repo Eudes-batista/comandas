@@ -31,14 +31,19 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" SUM(QUANTIDADE) as itens,")
                     .append(" SUM(QUANTIDADE*VALOR_ITEM) as vendas,")
                     .append(" VENDEDOR as garcom,")
-                    .append(" SUM(VALOR_PORCENTAGEM) as COMISSAO")
+                    .append(" SUM(VALOR_PORCENTAGEM) as COMISSAO,")
+                    .append(" RVMETMES as META,")
+                    .append(" (RVMETMES-SUM(QUANTIDADE*VALOR_ITEM)) as VALOR_A_ALCANCAR")
                     .append(" from")
                     .append(" espelho_comanda")
+                    .append(" left outer join")
+                    .append(" sfta01")
+                    .append(" on(RVNOMEVE=VENDEDOR)")
                     .append(" where")
                     .append(" STATUS = 'P' AND STATUS_ITEM = 'N' AND")
                     .append(" DATA_PRECONTA BETWEEN '").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00'").append(" and '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" GROUP BY")
-                    .append(" VENDEDOR");
+                    .append(" VENDEDOR,META");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
             return query.list();
@@ -89,7 +94,7 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" inner join")
                     .append(" scea01 on(prrefere=referencia)")
                     .append(" where")
-                    .append(" PORCENTAGEM <").append(10)
+                    .append(" PORCENTAGEM <").append(10).append(" and substr(prdescri,1,7) != 'COUVERT' " )
                     .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00' ")
                     .append(" AND '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" AND STATUS_ITEM ='").append("N").append("'")
@@ -97,6 +102,7 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" AND VENDEDOR ='").append(filtroVendaDetalhe.getCargom()).append("'")
                     .append(" group by")
                     .append("    PEDIDO,REFERENCIA,PRDESCRI,QUANTIDADE,VALOR_ITEM,PORCENTAGEM,VALOR_PORCENTAGEM,DATA");
+            System.out.println("sql = " + sql.toString());
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
             return setResultTransformer.list();

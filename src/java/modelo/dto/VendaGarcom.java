@@ -16,6 +16,8 @@ public class VendaGarcom implements Serializable{
    private Double VENDAS;
    private Double ITENS;
    private Double COMISSAO;
+   private Double META;
+   private Double VALOR_A_ALCANCAR;
 
     public VendaGarcom() {
     }
@@ -36,6 +38,15 @@ public class VendaGarcom implements Serializable{
         this.GARCOM = GARCOM;
         this.VENDAS = VENDAS;
         this.ITENS = ITENS;
+    }
+
+    public VendaGarcom(String GARCOM, Double VENDAS, Double ITENS, Double COMISSAO, Double META, Double VALOR_A_ALCANCAR) {
+        this.GARCOM = GARCOM;
+        this.VENDAS = VENDAS;
+        this.ITENS = ITENS;
+        this.COMISSAO = COMISSAO;
+        this.META = META;
+        this.VALOR_A_ALCANCAR = VALOR_A_ALCANCAR;
     }
 
     

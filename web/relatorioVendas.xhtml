@@ -65,7 +65,7 @@
                        autofocus="true"/><br />
                 <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataFinal}" type="date" class="form-control" placeholder="Data Final" /><br />
                 <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
-                               update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo"
+                               update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo corpo:empresa"
                                process="filtro" actionListener="#{relatorioVendaBean.filtrar()}">
                     <i class="fa fa-print"></i> Imprimir ( F10 )
                 </p:commandLink>
@@ -77,10 +77,12 @@
                     <div class="row">
                         <div class="col-xs-4">
                             <div class="row">
-                                <img  class="logo" src="resources/imagens/zoom.jpg"/>
+                                <img  class="logo" src="resources/imagens/logo.jpg"/>
                             </div>
                             <div class="row texto-logo">
-                                <span>#{relatorioVendaBean.empresa.codigo} - #{relatorioVendaBean.empresa.razao}</span>
+                                <h:panelGroup id="empresa">
+                                    <span>#{relatorioVendaBean.empresa.codigo} - #{relatorioVendaBean.empresa.razao}</span>
+                                </h:panelGroup>
                             </div>
                         </div>
                         <div class="coml-xs-8  cabecalho">

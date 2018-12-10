@@ -87,9 +87,21 @@
                                                     <h:outputText value="#{vendaGarcom.ITENS}">
                                                         <f:convertNumber />
                                                     </h:outputText> 
-                                                    Itens vendidos
+                                                    Itens vendidos <br/>
                                                 </p:commandLink> 
                                             </h:form>
+                                            <!--mostrar a meta--> 
+                                            <h:outputText value="#{vendaGarcom.META}" style="font-size: 10pt;">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText> 
+                                                Meta <br />
+                                            <!--**************-->
+                                            <!--mostrar o valor que falta para bater a meta--> 
+                                                <h:outputText value="#{vendaGarcom.VALOR_A_ALCANCAR}" style="font-size: 10pt;">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText> 
+                                                Diferença
+                                            <!--**************-->
                                         </span>
                                     </div>
                                     <div class="row" style="color: #fff; text-align: center;">
@@ -103,8 +115,7 @@
                                             <p:commandLink oncomplete="PF('dialogoRejeicaoDezPorcento').show();" style="color: #fff;"
                                                            actionListener="#{vendaDetalheBean.listarRejeicaoPorcentagemPorGarcom(vendaGarcom.GARCOM)}"
                                                            process="@this" update="formRejeicao">
-                                                Sem 10% 
-                                                <h:outputText value="#{vendaDetalheBean.getQuantidadeRejeicaoDezPorcento(vendaGarcom.GARCOM)}"></h:outputText> Vendas
+                                                <h:outputText value="#{vendaDetalheBean.getQuantidadeRejeicaoDezPorcento(vendaGarcom.GARCOM)}"></h:outputText> Vendas sem comissão 
                                             </p:commandLink> 
                                         </div>
                                     </div>

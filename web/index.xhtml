@@ -22,9 +22,15 @@
                 });
                 $(".numero-comanda").keypress(function (evt) {
                     if (evt.keyCode === 13) {
-                        document.getElementById("form:abrirComanda").click();
+                        document.getElementById("form:quantidadePessoa").focus();
+                        document.getElementById("form:quantidadePessoa").select();
                     }
                 });
+                document.getElementById("form:quantidadePessoa").onkeypress =function (evt) {
+                    if (evt.keyCode === 13) {
+                        document.getElementById("form:abrirComanda").click();
+                    }
+                };
                 document.getElementById("form:mesa").onkeypress = function (evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:numero").focus();
