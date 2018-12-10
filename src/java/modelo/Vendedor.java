@@ -7,37 +7,37 @@ import java.util.Objects;
 
 public class Vendedor implements Serializable{
 
-    private String id;
-    private String nome;
+    private String CODIGO;
+    private String NOME;
 
     public Vendedor() {
     }
 
-    public Vendedor(String id, String nome) {
-        this.id = id;
-        this.nome = nome;
+    public Vendedor(String CODIGO, String NOME) {
+        this.CODIGO = CODIGO;
+        this.NOME = NOME;
     }
 
     public String getId() {
-        return id;
+        return CODIGO;
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.CODIGO = id;
     }
 
     public String getNome() {
-        return nome;
+        return NOME;
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.NOME = nome;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.id);
+        hash = 43 * hash + Objects.hashCode(this.CODIGO);
         return hash;
     }
 
@@ -53,7 +53,7 @@ public class Vendedor implements Serializable{
             return false;
         }
         final Vendedor other = (Vendedor) obj;
-        return Objects.equals(this.id, other.id);
+        return Objects.equals(this.CODIGO, other.CODIGO);
     }
 
        

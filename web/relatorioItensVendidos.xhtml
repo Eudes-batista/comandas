@@ -2,21 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:jsf="http://xmlns.jcp.org/jsf"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <f:metadata>
-        <f:viewAction action="#{relatorioVendaBean.init()}"/>
+        <f:viewAction action="#{relatorioItemVendidoBean.init()}"/>
     </f:metadata>
     <h:head>
-        <title>Relatório de Vendas</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="shortcut icon" href="resources/imagens/food.png" type="image/x-icon" />
-        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
         <h:outputStylesheet library="css" name="rel-venda.css" />
         <h:outputScript library="js" name="jquery-3.2.1.min.js" />
+        <h:outputScript library="js" name="function.js" />
         <script>
             document.addEventListener('keydown', function (evt) {
                 if (evt.keyCode === 121) {
@@ -55,19 +54,61 @@
                 principal.style.display = relatorio;
             }
         </script>
+
+        <title>Relatorio de Itens Vendidos</title>
     </h:head>
     <h:body>
-        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;width: 300px;margin-top: 20px;padding: 20px;">
-            <h3>Filtro</h3>
+        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;width: 600px;margin-top: 20px;padding: 20px;">
             <h:form id="filtro">
-                <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
-                       autofocus="true"/><br />
-                <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioVendaBean.filtroVendaDetalhe.dataFinal}" type="date" class="form-control" placeholder="Data Final" /><br />
-                <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
-                               update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo corpo:empresa"
-                               process="filtro" actionListener="#{relatorioVendaBean.filtrar()}">
-                    <i class="fa fa-print"></i> Imprimir ( F10 )
-                </p:commandLink>
+                <div class="container-fluid">
+                    <h3>Filtro</h3>
+                    <div class="row espaco">
+                        <div class="col-xs-6">
+                            <label >Data Inicial</label>
+                            <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
+                                   autofocus="true"/>
+                        </div>
+                        <div class="col-xs-6">
+                            <label >Data Final</label>
+                            <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.dataFinal}" type="date" class="form-control" placeholder="Data Final" />                    
+                        </div>
+                    </div>
+                    <div class="row espaco">
+                        <div class="col-xs-3">
+                            <label >Garcom</label>
+                            <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
+                                             class="form-control">
+                                <f:selectItems value="#{relatorioItemVendidoBean.vendedores}" var="garcom" itemLabel="#{garcom.nome}" itemValue="#{garcom.nome}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-xs-3">
+                            <label >Grupo</label>
+                            <h:selectOneMenu id="grupo" value="#{relatorioItemVendidoBean.filtroItemVendido.grupo}"
+                                             class="form-control">
+                                <f:selectItems value="#{relatorioItemVendidoBean.grupos}" var="grupo" itemLabel="#{grupo.t51dsgrp}" itemValue="#{grupo.t51cdgrp}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-xs-6">
+                            <label >Produto</label>
+                            <div class="input-group">
+                                <input jsf:id="referencia" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.produto}" type="text" class="form-control" placeholder="Refencia do Produto" 
+                                       aria-label="referencia" aria-describedby="basic-addon1"/>
+                                <span class="input-group-addon" id="basic-addon1">
+                                    <p:commandLink ><i class="fa fa-search"></i></p:commandLink>
+                                </span>
+                            </div>     
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
+                                           update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo corpo:empresa"
+                                           process="filtro" actionListener="#{relatorioVendaBean.filtrar()}">
+                                <i class="fa fa-print"></i> Imprimir ( F10 )
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
             </h:form>
         </div>
         <div class="container-fluid" id="principal" style="display: none;">

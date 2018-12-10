@@ -1,24 +1,31 @@
 package controle;
 
 import java.io.Serializable;
-import util.HibernateUtil;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import modelo.Vendedor;
+import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
 import servico.VendedorService;
+import util.HibernateUtil;
 
 @ManagedBean(name = "vendedorService")
 @ViewScoped
 public class VendedorControle implements VendedorService, Serializable {
 
     @Override
-    public List<Object[]> listarVendedor() {
+    public List<Vendedor> listarVendedor() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        List<Object[]> vendedores = session
-                .createSQLQuery("select RVIDEVEN,RVNOMEVE from SFTA01 order by RVNOMEVE").list();
-        session.close();
-        return vendedores;
+        if (session != null) {
+            Query query = session
+                    .createSQLQuery("select RVIDEVEN as CODIGO,RVNOMEVE as NOME from SFTA01 order by RVNOMEVE").setResultTransformer(Transformers.aliasToBean(Vendedor.class));
+            List<Vendedor> vendedores = query.list();
+            session.close();
+            return vendedores;
+        }
+        return null;
     }
 
     @Override

@@ -141,21 +141,28 @@
                                         <ul class="text-center">
                                             <li>
                                                 <p:commandLink class="btn-modal btn btn-produto btn-danger" style="color: #fff;" onclick="removerQuantidade('frm:tabelaProduto:#{index}:qtd')"
-                                                               update="@this" process="@this">
+                                                               update="@this" process="@this" rendered="#{p.GRUPO ne 'PIZZAS'}">
                                                     <i class="fa fa-minus"></i>
                                                 </p:commandLink>   
                                             </li>
                                             <li >
                                                 <h:inputText id="qtd" class="form-control" style="width: 50px;" maxlength="5" value="#{produtoBean.quantidade}"
-                                                             onkeyup="keypressQuantidade(this)" >
+                                                             onkeyup="keypressQuantidade(this)" rendered="#{p.GRUPO ne 'PIZZAS' and p.GRUPO ne 'PIZZA' }">
                                                     <f:passThroughAttribute name="type" value="tel" />
                                                     <p:keyFilter for="qtd" mask="num" />
                                                     <f:convertNumber pattern="#" />
                                                 </h:inputText>
+                                                <p:commandLink class="btn btn-modal btn-produto btn-warning btn-block" rendered="#{p.GRUPO eq 'PIZZAS' or p.GRUPO eq 'PIZZA'}"
+                                                               actionListener="#{produtoBean.adicionarItemQuantidadeMetade(p)}"
+                                                               update="frm:totalItens frm:notificacao" process="@this" 
+                                                               partialSubmit="true" oncomplete="PF('bar').show();fecharNotificacao();selecionarPesquisa();"
+                                                               >
+                                                        1/2
+                                                </p:commandLink>
                                             </li> 
                                             <li>
                                                 <p:commandLink class="btn-modal btn btn-produto btn-info" style="color: #fff; "  onclick="adicionarQuantidade('frm:tabelaProduto:#{index}:qtd')"
-                                                               update="@this" process="@this">
+                                                               update="@this" process="@this" rendered="#{p.GRUPO ne 'PIZZAS'}">
                                                     <i class="fa fa-plus"></i>
                                                 </p:commandLink>   
                                             </li>

@@ -189,6 +189,26 @@ public class ProdutoBean implements Serializable {
     public void totalizarItensAdicionado() {
         this.valorTotalItens = this.lancamentosAdicionados.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
+    
+    public void adicionarItemQuantidadeMetade(Produto p) {
+        Lancamento lancamentoItem = new Lancamento();
+        lancamentoItem.setComanda(this.comanda);
+        lancamentoItem.setMesa(this.mesa);
+        lancamentoItem.setItem(this.controleService.gerarSequencia(this.comanda));
+        lancamentoItem.setNumero(gerarNumero());
+        lancamentoItem.setReferencia(p.getReferencia());
+        lancamentoItem.setDescricao(p.getDescricao());
+        lancamentoItem.setQuantidade(0.5);
+        lancamentoItem.setPreco(p.getPreco());
+        lancamentoItem.setPrecoTotal(p.getPreco() * quantidade);
+        lancamentoItem.setVendedor(this.vendedor);
+        lancamentoItem.setImprimir("0");
+        lancamentoItem.setStatus(this.status);
+        lancamentoItem.setPedido(this.pedido);
+        this.produto = p;
+        preparaItem(lancamentoItem);
+    }
+    
 
     public void adicionarItem(Produto p) {
         Lancamento lancamentoItem = new Lancamento();
@@ -205,11 +225,16 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setImprimir("0");
         lancamentoItem.setStatus(this.status);
         lancamentoItem.setPedido(this.pedido);
-        this.lancamentosAdicionados.add(lancamentoItem);
-        this.quantidadeItensAdicionados += 1;
-        salvar(lancamentoItem);
         this.produto = p;
+        preparaItem(lancamentoItem);
     }
+    
+    public void preparaItem(Lancamento lancamento) {
+        this.lancamentosAdicionados.add(lancamento);
+        this.quantidadeItensAdicionados += 1;
+        salvar(lancamento);
+    }
+    
 
     public void adicionarItem() {
         this.produto = this.produtoServico.buscarProduto(produto.getReferencia());
