@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import modelo.Lapt51;
 
 @Getter
 @Setter
@@ -16,6 +17,11 @@ public class FiltroItemVendido {
     private String dataFinal;
     private String garcom;
     private String produto;
-    private String grupo;
+    private Lapt51 grupo;
+
+    @Override
+    public String toString() {
+        return "FiltroItemVendido{" + "dataInicial=" + dataInicial + ", dataFinal=" + dataFinal + ", garcom=" + garcom + ", produto=" + produto + ", grupo=" + grupo + '}';
+    }
     
 }

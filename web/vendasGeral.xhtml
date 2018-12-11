@@ -82,7 +82,7 @@
                                         </span>
                                         <span class="dash-box-title">
                                             <h:form>
-                                                <p:commandLink oncomplete="PF('dialogoVisualizarItens').show();" update="formItens"
+                                                <p:commandLink oncomplete="PF('dialogoVisualizarItens').show();" update="dlVisualizarItens"
                                                                process="@this" actionListener="#{vendaDetalheBean.listarItensVendidosPorGarcom(vendaGarcom.GARCOM)}">
                                                     <h:outputText value="#{vendaGarcom.ITENS}">
                                                         <f:convertNumber />
@@ -114,7 +114,7 @@
                                         <div class="col-md-5 valores-rejeicao">
                                             <p:commandLink oncomplete="PF('dialogoRejeicaoDezPorcento').show();" style="color: #fff;"
                                                            actionListener="#{vendaDetalheBean.listarRejeicaoPorcentagemPorGarcom(vendaGarcom.GARCOM)}"
-                                                           process="@this" update="formRejeicao">
+                                                           process="@this" update="dlRejeicaoDezPorcento">
                                                 <h:outputText value="#{vendaDetalheBean.getQuantidadeRejeicaoDezPorcento(vendaGarcom.GARCOM)}"></h:outputText> Vendas sem comissão 
                                             </p:commandLink> 
                                         </div>

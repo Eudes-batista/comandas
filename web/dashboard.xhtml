@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <f:metadata>
         <f:viewAction action="#{DashboardBean.init()}" />
     </f:metadata>
@@ -69,9 +70,9 @@
                         </div>
                         <div class="dash-box-body">
                             <span class="dash-box-count">
-                                <h:outputLabel value="#{DashboardBean.totalVenda.VENDAS}">
+                                <h:outputText value="#{DashboardBean.totalVenda.VENDAS}">
                                     <f:convertNumber pattern="###,##0.00"/>
-                                </h:outputLabel>
+                                </h:outputText>
                             </span>
                             <span class="dash-box-title">
                                 Vendas
@@ -104,9 +105,9 @@
                         </div>
                         <div class="dash-box-body">
                             <span class="dash-box-count">
-                                <h:outputLabel value="#{DashboardBean.totalVenda.ITENS}">
+                                <h:outputText value="#{DashboardBean.totalVenda.ITENS}">
                                     <f:convertNumber />
-                                </h:outputLabel>
+                                </h:outputText>
                             </span>
                             <span class="dash-box-title">Itens Vendidos</span>
                         </div>
@@ -123,9 +124,9 @@
                         </div>
                         <div class="dash-box-body">
                             <span class="dash-box-count">
-                                <h:outputLabel value="#{DashboardBean.quantidadeClientesEmAtendimentos}">
+                                <h:outputText value="#{DashboardBean.quantidadeClientesEmAtendimentos}">
                                     <f:convertNumber />
-                                </h:outputLabel>
+                                </h:outputText>
                             </span>
                             <span class="dash-box-title">Clientes em Atendimento</span>
                         </div>
@@ -140,9 +141,10 @@
                         </div>
                         <div class="dash-box-body">
                             <span class="dash-box-count">
-                                <h:outputLabel value="#{DashboardBean.couvert.VALOR}">
+                                <c:set value="#{DashboardBean.couvert.VALOR}" var="couvert"/>
+                                <h:outputText value="#{empty couvert ? 0.0 : couvert}">
                                     <f:convertNumber pattern="###,##0.00"/>
-                                </h:outputLabel>
+                                </h:outputText>
                             </span>
                             <span class="dash-box-title">COUVERT</span>
                         </div>

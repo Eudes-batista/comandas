@@ -2,10 +2,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:jsf="http://xmlns.jcp.org/jsf"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <f:metadata>
         <f:viewAction action="#{relatorioItemVendidoBean.init()}"/>
     </f:metadata>
@@ -15,7 +16,7 @@
         <link rel="stylesheet" href="resources/css/bootstrap.css" />
         <h:outputStylesheet library="css" name="rel-venda.css" />
         <h:outputScript library="js" name="jquery-3.2.1.min.js" />
-        <h:outputScript library="js" name="function.js" />
+        <h:outputScript library="js" name="bootstrap.min.js" />
         <script>
             document.addEventListener('keydown', function (evt) {
                 if (evt.keyCode === 121) {
@@ -54,11 +55,10 @@
                 principal.style.display = relatorio;
             }
         </script>
-
         <title>Relatorio de Itens Vendidos</title>
     </h:head>
     <h:body>
-        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;width: 600px;margin-top: 20px;padding: 20px;">
+        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;max-width: 800px;margin-top: 20px;padding: 20px;">
             <h:form id="filtro">
                 <div class="container-fluid">
                     <h3>Filtro</h3>
@@ -74,27 +74,33 @@
                         </div>
                     </div>
                     <div class="row espaco">
-                        <div class="col-xs-3">
-                            <label >Garcom</label>
+                        <div class="col-md-3">
+                            <label >Garçom</label>
                             <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
                                              class="form-control">
+                                <f:selectItem noSelectionOption="true" itemLabel="Selecione um Garçom" />
                                 <f:selectItems value="#{relatorioItemVendidoBean.vendedores}" var="garcom" itemLabel="#{garcom.nome}" itemValue="#{garcom.nome}"/>
                             </h:selectOneMenu>
                         </div>
-                        <div class="col-xs-3">
+                        <div class="col-md-3">
                             <label >Grupo</label>
                             <h:selectOneMenu id="grupo" value="#{relatorioItemVendidoBean.filtroItemVendido.grupo}"
-                                             class="form-control">
-                                <f:selectItems value="#{relatorioItemVendidoBean.grupos}" var="grupo" itemLabel="#{grupo.t51dsgrp}" itemValue="#{grupo.t51cdgrp}"/>
+                                             class="form-control" converter="omnifaces.SelectItemsConverter">
+                                <f:selectItem noSelectionOption="true" itemLabel="Selecione um Grupo" />
+                                <f:selectItems value="#{relatorioItemVendidoBean.grupos}" var="grupo" itemLabel="#{grupo.t51dsgrp}" itemValue="#{grupo}"/>
                             </h:selectOneMenu>
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-md-6">
                             <label >Produto</label>
                             <div class="input-group">
                                 <input jsf:id="referencia" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.produto}" type="text" class="form-control" placeholder="Refencia do Produto" 
                                        aria-label="referencia" aria-describedby="basic-addon1"/>
                                 <span class="input-group-addon" id="basic-addon1">
-                                    <p:commandLink ><i class="fa fa-search"></i></p:commandLink>
+                                    <p:commandLink >
+                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                        <f:passThroughAttribute name="data-target" value="#myModal" />
+                                        <i class="fa fa-search"></i>
+                                    </p:commandLink>
                                 </span>
                             </div>     
                         </div>
@@ -102,8 +108,8 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
-                                           update="corpo:linhas corpo:rodapeVendas corpo:linhasRejeicao corpo:clienteAtendido corpo:periodo corpo:empresa"
-                                           process="filtro" actionListener="#{relatorioVendaBean.filtrar()}">
+                                           update="corpo:linhas corpo:rodapeVendas corpo:periodo corpo:empresa"
+                                           process="filtro" actionListener="#{relatorioItemVendidoBean.filtrar()}">
                                 <i class="fa fa-print"></i> Imprimir ( F10 )
                             </p:commandLink>
                         </div>
@@ -121,19 +127,24 @@
                             </div>
                             <div class="row texto-logo">
                                 <h:panelGroup id="empresa">
-                                    <span>#{relatorioVendaBean.empresa.codigo} - #{relatorioVendaBean.empresa.razao}</span>
+                                    <span>#{relatorioItemVendidoBean.empresa.codigo} - #{relatorioItemVendidoBean.empresa.razao}</span>
                                 </h:panelGroup>
                             </div>
                         </div>
                         <div class="coml-xs-8  cabecalho">
                             <div class="row">
                                 <div class="col-xs-8"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
-                                    <span style="font-weight: bold;">RELATÓRIO GERAL</span> <br/>
-                                    <span style="font-size: 8pt;padding: 20px;">
-                                        <h:panelGroup id="periodo">
-                                            Período: #{relatorioVendaBean.filtroVendaDetalhe.dataInicial} à #{relatorioVendaBean.filtroVendaDetalhe.dataFinal}    
-                                        </h:panelGroup>  
-                                    </span>
+                                    <c:set var="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"/>
+                                    <c:set var="grupo" value="#{relatorioItemVendidoBean.filtroItemVendido.grupo}"/>
+                                    <h:panelGroup id="periodo">
+                                        <span style="font-weight: bold;">RELATÓRIO VENDA DE ITENS - #{empty garcom?'TODOS':garcom}</span> <br/>
+                                        <span style="font-size: 8pt;padding: 20px;">
+                                            Período: #{relatorioItemVendidoBean.filtroItemVendido.dataInicial} à #{relatorioItemVendidoBean.filtroItemVendido.dataFinal}    
+                                        </span>
+                                        <span style="font-size: 8pt;padding: 20px;">
+                                            Grupo: #{empty grupo?'TODOS':grupo.t51dsgrp}     
+                                        </span>
+                                    </h:panelGroup>  
                                 </div>
                             </div>
                         </div>
@@ -143,28 +154,30 @@
                             <table class="table table-striped"  style="font-size: 8pt">
                                 <thead>
                                     <tr style="background: #f1f1f1;">
-                                        <th>Garçom</th>
-                                        <th style="text-align: right;">Qtd. Itens</th>
-                                        <th style="text-align: right;">Comissão</th>
-                                        <th style="text-align: right;">Vendas</th>
+                                        <th>Referência</th>
+                                        <th style="text-align: right;">Descrição</th>
+                                        <th style="text-align: right;">Quantidade</th>
+                                        <th style="text-align: right;">Valor</th>
+                                        <th style="text-align: right;">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody jsf:id="linhas" style="font-size: 8pt">
-                                    <ui:repeat value="#{relatorioVendaBean.vendaGarcoms}" var="vendaGarcom">
+                                    <ui:repeat value="#{relatorioItemVendidoBean.itemVendidos}" var="itemVendido">
                                         <tr>
-                                            <td>#{vendaGarcom.GARCOM}</td>
+                                            <td>#{itemVendido.REFERENCIA}</td>
+                                            <td>#{itemVendido.DESCRICAO}</td>
                                             <td style="text-align: right;">
-                                                <h:outputText value="#{vendaGarcom.ITENS}">
+                                                <h:outputText value="#{itemVendido.QUANTIDADE}">
                                                     <f:convertNumber />
                                                 </h:outputText>                                                  
                                             </td>
                                             <td style="text-align: right;">
-                                                <h:outputText value="#{vendaGarcom.COMISSAO}">
+                                                <h:outputText value="#{itemVendido.VALOR}">
                                                     <f:convertNumber pattern="###,##0.00"/>
                                                 </h:outputText>
                                             </td>
                                             <td style="text-align: right;">
-                                                <h:outputText value="#{vendaGarcom.VENDAS}">
+                                                <h:outputText value="#{itemVendido.TOTAL}">
                                                     <f:convertNumber pattern="###,##0.00"/>
                                                 </h:outputText>
                                             </td>
@@ -173,56 +186,77 @@
                                 </tbody>
                                 <tfoot jsf:id="rodapeVendas" style="font-weight: bold;">
                                     <tr>
-                                        <td style="text-align: left;">
+                                        <td style="text-align: right;" colspan="2">
                                             Totais:
                                         </td>
-                                        <td style="text-align: right;">
-                                            #{relatorioVendaBean.totalItens}
-                                        </td>
                                         <td  style="text-align: right;">
-                                            <h:outputText value="#{relatorioVendaBean.totalComissao}">
+                                            <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
                                                 <f:convertNumber pattern="###,##0.00"/>
                                             </h:outputText>
                                         </td>
-                                        <td  style="text-align: right;">
-                                            <h:outputText value="#{relatorioVendaBean.totalVendas}">
+                                        <td  style="text-align: right;" colspan="2">
+                                            <h:outputText value="#{relatorioItemVendidoBean.total}">
                                                 <f:convertNumber pattern="###,##0.00"/>
                                             </h:outputText>
                                         </td>
                                     </tr>
                                 </tfoot>
                             </table>
-                            <div class="col-xs-12"><span style="font-weight: bold;">Rejeição de 10%</span></div>
-                            <div class="col-xs-12">
-                                <table class="table table-striped"  style="font-size: 8pt">
-                                    <thead>
-                                        <tr style="background: #f1f1f1;">
-                                            <th>Garçom</th>
-                                            <th>Qtd.</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody jsf:id="linhasRejeicao" >
-                                        <ui:repeat value="#{relatorioVendaBean.rejeicaoPorcentagemVendedores}" var="rejeicao" > 
-                                            <tr>
-                                                <td>#{rejeicao.VENDEDOR}</td>
-                                                <td>#{rejeicao.QTD}</td>
-                                            </tr>
-                                        </ui:repeat>
-                                    </tbody>
-                                </table>
-                                <div class="col-xs-12">
-                                    <div class="col-xs-6 text-right"><span>Clientes Atendidos</span></div>
-                                    <div class="col-xs-6">
-                                        <h:panelGroup id="clienteAtendido">
-                                            #{relatorioVendaBean.quantidadeClientesAtendidos}                                            
-                                        </h:panelGroup> 
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </h:form>           
+        </div>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Pesquisa de Produto</h4>
+                    </div>
+                    <h:form id="frmProduto">
+                        <div class="modal-body">
+                            <h:inputText value="#{relatorioItemVendidoBean.pesquisa}" class="form-control">
+                                <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
+                                <f:ajax event="keyup" render="linha" execute="@this" listener="#{relatorioItemVendidoBean.pesquisarProduto()}"/>
+                            </h:inputText>
+                            <div class="table-responsive" style="overflow: auto;height: 380px;">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Referencia</th>
+                                            <th>Descrição</th>
+                                            <th>Preço</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody jsf:id="linha">
+                                        <ui:repeat id="repeat" value="#{relatorioItemVendidoBean.produtos}" var="produto">
+                                            <tr>
+                                                <td>
+                                                    <button jsf:id="confirma"  data-dismiss="modal" class="btn btn-link">
+                                                        <i class="fa fa-check"></i>
+                                                        <f:ajax event="click" listener="#{relatorioItemVendidoBean.selecionarProduto(produto)}" render="filtro:referencia" execute="@this" />
+                                                    </button>
+                                                </td>
+                                                <td>#{produto.referencia}</td>
+                                                <td>#{produto.descricao}</td>
+                                                <td>#{produto.preco}</td>
+                                            </tr>
+                                        </ui:repeat>  
+                                    </tbody>
+                                </table>
+                            </div>  
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                Fechar
+                            </button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
         </div>
     </h:body>
 </html>
