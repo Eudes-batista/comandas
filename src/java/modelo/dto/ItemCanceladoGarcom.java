@@ -18,6 +18,7 @@ public class ItemCanceladoGarcom implements Serializable{
     private String  OBSERVACAO;
     private String  PRODUZIDO;
     private String  RESPONSAVEL;  
+    private String  DESTINO;  
 
     public ItemCanceladoGarcom() {
     }
@@ -26,7 +27,7 @@ public class ItemCanceladoGarcom implements Serializable{
         this.GARCOM = GARCOM;
     }
 
-    public ItemCanceladoGarcom(String NUMERO, String PEDIDO, String GARCOM, Double TOTAL, Double CANCELAMENTO, String ITEM, String MOTIVO, String OBSERVACAO, String PRODUZIDO, String RESPONSAVEL) {
+    public ItemCanceladoGarcom(String NUMERO, String PEDIDO, String GARCOM, Double TOTAL, Double CANCELAMENTO, String ITEM, String MOTIVO, String OBSERVACAO, String PRODUZIDO, String RESPONSAVEL, String DESTINO) {
         this.NUMERO = NUMERO;
         this.PEDIDO = PEDIDO;
         this.GARCOM = GARCOM;
@@ -37,9 +38,8 @@ public class ItemCanceladoGarcom implements Serializable{
         this.OBSERVACAO = OBSERVACAO;
         this.PRODUZIDO = PRODUZIDO;
         this.RESPONSAVEL = RESPONSAVEL;
+        this.DESTINO = DESTINO;
     }
-
-    
 
     public ItemCanceladoGarcom(String GARCOM, Double TOTAL) {
         this.GARCOM = GARCOM;

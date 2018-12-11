@@ -63,6 +63,14 @@
                 <div class="container-fluid">
                     <h3>Filtro</h3>
                     <div class="row espaco">
+                        <div class="col-xs-12 text-right">
+                            <h:panelGrid columns="2" style="float: right;">
+                                <h:outputText  value="Cancelados" style="font-weight: bold;"/>
+                                <h:selectBooleanCheckbox id="cancelados" style="height: 20px;width: 20px;" value="#{relatorioItemVendidoBean.filtroItemVendido.cancelado}"/>
+                            </h:panelGrid>
+                        </div>
+                    </div>
+                    <div class="row espaco">
                         <div class="col-xs-6">
                             <label >Data Inicial</label>
                             <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
@@ -96,7 +104,7 @@
                                 <input jsf:id="referencia" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.produto}" type="text" class="form-control" placeholder="Refencia do Produto" 
                                        aria-label="referencia" aria-describedby="basic-addon1"/>
                                 <span class="input-group-addon" id="basic-addon1">
-                                    <p:commandLink >
+                                    <p:commandLink actionListener="#{relatorioItemVendidoBean.listarProdutos()}" update="frmProduto:linha">
                                         <f:passThroughAttribute name="data-toggle" value="modal" />
                                         <f:passThroughAttribute name="data-target" value="#myModal" />
                                         <i class="fa fa-search"></i>
@@ -108,7 +116,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
-                                           update="corpo:linhas corpo:rodapeVendas corpo:periodo corpo:empresa"
+                                           update="corpo:tabela corpo:periodo corpo:empresa"
                                            process="filtro" actionListener="#{relatorioItemVendidoBean.filtrar()}">
                                 <i class="fa fa-print"></i> Imprimir ( F10 )
                             </p:commandLink>
@@ -137,7 +145,7 @@
                                     <c:set var="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"/>
                                     <c:set var="grupo" value="#{relatorioItemVendidoBean.filtroItemVendido.grupo}"/>
                                     <h:panelGroup id="periodo">
-                                        <span style="font-weight: bold;">RELATÓRIO VENDA DE ITENS - #{empty garcom?'TODOS':garcom}</span> <br/>
+                                        <span style="font-weight: bold;">#{relatorioItemVendidoBean.filtroItemVendido.cancelado ? 'RELATÓRIO ITENS CANCELADOS' :'RELATÓRIO VENDA DE ITENS'} - #{empty garcom?'TODOS':garcom}</span> <br/>
                                         <span style="font-size: 8pt;padding: 20px;">
                                             Período: #{relatorioItemVendidoBean.filtroItemVendido.dataInicial} à #{relatorioItemVendidoBean.filtroItemVendido.dataFinal}    
                                         </span>
@@ -151,57 +159,92 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
-                            <table class="table table-striped"  style="font-size: 8pt">
-                                <thead>
-                                    <tr style="background: #f1f1f1;">
-                                        <th>Referência</th>
-                                        <th style="text-align: right;">Descrição</th>
-                                        <th style="text-align: right;">Quantidade</th>
-                                        <th style="text-align: right;">Valor</th>
-                                        <th style="text-align: right;">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody jsf:id="linhas" style="font-size: 8pt">
-                                    <ui:repeat value="#{relatorioItemVendidoBean.itemVendidos}" var="itemVendido">
+                            <h:panelGroup id="tabela">
+                                <!--Tabela Itens Vendidos-->
+                                <table jsf:rendered="#{!relatorioItemVendidoBean.filtroItemVendido.cancelado}" class="table table-striped"  style="font-size: 8pt">
+                                    <thead>
+                                        <tr style="background: #f1f1f1;">
+                                            <th>Referência</th>
+                                            <th style="text-align: left;">Descrição</th>
+                                            <th style="text-align: right;">Quantidade</th>
+                                            <th style="text-align: right;">Valor</th>
+                                            <th style="text-align: right;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size: 8pt">
+                                        <ui:repeat value="#{relatorioItemVendidoBean.itemVendidos}" var="itemVendido">
+                                            <tr>
+                                                <td>#{itemVendido.REFERENCIA}</td>
+                                                <td>#{itemVendido.DESCRICAO}</td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{itemVendido.QUANTIDADE}">
+                                                        <f:convertNumber />
+                                                    </h:outputText>                                                  
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{itemVendido.VALOR}">
+                                                        <f:convertNumber pattern="###,##0.00"/>
+                                                    </h:outputText>
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{itemVendido.TOTAL}">
+                                                        <f:convertNumber pattern="###,##0.00"/>
+                                                    </h:outputText>
+                                                </td>
+                                            </tr>
+                                        </ui:repeat>  
+                                    </tbody>
+                                    <tfoot style="font-weight: bold;">
                                         <tr>
-                                            <td>#{itemVendido.REFERENCIA}</td>
-                                            <td>#{itemVendido.DESCRICAO}</td>
-                                            <td style="text-align: right;">
-                                                <h:outputText value="#{itemVendido.QUANTIDADE}">
-                                                    <f:convertNumber />
-                                                </h:outputText>                                                  
+                                            <td style="text-align: right;" colspan="2">
+                                                Totais:
                                             </td>
-                                            <td style="text-align: right;">
-                                                <h:outputText value="#{itemVendido.VALOR}">
+                                            <td  style="text-align: right;">
+                                                <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
                                                     <f:convertNumber pattern="###,##0.00"/>
                                                 </h:outputText>
                                             </td>
-                                            <td style="text-align: right;">
-                                                <h:outputText value="#{itemVendido.TOTAL}">
+                                            <td  style="text-align: right;" colspan="2">
+                                                <h:outputText value="#{relatorioItemVendidoBean.total}">
                                                     <f:convertNumber pattern="###,##0.00"/>
                                                 </h:outputText>
                                             </td>
                                         </tr>
-                                    </ui:repeat>  
-                                </tbody>
-                                <tfoot jsf:id="rodapeVendas" style="font-weight: bold;">
-                                    <tr>
-                                        <td style="text-align: right;" colspan="2">
-                                            Totais:
-                                        </td>
-                                        <td  style="text-align: right;">
-                                            <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
-                                                <f:convertNumber pattern="###,##0.00"/>
-                                            </h:outputText>
-                                        </td>
-                                        <td  style="text-align: right;" colspan="2">
-                                            <h:outputText value="#{relatorioItemVendidoBean.total}">
-                                                <f:convertNumber pattern="###,##0.00"/>
-                                            </h:outputText>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                    </tfoot>
+                                </table>
+                                <!--Tabela Itens Cancelados-->
+                                <table class="table table-striped table-hover" jsf:rendered="#{relatorioItemVendidoBean.filtroItemVendido.cancelado}"
+                                       style="font-size: 8pt;">
+                                    <thead>
+                                        <tr>
+                                            <th>Pedido</th>
+                                            <th>Item</th>
+                                            <th>Cancelamentos</th>
+                                            <th>Motivo</th>
+                                            <th>Situação</th>
+                                            <th>Responsavel</th>
+                                            <th>Observação</th>
+                                            <th>Garçom</th>
+                                            <th>Destino</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ui:repeat value="#{relatorioItemVendidoBean.itemCanceladoGarcons}" var="item">
+                                            <tr>
+                                                <td>#{item.PEDIDO}</td>
+                                                <td>#{item.ITEM}</td>
+                                                <td>#{item.CANCELAMENTO}</td>
+                                                <td>#{item.MOTIVO}</td>
+                                                <td>#{item.PRODUZIDO eq '1' ? 'Foi produzido' :'Não foi produzido'}</td>
+                                                <td>#{item.RESPONSAVEL}</td>
+                                                <td>#{item.OBSERVACAO}</td>
+                                                <td>#{item.GARCOM}</td>
+                                                <td>#{item.DESTINO}</td>
+                                            </tr>                                
+                                        </ui:repeat>  
+                                    </tbody>
+                                </table>
+                            </h:panelGroup>
                         </div>
                     </div>
                 </div>

@@ -37,6 +37,7 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append(",UPPER(OBSERVACAO_MOTIVO) as OBSERVACAO")
                     .append(",cast(foi_produzido as varchar(1)) as produzido")
                     .append(",UPPER(RESPONSAVEL_CANCELAMENTO) as RESPONSAVEL")
+                    .append(",OBSERVACAO_DESTINO as DESTINO")
                     .append(" from")
                     .append(" espelho_comanda")
                     .append(" left outer join")
@@ -48,7 +49,7 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append(" AND '").append(filtroItemCancelado.getDataFinal()).append(" 23:59:59'")
                     .append(" AND STATUS_ITEM ='").append("C").append("'")
                     .append(" group by")
-                    .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO");
+                    .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemCanceladoGarcom.class));
             return setResultTransformer.list();

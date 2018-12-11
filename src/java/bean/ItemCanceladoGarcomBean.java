@@ -39,7 +39,12 @@ public class ItemCanceladoGarcomBean implements Serializable {
     }
 
     public void atualizarObservacaoDestino(){
-        this.itemCanceladoGarcomService.atualizarObservacaoDestino(this.itemCanceladoGarcom.getNUMERO(), this.itemCanceladoGarcom.getOBSERVACAO().toUpperCase());
+        this.itemCanceladoGarcomService.atualizarObservacaoDestino(this.itemCanceladoGarcom.getNUMERO(), this.itemCanceladoGarcom.getDESTINO().toUpperCase());
     }
+    
+    public void selecionarItemCancelado(ItemCanceladoGarcom itemCanceladoGarcom) {
+        this.itemCanceladoGarcom =itemCanceladoGarcom;
+    }
+    
     
 }

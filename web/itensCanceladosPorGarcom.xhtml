@@ -83,7 +83,7 @@
                                         <td>
                                             <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button">
                                                 Destinos
-                                                <f:ajax event="click" render="frmDestino" execute="@this" listener="#{ItemCanceladoGarcomBean.setItemCanceladoGarcom(item)}"/>
+                                                <f:ajax event="click" render="frmDestino" execute="@this" listener="#{ItemCanceladoGarcomBean.selecionarItemCancelado(item)}"/>
                                             </button>
                                         </td>
                                     </tr>                                
@@ -107,7 +107,7 @@
                     </div>
                     <h:form id="frmDestino">
                         <div class="modal-body">
-                            <h:inputTextarea class="form-control" value="#{ItemCanceladoGarcomBean.itemCanceladoGarcom.OBSERVACAO}"
+                            <h:inputTextarea class="form-control" value="#{ItemCanceladoGarcomBean.itemCanceladoGarcom.DESTINO}"
                                              style="text-transform: uppercase;"/>
                         </div>
                         <div class="modal-footer">

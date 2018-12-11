@@ -18,10 +18,11 @@ public class FiltroItemVendido {
     private String garcom;
     private String produto;
     private Lapt51 grupo;
+    private boolean cancelado;
 
     @Override
     public String toString() {
-        return "FiltroItemVendido{" + "dataInicial=" + dataInicial + ", dataFinal=" + dataFinal + ", garcom=" + garcom + ", produto=" + produto + ", grupo=" + grupo + '}';
+        return "FiltroItemVendido{" + "dataInicial=" + dataInicial + ", dataFinal=" + dataFinal + ", garcom=" + garcom + ", produto=" + produto + ", grupo=" + grupo + ", cancelado=" + cancelado + '}';
     }
-    
+
 }

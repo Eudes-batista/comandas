@@ -13,6 +13,7 @@ import modelo.Lapt51;
 import modelo.Produto;
 import modelo.Vendedor;
 import modelo.dto.FiltroItemVendido;
+import modelo.dto.ItemCanceladoGarcom;
 import modelo.dto.ItemVendido;
 import relatorio.Relatorio;
 import servico.EmpresaService;
@@ -43,13 +44,14 @@ public class RelatorioItemVendidoBean implements Serializable {
     private List<Lapt51> grupos;
     private List<Produto> produtos;
     private List<ItemVendido> itemVendidos;
+    private List<ItemCanceladoGarcom> itemCanceladoGarcons;
 
     private FiltroItemVendido filtroItemVendido;
     private Empresa empresa;
     private Produto produto;
-    
+
     private String pesquisa;
-    
+
     private double total;
     private double quantidade;
 
@@ -62,13 +64,11 @@ public class RelatorioItemVendidoBean implements Serializable {
         this.empresa = relatorio.setEmpresaService(empresaService).getEmpresa();
         listarVendedores();
         listarGrupos();
-        listarProdutos();
     }
-    
+
     public void selecionarProduto(Produto produto) {
         filtroItemVendido.setProduto(produto.getReferencia());
     }
-    
 
     private void listarVendedores() {
         this.vendedores = this.vendedorService.listarVendedor();
@@ -78,25 +78,26 @@ public class RelatorioItemVendidoBean implements Serializable {
         this.grupos = this.grupoServico.listarGrupos();
     }
 
-    private void listarProdutos() {
+    public void listarProdutos() {
         this.produtos = this.produtoService.lsitarProdutos();
     }
-    
+
     public void pesquisarProduto() {
         this.produtos = this.produtoService.listarPorReferenciaDescricaoCodigoBarra(pesquisa.toUpperCase());
     }
-    
-    
+
     public void filtrar() {
-        this.itemVendidos= this.relatorioItemVendidoService.listaItensVendidos(filtroItemVendido);
-        somarTotais();
+        if (!filtroItemVendido.isCancelado()) {
+            this.itemVendidos = this.relatorioItemVendidoService.listaItensVendidos(filtroItemVendido);
+            somarTotais();
+        }else{
+            this.itemCanceladoGarcons = this.relatorioItemVendidoService.listarItensCanceladosPorGarcom(filtroItemVendido);
+        }
     }
-    
-    private void somarTotais(){
-        
+
+    private void somarTotais() {
         this.total = this.itemVendidos.stream().mapToDouble(ItemVendido::getTOTAL).sum();
         this.quantidade = this.itemVendidos.stream().mapToDouble(ItemVendido::getQUANTIDADE).sum();
-        
-        
+
     }
 }
