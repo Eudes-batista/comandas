@@ -39,6 +39,7 @@ import servico.ItemAcompanhamentoService;
 import servico.MesaService;
 import servico.PdfService;
 import servico.UsuarioService;
+import servico.VendedorService;
 import util.GerenciaArquivo;
 import util.GerenciaEntrada;
 import util.Log;
@@ -62,6 +63,8 @@ public class MesasBean implements Serializable {
     private EspelhoComandaService espelhoComandaService;
     @ManagedProperty(value = "#{itemAcompanhamentoService}")
     private ItemAcompanhamentoService itemAcompanhamentoService;
+    @ManagedProperty(value = "#{vendedorService}")
+    private VendedorService vendedorService;
 
     private List<Mesa> mesas = new ArrayList<>();
     private List<Lancamento> lancamentos = new ArrayList<>();
@@ -77,6 +80,8 @@ public class MesasBean implements Serializable {
     private String mesaDestino;
     private String mesaOrigem;
     private String pesquisa;
+    private String vendedor;
+    private String tipoImpressao;
     private Status condicao;
 
     public void init() {
@@ -150,22 +155,18 @@ public class MesasBean implements Serializable {
     public void imprimirPrecontaDetalhada() {
         imprimir("detalhada");
     }
-    
+
     public void imprimirParcial() {
         imprimir("parcial");
     }
-    
-    
+
     public void imprimir(String tipo) {
         if (!"RSVA".equals(this.mesa.getMESA()) && Pattern.compile("\\d").matcher(this.mesa.getMESA()).find()) {
-            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())),tipo);
+            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), tipo);
             listarMesas();
-            this.mesa = null;
-            this.mesa = new Mesa();
             PrimeFaces.current().executeScript("PF('dialogoPrecontaRapida').hide();");
         }
     }
-    
 
     private void prepararPreconta(String mesa1, String tipo) {
         this.mesa = inserirPessoasNaMesa(mesa1);
@@ -199,13 +200,14 @@ public class MesasBean implements Serializable {
                 Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
             }
         }
-        if(!"parcial".equals(tipo))
+        if (!"parcial".equals(tipo)) {
             fecharMesa(this.mesa);
+        }
     }
 
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));
-        Mesa mesaAxu =this.mesas.get(indexMesa);
+        Mesa mesaAxu = this.mesas.get(indexMesa);
         mesaAxu.setPAGANTES(this.mesa.getPAGANTES());
         return mesaAxu;
     }
@@ -363,6 +365,35 @@ public class MesasBean implements Serializable {
 
     private void atualizarDataPreContaPessoasPagantes(String data, Mesa mesa) {
         this.espelhoComandaService.atualizarDataPreconta(data, mesa);
+    }
+
+    public void validaVendedor() {
+        String permissao = vendedorService.validarVendedor(gerarSenha());
+        if (!"null".equals(permissao)) {
+            this.vendedor = permissao;
+            realizarAcaoDeImpressao(this.tipoImpressao);
+            limparStatusJanela();
+        } else {
+            Messages.addGlobalWarn("Senha incorreta.");
+        }
+    }
+
+    private void limparStatusJanela() {
+        PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
+        PrimeFaces.current().executeScript("PF('dialogoPreconta').hide();");
+        this.senha = "";
+        this.mesa = null;
+        this.mesa = new Mesa();
+    }
+
+    public void realizarAcaoDeImpressao(String tipo) {
+        if (tipo.equals("parcial")) {
+            imprimirParcial();
+            espelhoComandaService.atualizarResponsavelParcial(this.mesa.getPEDIDO(), this.vendedor);
+            return;
+        }
+        imprimirPreconta();
+        espelhoComandaService.atualizarResponsavelPreconta(this.mesa.getPEDIDO(), this.vendedor);
     }
 
 }

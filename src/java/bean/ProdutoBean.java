@@ -189,7 +189,7 @@ public class ProdutoBean implements Serializable {
     public void totalizarItensAdicionado() {
         this.valorTotalItens = this.lancamentosAdicionados.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
-    
+
     public void adicionarItemQuantidadeMetade(Produto p) {
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setComanda(this.comanda);
@@ -208,7 +208,6 @@ public class ProdutoBean implements Serializable {
         this.produto = p;
         preparaItem(lancamentoItem);
     }
-    
 
     public void adicionarItem(Produto p) {
         Lancamento lancamentoItem = new Lancamento();
@@ -228,13 +227,12 @@ public class ProdutoBean implements Serializable {
         this.produto = p;
         preparaItem(lancamentoItem);
     }
-    
+
     public void preparaItem(Lancamento lancamento) {
         this.lancamentosAdicionados.add(lancamento);
         this.quantidadeItensAdicionados += 1;
         salvar(lancamento);
     }
-    
 
     public void adicionarItem() {
         this.produto = this.produtoServico.buscarProduto(produto.getReferencia());
@@ -479,7 +477,7 @@ public class ProdutoBean implements Serializable {
 
     public void validaVendedor() {
         String permissao = vendedorService.validarVendedor(gerarSenha());
-        if (!permissao.equals("null")) {
+        if (!"null".equals(permissao)) {
             vendedor = permissao;
             PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
             this.senha = "";

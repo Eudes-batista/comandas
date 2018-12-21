@@ -29,6 +29,9 @@ a,a:hover{
 .btn-modal{    
     background:rgba(250, 250, 250,.3);
 }
+.btn-purple:hover{
+    background: #a442f4;
+}
 .mesa,.btn,.btn-modal,.mesa-vermelha,.mesa-modal,input{
     border: none;    
 }

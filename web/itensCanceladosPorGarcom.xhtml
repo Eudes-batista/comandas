@@ -54,7 +54,7 @@
             </div>
             <div class="row">
                 <h:form id="frmItemCancelado">                
-                    <div class="table-responsive" style="overflow: auto;height: 608px;">
+                    <div class="table-responsive" style="overflow: auto;min-height: 380px;max-height: 608px;">
                         <table class="table table-striped table-hover">
                             <thead>
                                 <tr>
@@ -81,7 +81,8 @@
                                         <td>#{item.OBSERVACAO}</td>
                                         <td>#{item.GARCOM}</td>
                                         <td>
-                                            <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button">
+                                            <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button" jsf:disabled="#{item.PRODUZIDO ne '1'}"
+                                                     title="Informar uma Observação">
                                                 Destinos
                                                 <f:ajax event="click" render="frmDestino" execute="@this" listener="#{ItemCanceladoGarcomBean.selecionarItemCancelado(item)}"/>
                                             </button>

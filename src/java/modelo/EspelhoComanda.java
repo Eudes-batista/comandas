@@ -103,6 +103,12 @@ public class EspelhoComanda implements Serializable {
     
     @Column(name = "valor_item", precision = 18, scale = 3, nullable = false)
     private Double valorItem;
+    
+    @Column(name="responsavel_preconta",length = 50,nullable = true)
+    private String responsavelPreconta;
+    
+    @Column(name="responsavel_parcial",length = 50,nullable = true)
+    private String responsavelParcial;
 
     @Override
     public int hashCode() {

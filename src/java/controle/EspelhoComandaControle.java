@@ -140,4 +140,14 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         executarSql("update espelho_comanda set status_item='C' where pedido in(" + pedidos + ")");
     }
 
+    @Override
+    public void atualizarResponsavelPreconta(String pedido,String responsavel) {
+        executarSql("update espelho_comanda set responsavel_preconta='"+responsavel+"' where pedido in("+pedido+")");
+    }
+
+    @Override
+    public void atualizarResponsavelParcial(String pedido,String responsavel) {
+        executarSql("update espelho_comanda set responsavel_parcial='"+responsavel+"' where pedido in("+pedido+")");
+    }
+
 }
