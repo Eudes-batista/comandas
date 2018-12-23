@@ -22,7 +22,7 @@ public class AbrirComandaBean implements Serializable {
 
     @ManagedProperty(value = "#{controle}")
     private ComandaService controleService;
-
+    
     public String verificar() {
         if (!mesa.equals("RSVA")) {
             mesa = String.format("%04d", Integer.parseInt(mesa));

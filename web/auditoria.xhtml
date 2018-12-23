@@ -71,7 +71,7 @@
                     </h:outputLabel> 
                 </p:column>
                 <p:column headerText="T.+10%" >
-                    <h:outputLabel value="#{comanda.TOTAL * 1.1}">
+                    <h:outputLabel value="#{comanda.DESCRICAO eq '' ? comanda.TOTAL * 1.1 : comanda.TOTAL}">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>

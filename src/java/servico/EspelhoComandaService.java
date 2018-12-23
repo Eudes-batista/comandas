@@ -19,4 +19,5 @@ public interface EspelhoComandaService {
     public void atualizarStatusItens(String pedidos);
     public void atualizarResponsavelPreconta(String pedido,String responsavel);
     public void atualizarResponsavelParcial(String pedido,String responsavel);
+    public void atualizarResponsavelTransferencia(String pedido,String responsavel);
 }

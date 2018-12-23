@@ -126,7 +126,7 @@ public class PdfComanda implements PdfService {
             PdfPCell produto = controlePdf.criarCelula(lancamento.getDescricao(), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
             PdfPCell valor = controlePdf.criarCelula(df.format(lancamento.getPreco()), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
             PdfPCell subTotal = controlePdf.criarCelula(df.format(lancamento.getPrecoTotal()), ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
-            PdfPCell div = controlePdf.criarCelula("..........................................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
+            PdfPCell div = controlePdf.criarCelula("...............................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
 
             qtd.setPaddingTop(-7f);
             produto.setPaddingTop(-5f);
@@ -155,7 +155,7 @@ public class PdfComanda implements PdfService {
         tabelaComissao.setWidthPercentage(100f);
         tabelaComissao.setWidths(new float[]{25, 125, 25, 30});
 
-        PdfPCell div = controlePdf.criarCelula("____________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
+        PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
         CalcularPreconta calcularPreconta = new CalcularPreconta(lancamentos);

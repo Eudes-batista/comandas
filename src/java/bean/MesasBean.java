@@ -77,6 +77,7 @@ public class MesasBean implements Serializable {
 
     private String usuario;
     private String senha;
+    private String usuarioTransferencia;
     private String mesaDestino;
     private String mesaOrigem;
     private String pesquisa;
@@ -200,7 +201,7 @@ public class MesasBean implements Serializable {
                 Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
             }
         }
-        if (!"parcial".equals(tipo)) {
+        if ("normal".equals(tipo)) {
             fecharMesa(this.mesa);
         }
     }
@@ -270,6 +271,11 @@ public class MesasBean implements Serializable {
             case COMANDA:
                 redirecionarParaLancamentoItens();
                 break;
+
+            case TRANSFERENCIA:
+                this.usuarioTransferencia=this.usuario;
+                PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
+                break;
             default:
                 break;
         }
@@ -277,6 +283,8 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaComandas() {
         try {
+            mesa.setSTATUS("");
+            controle.atualizarStatusPreconta(mesa, "REABRIR");
             Faces.redirect("comandas.jsf?id=" + this.mesa.getMESA());
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
@@ -313,7 +321,9 @@ public class MesasBean implements Serializable {
         }
         Mesa mesaDes = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
         if ((mesaDes != null && !mesaDes.getSTATUS().equals("V")) || mesaDes == null) {
-            controle.transferirMesa(this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem))), mesaDestino.toUpperCase());
+            Mesa m = this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem)));
+            controle.transferirMesa(m, mesaDestino.toUpperCase());
+            espelhoComandaService.atualizarResponsavelTransferencia(m.getPEDIDO(), usuarioTransferencia.toUpperCase());
             listarMesas();
             PrimeFaces.current().ajax().update("frm:tabelaMesa");
             PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
@@ -337,7 +347,7 @@ public class MesasBean implements Serializable {
     }
 
     public void fecharMesa(Mesa mesa) {
-        controle.atualizarStatusPreconta(mesa);
+        controle.atualizarStatusPreconta(mesa, "FECHAR");
         atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
         listarMesas();
     }
@@ -394,6 +404,11 @@ public class MesasBean implements Serializable {
         }
         imprimirPreconta();
         espelhoComandaService.atualizarResponsavelPreconta(this.mesa.getPEDIDO(), this.vendedor);
+    }
+
+    public void setMesaOrigem(String mesaOrigem) {
+        this.mesaOrigem = mesaOrigem;
+        this.condicao = Status.TRANSFERENCIA;
     }
 
 }

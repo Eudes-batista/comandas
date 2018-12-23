@@ -37,8 +37,8 @@
                 </h:outputText>
             </p:column>
             <p:column headerText="Valor da %">
-                <h:outputText value="R$ #{vendaDetalheRejeicao.VALOR_PORCENTAGEM}">
-                    <f:convertNumber pattern="###,##0.00" />
+                <h:outputText value="#{vendaDetalheRejeicao.VALOR_PORCENTAGEM}">
+                    <f:convertNumber type="currency" />
                 </h:outputText>
             </p:column>
             <p:column headerText="Data">

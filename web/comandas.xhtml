@@ -123,8 +123,9 @@
                                                 </p:commandLink>
                                             </li>
                                             <li>
-                                                <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" oncomplete="PF('dialogoTransferencia').show();"
+                                                <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" 
                                                                update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.COMANDA)}"
+                                                               oncomplete="PF('dialogoUsuario').show();"
                                                                partialSubmit="true" disabled="#{item.STATUS eq 'P'}"/>
                                             </li>
                                             <li>

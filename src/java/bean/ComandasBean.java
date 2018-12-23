@@ -70,6 +70,7 @@ public class ComandasBean implements Serializable {
     private String comandaOrigem;
     private String pesquisa;
     private String tipoTransferencia;
+    private String tipo;
 
     public void init() {
         listarComandas();
@@ -169,6 +170,7 @@ public class ComandasBean implements Serializable {
 
     public void receberCodigoExcluxao(Comandas comanda) {
         this.comanda = comanda;
+        this.tipo = "EXCLUIR";
     }
 
     private String gerarSenha() {
@@ -201,11 +203,15 @@ public class ComandasBean implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
         if (validarGerente()) {
+            if ("EXCLUIR".equals(this.tipo)) {
+                controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
+                comandas.remove(this.comanda);
+                totalMesa();
+            }else if("TRANFERENCIA".equals(this.tipo)){
+                PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
+            }
             setUsuario("");
             setSenha("");
-            controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
-            comandas.remove(this.comanda);
-            totalMesa();
             fechar = true;
         } else {
             fechar = false;
@@ -256,7 +262,7 @@ public class ComandasBean implements Serializable {
         if ("mesa".equals(this.tipoTransferencia)) {
             controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
         } else {
-            controleService.transferirComandaParaComanda(comandaOrigem,mesaDestino);
+            controleService.transferirComandaParaComanda(comandaOrigem, mesaDestino);
         }
     }
 
@@ -270,5 +276,10 @@ public class ComandasBean implements Serializable {
 
     public String getTipoTransferencia() {
         return this.tipoTransferencia == null ? "mesa" : this.tipoTransferencia;
+    }
+
+    public void setComandaOrigem(String comanda) {
+        this.comandaOrigem = comanda;
+        this.tipo = "TRANFERENCIA";
     }
 }

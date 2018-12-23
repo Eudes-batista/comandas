@@ -77,9 +77,10 @@ public class MesaControle implements MesaService, Serializable {
     }
 
     @Override
-    public void atualizarStatusPreconta(Mesa mesa) {
-        executarSql("update sosa98 set testatus='P' where tecdmesa='" + mesa.getMESA()+ "'");
-        executarSql("update espelho_comanda set status='P' where pedido in("+mesa.getPEDIDO()+")");
+    public void atualizarStatusPreconta(Mesa mesa,String tipo) {
+        String status = tipo.equals("FECHAR") ? "P" :"";
+        executarSql("update sosa98 set testatus='"+status+"' where tecdmesa='" + mesa.getMESA()+ "'");
+        executarSql("update espelho_comanda set status='"+status+"' where pedido in("+mesa.getPEDIDO()+")");
     }
 
     private void executarSql(String sql) {

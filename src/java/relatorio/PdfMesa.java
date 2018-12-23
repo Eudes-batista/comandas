@@ -146,7 +146,7 @@ public class PdfMesa implements PdfService {
                 PdfPCell produto = controlePdf.criarCelula(descricao, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
                 PdfPCell valor = controlePdf.criarCelula(vUnitario, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
                 PdfPCell subTotal = controlePdf.criarCelula(df.format(vTotal), ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
-                PdfPCell div = controlePdf.criarCelula("..........................................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
+                PdfPCell div = controlePdf.criarCelula("..............................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
 
                 qtd.setPaddingTop(-7f);
                 produto.setPaddingTop(-5f);
@@ -213,7 +213,7 @@ public class PdfMesa implements PdfService {
         PdfPCell vendedor = controlePdf.criarCelula(garcons + vendedores.stream().collect(Collectors.joining(",")), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
 
-        PdfPCell div = controlePdf.criarCelula("____________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
+        PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
 

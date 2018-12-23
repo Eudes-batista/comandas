@@ -9,14 +9,14 @@ import javax.faces.context.FacesContext;
 
 public class ControlePdf {
 
-    public static final Font FONT_G = new Font(Font.getFamily("tahoma"), 25, Font.BOLD);
-    public static final Font FONT_M = new Font(Font.getFamily("tahoma"), 15, Font.NORMAL);
-    public static final Font FONT_MB = new Font(Font.getFamily("tahoma"), 15, Font.BOLD);
-    public static final Font FONT_P = new Font(Font.getFamily("tahoma"), 10, Font.NORMAL);
-    public static final Font FONT_PB = new Font(Font.getFamily("tahoma"), 10, Font.BOLD);
-    public static final Font FONT_PP = new Font(Font.getFamily("tahoma"), 8, Font.NORMAL);
-    public static final Font FONT_PPB = new Font(Font.getFamily("tahoma"), 8, Font.BOLD);
-    public static final Font FONT_PPP = new Font(Font.getFamily("tahoma"), 6, Font.NORMAL);
+    public static final Font FONT_G = new Font(Font.getFamily("arial"), 26, Font.BOLD);
+    public static final Font FONT_M = new Font(Font.getFamily("arial"), 16, Font.NORMAL);
+    public static final Font FONT_MB = new Font(Font.getFamily("arial"), 16, Font.BOLD);
+    public static final Font FONT_P = new Font(Font.getFamily("arial"), 11, Font.NORMAL);
+    public static final Font FONT_PB = new Font(Font.getFamily("arial"), 11, Font.BOLD);
+    public static final Font FONT_PP = new Font(Font.getFamily("arial"), 9, Font.NORMAL);
+    public static final Font FONT_PPB = new Font(Font.getFamily("arial"), 9, Font.BOLD);
+    public static final Font FONT_PPP = new Font(Font.getFamily("arial"), 9, Font.NORMAL);
 
     private static Document documento = null;
 

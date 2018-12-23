@@ -13,6 +13,7 @@ public class Comandas implements Serializable {
     private String PEDIDO;
     private String PAGANTES;
     private String VENDEDOR;
+    private String DESCRICAO;
 
     public Comandas() {
     }
@@ -35,14 +36,16 @@ public class Comandas implements Serializable {
         this.VENDEDOR = vendedor;
     }
 
-    public Comandas(String comanda, Double Total, String status, String mesa, String pessoasMesa, String pedido,String vendedor) {
-        this.COMANDA = comanda;
-        this.MESA = mesa;
-        this.TOTAL = Total;
-        this.STATUS = status;
-        this.PESSOAS = pessoasMesa;
-        this.PEDIDO = pedido;
-        this.VENDEDOR = vendedor;
+    public Comandas(String COMANDA, String MESA, Double TOTAL, String STATUS, String PESSOAS, String PEDIDO, String PAGANTES, String VENDEDOR, String DESCRICAO) {
+        this.COMANDA = COMANDA;
+        this.MESA = MESA;
+        this.TOTAL = TOTAL;
+        this.STATUS = STATUS;
+        this.PESSOAS = PESSOAS;
+        this.PEDIDO = PEDIDO;
+        this.PAGANTES = PAGANTES;
+        this.VENDEDOR = VENDEDOR;
+        this.DESCRICAO = DESCRICAO;
     }
 
     public String getCOMANDA() {
@@ -130,4 +133,18 @@ public class Comandas implements Serializable {
     public void setPAGANTES(String PAGANTES) {
         this.PAGANTES = PAGANTES;
     }
+
+    public String getDESCRICAO() {
+        return DESCRICAO;
+    }
+
+    public void setDESCRICAO(String DESCRICAO) {
+        this.DESCRICAO = DESCRICAO;
+    }
+
+    @Override
+    public String toString() {
+        return "Comandas{" + "COMANDA=" + COMANDA + ", MESA=" + MESA + ", TOTAL=" + TOTAL + ", STATUS=" + STATUS + ", PESSOAS=" + PESSOAS + ", PEDIDO=" + PEDIDO + ", PAGANTES=" + PAGANTES + ", VENDEDOR=" + VENDEDOR + ", DESCRICAO=" + DESCRICAO + '}';
+    }
+
 }
