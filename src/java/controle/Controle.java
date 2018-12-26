@@ -339,8 +339,8 @@ public class Controle implements ComandaService, Serializable {
             pedido = String.valueOf(comandas.get(0).getPEDIDO());
         }
         String numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
-        executarSql("update          sosa98 set tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-        executarSql("update espelho_comanda set   pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+        executarSql("update          sosa98 set testatus='"+comandas.get(0).getSTATUS()+"' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+        executarSql("update espelho_comanda set status='"+comandas.get(0).getSTATUS()+"' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
         List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
         for (int i = 0; i < itensTransferencia.size(); i++) {
             transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));

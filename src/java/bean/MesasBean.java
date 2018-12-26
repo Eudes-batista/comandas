@@ -84,6 +84,8 @@ public class MesasBean implements Serializable {
     private String vendedor;
     private String tipoImpressao;
     private Status condicao;
+    private boolean reabrimesa;
+    private boolean mostrareabrimesa;
 
     public void init() {
         GerenciaEntrada gerenciaEntrada = new GerenciaEntrada();
@@ -216,6 +218,7 @@ public class MesasBean implements Serializable {
     public void receberCodigoAutorizacao(Mesa mesa, Status condicao) {
         this.mesa = mesa;
         this.condicao = condicao;
+        this.mostrareabrimesa = false;
     }
 
     private String gerarSenha() {
@@ -273,7 +276,7 @@ public class MesasBean implements Serializable {
                 break;
 
             case TRANSFERENCIA:
-                this.usuarioTransferencia=this.usuario;
+                this.usuarioTransferencia = this.usuario;
                 PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
                 break;
             default:
@@ -283,8 +286,10 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaComandas() {
         try {
-            mesa.setSTATUS("");
-            controle.atualizarStatusPreconta(mesa, "REABRIR");
+            if (this.reabrimesa) {
+                mesa.setSTATUS("");
+                controle.atualizarStatusPreconta(mesa, "REABRIR");
+            }
             Faces.redirect("comandas.jsf?id=" + this.mesa.getMESA());
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
@@ -359,6 +364,7 @@ public class MesasBean implements Serializable {
     public void abrirMesa(Mesa mesa) {
         if (getSTATUS(mesa)) {
             receberCodigoAutorizacao(mesa, Status.MESA);
+            this.mostrareabrimesa = true;
             PrimeFaces.current().executeScript("PF('dialogoUsuario').show();");
         }
     }
@@ -368,6 +374,7 @@ public class MesasBean implements Serializable {
         if (getSTATUS(mesa)) {
             receberCodigoAutorizacao(mesa, Status.COMANDA);
             this.comanda = comanda;
+            this.mostrareabrimesa = false;
             PrimeFaces.current().executeScript("PF('dialogoUsuario').show();");
         }
         mesa = null;

@@ -23,6 +23,7 @@
     </h:head>
     <h:body>
         <h:form id="frmAuditoria">
+            <p:growl id="msgAuditoria"/>
             <div class="container-fluid">
                 <div class="row barra">
                     <div class="col-md-9">
@@ -75,13 +76,22 @@
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
+                <p:column width="120">
+                    <p:commandButton value="SEM 10%" actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
+                                     process="@this" update="frmAuditoria:msgAuditoria"
+                                     disabled="#{comanda.STATUS ne 'P'}"
+                                     onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
+                        <p:confirm header="Confirmação" message="Tem certeza que deseja retirar os 10%?" icon="fa fa-exclamation-triangle" />
+                    </p:commandButton>
+                </p:column>
                 <p:column width="60">
                     <p:commandButton id="altera" value="PG" disabled="#{comanda.STATUS ne 'P'}" 
-                                     oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"/>
+                                     oncomplete="focusValor('frmAuditoria:tabela:#{index}:valor_input');"
+                                     process="@this" update="msg"/>
                     <p:overlayPanel id="panel"  for="altera" hideEffect="fade" style="background: linear-gradient(135deg,#094b66 30%,#8ad8f2 95%); width: 300px;" 
                                     appendToBody="true" modal="true" >
                         <div class="ui-fluid">
-                            <p:messages id="msg" closable="true" showIcon="false"/>
+                            <p:messages id="msg" closable="true" showIcon="false" autoUpdate="false"/>
                             <p:panelGrid id="panelPg" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                 <p:outputLabel value="Total" style="color:#fff;"/>
                                 <h:outputLabel value="#{comanda.TOTAL * 1.1}" style="color:#fff; font-size: 15pt;">
@@ -92,15 +102,24 @@
                             </p:panelGrid>
                             <p:commandLink id="confirmaValor" value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
-                                           process="frmAuditoria:tabela:#{index}:valor @this" update="msg"
-                                           partialSubmit="true"/>
-                            <p:defaultCommand target="confirmaValor" />
+                                           process="frmAuditoria:tabela:#{index}:valor @this" update="msg frmAuditoria:msgAuditoria"
+                                           partialSubmit="true"
+                                           onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
                         </div> 
                     </p:overlayPanel>
                 </p:column>
             </p:dataTable>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+            </p:confirmDialog>
+            <p:commandButton id="default" style="display: none;" />
+            <p:defaultCommand target="default" />
         </h:form>
-
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
+                  responsive="true">
+            <h3>Realizando a operação aguarde...</h3>
+        </p:dialog>
     </h:body>
 </html>
 

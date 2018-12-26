@@ -15,10 +15,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="resources/imagens/mesa.png" type="image/x-icon" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="icon" sizes="192x192" href="resources/imagens/mesa.png"/>
         <h:outputStylesheet library="css" name="bootstrap.css" />
         <h:outputStylesheet library="css" name="mesas.css" />
+        <h:outputScript library="primefaces" name="jquery.js"/>
+        <script src="resources/js/bootstrap.min.js"></script>
         <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
             document.addEventListener("keydown", function (evt) {
                 if (evt.keyCode === 113) {
                     document.getElementById("frmBarra:novaMesa").click();
@@ -47,27 +51,27 @@
                         <a class="texto-cabecalho" onclick="PF('atalhos').show();">Mesas</a>
                     </li>
                     <li class="text-right" style="width: 25%;">
-                        <p:inputText styleClass="form-control" placeholder="Pesquisar" value="#{mesasBean.pesquisa}" 
+                        <h:inputText styleClass="form-control" value="#{mesasBean.pesquisa}" 
                                      style="margin-top: 5px; " >
                             <f:passThroughAttribute name="autofocus" value="true" />
+                            <f:passThroughAttribute name="placeholder" value="Pesquisar" />
                             <f:ajax event="keyup" render="frm:tabelaMesa" execute="@this" listener="#{mesasBean.pesquisarMesas()}" />
-                        </p:inputText>
+                        </h:inputText>
                     </li>
                     <li class="text-center" style="width: 10%;">
-                        <p:link id="novaMesa" class="btn-modal btn btn-success btn-block fa fa-plus" outcome="index.jsf" ></p:link>
-                        <p:tooltip for="novaMesa" value="Nova Mesa ( F2 )" showEffect="fade" hideEffect="fade"
-                                   position="bottom"/>
+                        <a id="novaMesa" class="btn-modal btn btn-success btn-block fa fa-plus" data-toggle="tooltip" data-placement="bottom" title="Nova Mesa ( F2 )" href="index.jsf" ></a>
                     </li>
                     <li class="text-center" style="width: 10%;">
-                        <p:link id="atualizar" class="btn-modal btn btn-info btn-block fa fa-refresh" outcome="mesas.jsf" ></p:link>
-                        <p:tooltip for="atualizar" value="Atualizar ( F5 )" showEffect="fade" hideEffect="fade"
-                                   position="bottom"/>
+                        <a id="atualizar" class="btn-modal btn btn-info btn-block fa fa-refresh" href="mesas.jsf" 
+                           data-toggle="tooltip" data-placement="bottom" title="Atualizar ( F5 )"></a>
                     </li>
                     <li class="text-center" style="width: 10%;">
                         <p:commandLink id="pesquisar" class="btn-modal btn btn-info btn-block fa fa-search" oncomplete="PF('dialogoPesquisaComanda').show();" update="frmPesquisaComanda:tabelaComanda" process="@this"
-                                       actionListener="#{mesasBean.listarComandas()}"/>
-                        <p:tooltip for="pesquisar" value="Pesquisar Comandas( F4 )" showEffect="fade" hideEffect="fade"
-                                   position="bottom"/>
+                                       actionListener="#{mesasBean.listarComandas()}"
+                                       title="Pesquisar Comandas( F4 )">
+                            <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                            <f:passThroughAttribute name="data-placement" value="bottom"/>
+                        </p:commandLink>
                     </li>
                 </ul>
             </h:form>      
@@ -82,40 +86,46 @@
                             <ui:repeat value="#{mesasBean.mesas}" var="item">  
                                 <li>
                                     <div jsf:id="listMesa" class="#{item.STATUS eq 'V' ? 'mesa-vermelha': item.STATUS eq 'L' ? 'mesa-laranja' : 'mesa'}">
-                                        <p:link id="mesaLink" outcome="comandas.jsf" disabled="#{mesasBean.getSTATUS(item)}">
+                                        <h:link id="mesaLink" outcome="comandas.jsf" disabled="#{mesasBean.getSTATUS(item)}">
                                             <f:param name="id" value="#{item.MESA}"/>                                        
                                             <h1 class="texto-mesa" style="padding-top: 20px;">M</h1>
                                             <h2 class="texto-mesa">#{item.MESA}</h2>
-                                        </p:link> 
-                                        <p:tooltip for="mesaLink" value="#{item.STATUS eq 'V' ? 'Mesa em preconta' : 'Em consumo'}"/>
-                                        <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirMesa(item)}"/>
+                                            <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                            <f:passThroughAttribute name="data-placement" value="top"/>
+                                            <f:passThroughAttribute name="title" value="#{item.STATUS eq 'V' ? 'Mesa em preconta' : 'Em consumo'}"/>
+                                        </h:link> 
+                                        <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirMesa(item)}" render="dlUsuario"/>
                                     </div>
                                     <div style="margin-top: 5px;margin-left: -5px;">
                                         <ul>
                                             <li>
                                                 <p:commandLink id="imprimir" class="btn btn-warning btn-block" disabled="#{item.MESA eq 'RSVA' }" 
                                                                update="frmPreconta:mesaPreconta" process="@this"
-                                                               oncomplete="PF('dialogoPreconta').show();" actionListener="#{mesasBean.setMesa(item)}">
+                                                               oncomplete="PF('dialogoPreconta').show();" actionListener="#{mesasBean.setMesa(item)}"
+                                                               title="Imprimir Preconta">
                                                     <i class="fa fa-print"></i>
+                                                    <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                                    <f:passThroughAttribute name="data-placement" value="bottom"/>
                                                 </p:commandLink>
-                                                <p:tooltip for="imprimir" value="Imprimir Preconta" showEffect="fade" hideEffect="fade" position="bottom"/>
                                             </li>
                                             <li>
-                                                <p:commandLink id="enviar" class="btn btn-info btn-block" update="dlTransferencia" process="@this"
+                                                <p:commandLink id="enviar" class="btn btn-info btn-block" update="dlTransferencia frmDialogo:panelUsuario" process="@this"
                                                                oncomplete="PF('dialogoUsuario').show();" actionListener="#{mesasBean.setMesaOrigem(item.MESA)}"
-                                                               disabled="#{item.MESA eq 'RSVA' or mesasBean.getSTATUS(item)}">
+                                                               disabled="#{item.MESA eq 'RSVA' or mesasBean.getSTATUS(item)}"
+                                                               title="Transferir Mesa">
                                                     <i class="fa fa-exchange"></i>
+                                                    <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                                    <f:passThroughAttribute name="data-placement" value="bottom"/>
                                                 </p:commandLink>
-                                                <p:tooltip for="enviar" value="Transferir Mesa" showEffect="fade" hideEffect="fade"
-                                                           position="bottom"/>
                                             </li>
                                             <li>
                                                 <p:commandLink id="apagar" class="btn btn-danger btn-block" actionListener="#{mesasBean.receberCodigoAutorizacao(item,null)}" process="@this"
-                                                               oncomplete="PF('dialogoUsuario').show();" disabled="#{item.MESA eq 'RSVA' }">
+                                                               oncomplete="PF('dialogoUsuario').show();" update="frmDialogo:panelUsuario" disabled="#{item.MESA eq 'RSVA' }"
+                                                               title="Apagar Mesa">
                                                     <i class="fa fa-trash"></i>
+                                                    <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                                    <f:passThroughAttribute name="data-placement" value="bottom"/>
                                                 </p:commandLink>
-                                                <p:tooltip for="apagar" value="Apagar Mesa" showEffect="fade" hideEffect="fade"
-                                                           position="bottom"/>
                                             </li>
                                         </ul>
                                     </div> 
@@ -134,6 +144,10 @@
                 <p:messages id="msgUsuario" closable="true" showIcon="false"/>
                 <div class="ui-fluid">                    
                     <p:panelGrid id="panelUsuario" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:panelGrid rendered="#{mesasBean.mostrareabrimesa}" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-1">
+                            <p:outputLabel for="reabrir" value="Reabrir" style="color: #fff;"/>
+                            <p:selectBooleanCheckbox id="reabrir" value="#{mesasBean.reabrimesa}"/>
+                        </p:panelGrid>
                         <p:focus for="usuario"/>
                         <p:outputLabel for="usuario" value="Usuario" class="modal-text"/>
                         <p:inputText id="usuario"  label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" value="#{mesasBean.usuario}" style="text-transform: uppercase;"/>
@@ -143,9 +157,9 @@
                 </div>
                 <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
                     <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" value="Confirma" update="frmDialogo:panelUsuario frmDialogo:msgUsuario frm:tabelaMesa" process="frmDialogo:panelUsuario @this" actionListener="#{mesasBean.validarUsuario()}" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"/>
-                    <p:commandLink id="nao" class="btn-modal btn btn-danger btn-block" update="@this" process="@this" oncomplete="PF('dialogoUsuario').hide();">
+                    <a id="nao" class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoUsuario').hide();">
                         Cancelar
-                    </p:commandLink>
+                    </a>
                 </p:panelGrid>
                 <p:defaultCommand target="sim" />
             </h:form>
@@ -165,14 +179,16 @@
                 <p:messages id="msgTrans" closable="true" showIcon="false"/>
                 <div class="ui-fluid">
                     <p:panelGrid id="panelTrans" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-                        <p:inputText id="mesaDestino" placeholder="mesa de destino" value="#{mesasBean.mesaDestino}" required="true" requiredMessage="mesa de destino Obrigatorio."/>
+                        <h:inputText id="mesaDestino" class="form-control"  value="#{mesasBean.mesaDestino}" required="true" requiredMessage="mesa de destino Obrigatorio.">
+                            <f:passThroughAttribute name="placeholder" value="Mesa de destino" />
+                        </h:inputText>
                         <p:commandLink id="transferir" class="btn-modal btn btn-success btn-block" actionListener="#{mesasBean.transferiMesa()}"
                                        process="panelTrans @this" update="msgTrans">
                             Confirma
                         </p:commandLink>
-                        <p:commandLink class="btn-modal btn btn-danger btn-block" update="@this" process="@this" oncomplete="PF('dialogoTransferencia').hide();">
+                        <a class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoTransferencia').hide();">
                             Cancelar
-                        </p:commandLink>
+                        </a>
                     </p:panelGrid>
                 </div>
                 <p:defaultCommand target="transferir" />
@@ -200,7 +216,7 @@
                         <ui:repeat  value="#{mesasBean.comandas}" var="item">   
                             <li>    
                                 <div jsf:id="listaComanda" class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
-                                    <p:link id="linkComanda" outcome="produtos.jsf" disabled="#{item.STATUS eq 'P'}">
+                                    <h:link id="linkComanda" outcome="produtos.jsf" disabled="#{item.STATUS eq 'P'}">
                                         <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
                                         <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.TOTAL}">
                                             <f:convertNumber for="label" pattern="#,##0.00"/>
@@ -210,8 +226,10 @@
                                         <f:param name="pessoas" value="#{item.PESSOAS}"/>
                                         <f:param name="pedido" value="#{item.PEDIDO}"/>
                                         <h5 style="color: #fff; font-weight: bold;">M #{item.MESA}</h5>
-                                    </p:link>
-                                    <p:tooltip for="linkComanda" value="#{item.STATUS eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="#{item.STATUS eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
+                                    </h:link>
                                     <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirComanda(item)}"/>
                                 </div>   
                             </li>
@@ -229,18 +247,20 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <p:inputText id="mesaPrecontaRapida" value="#{mesasBean.mesa.MESA}" placeholder="Mesa" required="true" requiredMessage="Mesa obrigatorio."
-                                         onkeyup="this.value = ('0000' + this.value).slice(-4);">
+                            <h:inputText id="mesaPrecontaRapida" value="#{mesasBean.mesa.MESA}" required="true" requiredMessage="Mesa obrigatorio."
+                                         onkeyup="this.value = ('0000' + this.value).slice(-4);" class="form-control">
                                 <f:passThroughAttribute name="type" value="tel" />
-                            </p:inputText>
+                                <f:passThroughAttribute name="placeholder" value="Mesa" />
+                            </h:inputText>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <p:inputText id="pessoasPagantesRapida" value="#{mesasBean.mesa.PAGANTES}" placeholder="Pessoas Pagantes">
+                            <h:inputText id="pessoasPagantesRapida" value="#{mesasBean.mesa.PAGANTES}" class="form-control">
                                 <f:passThroughAttribute name="type" value="tel" />
                                 <f:passThroughAttribute name="autofocus" value="true" />
-                            </p:inputText>
+                                <f:passThroughAttribute name="placeholder" value="Pessoas Pagantes" />
+                            </h:inputText>
                         </div>
                     </div>
                 </div>
@@ -257,17 +277,16 @@
                 <div class="container-fluid">
                     <div class="row divider">
                         <div class="col-md-12 text-center">
-                            <p:inputText id="mesaPreconta" value="#{mesasBean.mesa.MESA}" placeholder="Mesa" disabled="true">
-                                <f:passThroughAttribute name="type" value="tel" />
-                            </p:inputText>
+                            <h:inputText class="form-control" id="mesaPreconta" value="#{mesasBean.mesa.MESA}" disabled="true"/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <p:inputText id="pessoasPagantes" value="#{mesasBean.mesa.PAGANTES}" placeholder="Pessoas Pagantes">
+                            <h:inputText class="form-control" id="pessoasPagantes" value="#{mesasBean.mesa.PAGANTES}">
                                 <f:passThroughAttribute name="type" value="tel" />
                                 <f:passThroughAttribute name="autofocus" value="true" />
-                            </p:inputText>
+                                <f:passThroughAttribute name="placeholder" value="Pessoas Pagantes" />
+                            </h:inputText>
                         </div>
                     </div>
                     <div class="row">
@@ -303,14 +322,13 @@
                                            update="msgVendedor frm:tabelaMesa" process="confirmaSenha frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this" actionListener="#{mesasBean.validaVendedor()}">
                                 OK
                             </p:commandLink>
-                            <p:commandLink class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoVendedor').hide();" value="Voltar" style="color: #fff;"/>
+                            <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoVendedor').hide();" style="color: #fff;">Voltar</a>
                             <p:defaultCommand target="ok" />
                         </div>
                     </div>
                 </div>
             </h:form>
         </p:dialog>
-
         <!--FORMULARIO DA AJUDA-->
         <p:sidebar baseZIndex="10000" fullScreen="true" widgetVar="atalhos" style="background-color: rgba(50,130,150,.7) !important;">
             <h3 class="texto-mesa" style="margin-top: 80px;cursor: pointer;" onclick="PF('atalhos').hide();">Atalhos da Mesa</h3>

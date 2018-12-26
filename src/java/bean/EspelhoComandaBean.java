@@ -35,6 +35,9 @@ public class EspelhoComandaBean implements Serializable {
     }
 
     public void atualizarPorcemtagemEvalorPorcentagemItens(Comandas comandas) {
+        if(this.valor ==0){
+            this.valor = comandas.getTOTAL();
+        }
         if (this.valor < comandas.getTOTAL()) {
             Messages.addGlobalWarn("Valor menor que o da venda.");
             return;
@@ -46,6 +49,7 @@ public class EspelhoComandaBean implements Serializable {
         espelhoComandaService.atualizarPorcentagem(comandas.getPEDIDO(), this.valor);
         PrimeFaces.current().ajax().update("frmAuditoria:tabela");
         this.valor = 0;
+        Messages.addGlobalInfo("Operação realizada com sucesso!!");
     }
 
     public void salvar() {

@@ -532,7 +532,9 @@ public class ProdutoBean implements Serializable {
         EspelhoComanda espelhoComanda = this.espelhoComandaBean.espelhoComanda;
         this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(lancamento.getNumero())));
         this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
-        double qtd = lancamento.getQuantidade() - quantidade;
+        double qtd = quantidade;
+        if(quantidade != lancamento.getQuantidade())
+            qtd= lancamento.getQuantidade() - quantidade;
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(qtd);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
         this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario);
