@@ -286,10 +286,7 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaComandas() {
         try {
-            if (this.reabrimesa) {
-                mesa.setSTATUS("");
-                controle.atualizarStatusPreconta(mesa, "REABRIR");
-            }
+            abrirMesa();
             Faces.redirect("comandas.jsf?id=" + this.mesa.getMESA());
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
@@ -416,6 +413,14 @@ public class MesasBean implements Serializable {
     public void setMesaOrigem(String mesaOrigem) {
         this.mesaOrigem = mesaOrigem;
         this.condicao = Status.TRANSFERENCIA;
+    }
+
+    public void abrirMesa() {
+        this.mesa = this.mesas.get(this.mesas.indexOf(this.mesa));
+        if (this.reabrimesa) {
+            mesa.setSTATUS("");
+            controle.atualizarStatusPreconta(mesa, "REABRIR");
+        }
     }
 
 }

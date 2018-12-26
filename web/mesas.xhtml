@@ -36,6 +36,11 @@
                     PF('dialogoPrecontaRapida').show();
                     return;
                 }
+                if (evt.keyCode === 121) {
+                    PF('dialogoReabrir').show();
+                    document.getElementById("frmReabrir:mesaReabrir").focus();
+                    return;
+                }
             });
             function atualizar() {
                 document.getElementById("frmBarra:atualizar").click();
@@ -323,6 +328,36 @@
                                 OK
                             </p:commandLink>
                             <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoVendedor').hide();" style="color: #fff;">Voltar</a>
+                            <p:defaultCommand target="ok" />
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+        <!--MODAL DE REABRI MESA-->
+        <p:dialog header="Reabri Mesa" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlReabrir" widgetVar="dialogoReabrir" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" visible="false">
+            <h:form id="frmReabrir">
+                <p:messages id="msgReabrir" closable="true" showIcon="false"/>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h:inputText id="mesaReabrir" class="form-control" value="#{mesasBean.mesa.MESA}" required="true" requiredMessage="Mesa é Obrigatoria."
+                                         onkeyup="this.value = ('0000' + this.value).slice(-4);">
+                                <f:passThroughAttribute name="type" value="tel"/>
+                                <f:passThroughAttribute name="placeholder" value="Mesa"/>
+                                <f:passThroughAttribute name="autofocus" value="true"/>
+                            </h:inputText>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
+                                           update="msgReabrir frm:tabelaMesa" process="mesaReabrir @this" actionListener="#{mesasBean.abrirMesa()}">
+                                OK
+                            </p:commandLink>
+                            <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoReabrir').hide();" style="color: #fff;">Voltar</a>
                             <p:defaultCommand target="ok" />
                         </div>
                     </div>
