@@ -51,6 +51,7 @@
     </h:head>
     <h:body>
         <h:form id="frm">
+            <p:growl id="erroGeral"/>
             <!--BARRA DE NOTIFICAÇÃO SUPERIOR-->
             <p:notificationBar id="notificacao" position="top" effect="slide" styleClass="top" widgetVar="bar" style="background: #5cb85c;">
                 <h:outputText value="#{produtoBean.quantidade}X - #{produtoBean.produto.descricao} " style="font-size:20px;color:#fff;" />
@@ -436,6 +437,13 @@
                    showEffect="fade" hideEffect="fade" visible="false">
             <span style="color:#fff;">#{produtoBean.mensagem}</span>
             <p:link id="voltar" class="btn-modal btn btn-warning btn-block" outcome="mesas.jsf" style="margin-top: 30px; color: #fff;">OK</p:link>
+        </p:dialog>
+        <!--MODAL DE Erro-->
+        <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlErro" widgetVar="dialogoErro" dynamic="true" 
+                   closable="false" closeOnEscape="true"
+                   showEffect="fade" hideEffect="fade" visible="false">
+            <span style="color:#fff;">#{produtoBean.mensagem}</span>
+            <a id="voltar" class="btn-modal btn btn-warning btn-block" style="margin-top: 30px; color: #fff;" onclick="PF('dialogoErro').hide();">Lançar Produto novamente</a>
         </p:dialog>
         <!--MODAL DE REGISTRO DE PRODUTO-->
         <p:dialog header="Adicionar Produto" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300"  id="dlProduto" widgetVar="dialogoProduto" dynamic="true" 

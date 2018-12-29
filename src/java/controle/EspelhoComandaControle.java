@@ -137,7 +137,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarStatusItens(String pedidos,String usuario) {
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='"+usuario+"' status_item='M' where pedido in(" + pedidos + ")");
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='"+usuario+"' ,status_item='M' where pedido in(" + pedidos + ")");
     }
 
     @Override

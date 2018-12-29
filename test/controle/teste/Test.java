@@ -1,18 +1,17 @@
 package controle.teste;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 public class Test {
   
     public static void main(String[] args) {
- 
-        Random random = new Random();
-        
-        int valor1 = random.ints(100, 255).findFirst().getAsInt();
-        int valor2 = random.ints(100, 255).findFirst().getAsInt();
-        int valor3 = random.ints(100, 255).findFirst().getAsInt();
-        String rgba ="rgba("+valor1+","+valor2+","+valor3+",0.6)";
-        System.out.println(rgba);
+        String pedido ="789454,789454,789454,789453";
+        Set<String> collect = Arrays.asList(pedido.split(",")).stream().collect(Collectors.toSet());
+        String pedidos = collect.stream().collect(Collectors.joining(","));
+        System.out.println("pedidos = " + pedidos);
     }
     
 }

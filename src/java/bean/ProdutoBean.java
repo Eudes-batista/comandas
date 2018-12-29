@@ -51,6 +51,7 @@ import servico.SubGrupoService;
 import servico.UsuarioService;
 import servico.VendedorService;
 import util.GerenciaArquivo;
+import util.Log;
 
 @ManagedBean(name = "produtoBean")
 @ViewScoped
@@ -114,6 +115,8 @@ public class ProdutoBean implements Serializable {
     private Lancamento lancamento;
     private GrupoAcompanhamento grupoAcompanhamento;
     private Comandas comandaTransferencia;
+    private Log log = new Log();
+    private int produtoSalvo;
 
     public void init() {
         if (this.mesa == null || this.comanda == null) {
@@ -187,6 +190,7 @@ public class ProdutoBean implements Serializable {
         });
         totalizarItensAdicionado();
         comandaTransferencia = new Comandas();
+        this.produtoSalvo =  lancamentosAdicionados.size();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -219,7 +223,7 @@ public class ProdutoBean implements Serializable {
         preparaItem(lancamentoItem);
     }
 
-    public void adicionarItem(Produto p) {
+    public void adicionarItem(Produto p) {        
         if (verificarSeComandaJaExiste()) {
             return;
         }
@@ -278,20 +282,30 @@ public class ProdutoBean implements Serializable {
     }
 
     public void salvar(Lancamento lancamento) {
-        Date data = new Date();
-        controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
-                lancamento.getComanda(), lancamento.getReferencia(),
-                lancamento.getQuantidade(), data,
-                lancamento.getVendedor(), lancamento.getObservacao(),
-                lancamento.getMesa(),
-                lancamento.getStatus(),
-                lancamento.getImprimir(),
-                lancamento.getPedido()
-        ));
-        salvarEspelho(lancamento, data);
+        try {
+            Date data = new Date();
+            controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
+                    lancamento.getComanda(), lancamento.getReferencia(),
+                    lancamento.getQuantidade(), data,
+                    lancamento.getVendedor(), lancamento.getObservacao(),
+                    lancamento.getMesa(),
+                    lancamento.getStatus(),
+                    lancamento.getImprimir(),
+                    lancamento.getPedido()
+            ));
+            salvarEspelho(lancamento, data);
+            log.salvarLancamento(lancamento, vendedor);
+            produtoSalvo++;
+        } catch (Exception ex) {
+            this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens\n e lançe novamente.";
+            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
+        }
     }
 
     private boolean verificarSeComandaJaExiste() {
+        if(vendedor == null || "".equals(vendedor)){
+            return true;
+        }
         String verificarComanda = controleService.verificarComandaNaMesa(comanda);
         if (!verificarComanda.equals(mesa) && !"0".equals(verificarComanda)) {
             mensagem = "Comanda já existe em outra mesa.";
@@ -343,6 +357,7 @@ public class ProdutoBean implements Serializable {
         lancamentosAdicionados.remove(lancamento);
         totalizarItensAdicionado();
         quantidadeItensAdicionados = lancamentosAdicionados.isEmpty() ? 0 : quantidadeItensAdicionados;
+        this.produtoSalvo--;
     }
 
     public void receberCodigo(Lancamento lancamento, String condicao) {
@@ -470,6 +485,11 @@ public class ProdutoBean implements Serializable {
     }
 
     public void imprimirTodos() {
+        if (produtoSalvo < lancamentosAdicionados.size()) {
+            mensagem = "Verifique se o produto foi realmente adicionado.";
+            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+            return;
+        }
         Map<String, List<Lancamento>> mapLanmentos = separarLancamentoPorGrupo();
         if (!mapLanmentos.isEmpty()) {
             mapLanmentos.forEach((subgrupo, lancamentos) -> imprimir(subgrupo, lancamentos, null));

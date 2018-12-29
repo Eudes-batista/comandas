@@ -146,7 +146,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void salvar(Sosa98 sosa98) {
+    public void salvar(Sosa98 sosa98) throws Exception{
         session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try {

@@ -15,7 +15,7 @@ public interface ComandaService {
     
     public int buscarQuantidadeProdutosComanda(String comanda,String mesa);
 
-    public void salvar(Sosa98 sosa98);
+    public void salvar(Sosa98 sosa98) throws Exception;
     
     public void alterar(Sosa98 sosa98);
 
