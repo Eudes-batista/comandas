@@ -24,7 +24,8 @@ public class LogBean implements Serializable{
     @PostConstruct
     public void init() {
         controleLog= new Log(mesaService);
-        log=controleLog.recuperarLog().toString();        
+        log=controleLog.recuperarLog().toString();  
+        System.out.println("Git funcionando");
     }
     
     
