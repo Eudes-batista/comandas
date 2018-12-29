@@ -38,7 +38,6 @@
                 }
                 if (evt.keyCode === 121) {
                     PF('dialogoReabrir').show();
-                    document.getElementById("frmReabrir:mesaReabrir").focus();
                     return;
                 }
             });
@@ -145,6 +144,7 @@
         <p:dialog header="Autorização" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 
                   closable="false" closeOnEscape="true"
                   showEffect="fade" hideEffect="fade">
+            <p:ajax event="close" process="@this" listener="#{mesasBean.novo()}"/>
             <h:form id="frmDialogo"> 
                 <p:messages id="msgUsuario" closable="true" showIcon="false"/>
                 <div class="ui-fluid">                    
@@ -236,7 +236,21 @@
                                         <f:passThroughAttribute name="title" value="#{item.STATUS eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
                                     </h:link>
                                     <f:ajax event="click" execute="@this" listener="#{mesasBean.abrirComanda(item)}"/>
-                                </div>   
+                                </div>
+                                <div style="margin-top: 5px;margin-left: -5px;">
+                                    <ul>
+                                        <li>
+                                            <p:commandLink id="imprimirComanda" class="btn btn-warning btn-block" disabled="#{item.MESA eq 'RSVA' }" 
+                                                           update="frmPreconta:mesaPreconta" process="@this" style="border: 0.2px solid #bbb;"
+                                                           oncomplete="PF('dialogoPreconta').show();" actionListener="#{mesasBean.selecionarComandaParaPreconta(item.MESA)}"
+                                                           title="Imprimir Preconta">
+                                                <i class="fa fa-print"></i>
+                                                <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                                <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                            </p:commandLink>
+                                        </li>
+                                    </ul>   
+                                </div>  
                             </li>
                         </ui:repeat>
                     </ul>
@@ -296,13 +310,13 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <p:commandLink id="precontaAtalho" class="btn-modal btn btn-success btn-block"  process="@this"
+                            <p:commandLink id="precontaAtalho" class="btn-modal btn btn-success btn-block"  process="frmPreconta:pessoasPagantes @this"
                                            oncomplete="PF('dialogoVendedor').show();" value="Normal" actionListener="#{mesasBean.setTipoImpressao('preconta')}"
                                            update="frmVendedor:confirmaSenha"/>                            
                             <p:commandLink id="precontaDetalhada" class="btn-modal btn btn-warning btn-block"  actionListener="#{mesasBean.imprimirPrecontaDetalhada()}" 
                                            process="frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this" oncomplete="PF('dialogoPreconta').hide();" update="frm:tabelaMesa" value="Detalhada"/>                            
                             <p:commandLink id="parcial" class="btn-modal btn btn-info btn-block" actionListener="#{mesasBean.setTipoImpressao('parcial')}"
-                                           process="@this" oncomplete="PF('dialogoVendedor').show();" value="Parcial" update="frmVendedor:confirmaSenha"/>                            
+                                           process="frmPreconta:pessoasPagantes @this" oncomplete="PF('dialogoVendedor').show();" value="Parcial" update="frmVendedor:confirmaSenha"/>                            
                         </div>
                     </div>
                 </div>
@@ -324,7 +338,7 @@
                     <div class="row" style="margin-top: 10px;">
                         <div class="col-md-12">
                             <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
-                                           update="msgVendedor frm:tabelaMesa" process="confirmaSenha frmPreconta:mesaPreconta frmPreconta:pessoasPagantes @this" actionListener="#{mesasBean.validaVendedor()}">
+                                           update="msgVendedor frm:tabelaMesa" process="confirmaSenha frmPreconta:mesaPreconta frmPreconta @this" actionListener="#{mesasBean.validaVendedor()}">
                                 OK
                             </p:commandLink>
                             <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoVendedor').hide();" style="color: #fff;">Voltar</a>
@@ -335,9 +349,9 @@
             </h:form>
         </p:dialog>
         <!--MODAL DE REABRI MESA-->
-        <p:dialog header="Reabri Mesa" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlReabrir" widgetVar="dialogoReabrir" dynamic="true" 
-                  closable="false" closeOnEscape="true"
-                  showEffect="fade" hideEffect="fade" visible="false">
+        <p:dialog header="Reabrir mesa" class="mesa-modal" resizable="false"  modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlReabrirMesa" widgetVar="dialogoReabrir" dynamic="true" 
+                  closable="true" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
             <h:form id="frmReabrir">
                 <p:messages id="msgReabrir" closable="true" showIcon="false"/>
                 <div class="container-fluid">
@@ -345,20 +359,20 @@
                         <div class="col-md-12">
                             <h:inputText id="mesaReabrir" class="form-control" value="#{mesasBean.mesa.MESA}" required="true" requiredMessage="Mesa é Obrigatoria."
                                          onkeyup="this.value = ('0000' + this.value).slice(-4);">
+                                <f:passThroughAttribute name="autofocus" value="true"/>
                                 <f:passThroughAttribute name="type" value="tel"/>
                                 <f:passThroughAttribute name="placeholder" value="Mesa"/>
-                                <f:passThroughAttribute name="autofocus" value="true"/>
                             </h:inputText>
                         </div>
                     </div>
                     <div class="row" style="margin-top: 10px;">
                         <div class="col-md-12">
-                            <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
+                            <p:commandLink id="okReabrirMesa" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
                                            update="msgReabrir frm:tabelaMesa" process="mesaReabrir @this" actionListener="#{mesasBean.abrirMesa()}">
                                 OK
                             </p:commandLink>
                             <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoReabrir').hide();" style="color: #fff;">Voltar</a>
-                            <p:defaultCommand target="ok" />
+                            <p:defaultCommand target="okReabrirMesa" />
                         </div>
                     </div>
                 </div>
@@ -368,14 +382,15 @@
         <p:sidebar baseZIndex="10000" fullScreen="true" widgetVar="atalhos" style="background-color: rgba(50,130,150,.7) !important;">
             <h3 class="texto-mesa" style="margin-top: 80px;cursor: pointer;" onclick="PF('atalhos').hide();">Atalhos da Mesa</h3>
             <hr/>
-            <ul style="display: block !important;color: #fff;">
+            <ul style="display: list-item !important;color: #fff;">
                 <li>
                     <h4>Mesa</h4>
-                    <ul style="display: block !important;color: #fff;">
-                        <li><h5>F2 -> Nova Mesa</h5></li>
-                        <li><h5>F5 -> Atualizar</h5></li>
-                        <li><h5>F4 -> Pesquisar Comandas</h5></li>
-                        <li><h5>F8 -> Imprimir Preconta</h5></li>
+                    <ul style="display: list-item !important;color: #fff;">
+                        <li><h5>F2  -> Nova Mesa</h5></li>
+                        <li><h5>F5  -> Atualizar</h5></li>
+                        <li><h5>F4  -> Pesquisar Comandas</h5></li>
+                        <li><h5>F8  -> Imprimir Preconta</h5></li>
+                        <li><h5>F10 -> Reabrir Mesa</h5></li>
                     </ul>
                 </li>
             </ul>

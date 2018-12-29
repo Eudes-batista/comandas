@@ -19,5 +19,6 @@
     <mapping class="modelo.GrupoAcompanhamento"/>
     <mapping class="modelo.ItemAcompanhamento"/>
     <mapping class="modelo.MotivoCancelamento"/>
+    <mapping class="modelo.AtalhoFastFood"/>
   </session-factory>
 </hibernate-configuration>

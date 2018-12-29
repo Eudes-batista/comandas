@@ -184,10 +184,15 @@ public class PdfComanda implements PdfService {
         PdfPCell total = controlePdf.criarCelula(df.format(totalCupom), ControlePdf.FONT_PB, 2, Element.ALIGN_CENTER);
         PdfPCell vendedor = controlePdf.criarCelula("Garçom " + lancamentos.get(0).getVendedor(), ControlePdf.FONT_PB, 4, Element.ALIGN_LEFT);
 
+        PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        PdfPCell pedido = controlePdf.criarCelula(this.lancamentos.get(0).getPedido(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        
         tabelaRodape.addCell(tituloTotal);
         tabelaRodape.addCell(total);
         tabelaRodape.addCell(div);
         tabelaRodape.addCell(vendedor);
+        tabelaRodape.addCell(tituloPedido);
+        tabelaRodape.addCell(pedido);
 
         documento.add(tabelaRodape);
     }

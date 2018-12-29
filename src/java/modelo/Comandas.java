@@ -14,6 +14,7 @@ public class Comandas implements Serializable {
     private String PAGANTES;
     private String VENDEDOR;
     private String DESCRICAO;
+    private Double PORCENTAGEM;
 
     public Comandas() {
     }
@@ -145,6 +146,14 @@ public class Comandas implements Serializable {
     @Override
     public String toString() {
         return "Comandas{" + "COMANDA=" + COMANDA + ", MESA=" + MESA + ", TOTAL=" + TOTAL + ", STATUS=" + STATUS + ", PESSOAS=" + PESSOAS + ", PEDIDO=" + PEDIDO + ", PAGANTES=" + PAGANTES + ", VENDEDOR=" + VENDEDOR + ", DESCRICAO=" + DESCRICAO + '}';
+    }
+
+    public Double getPORCENTAGEM() {
+        return PORCENTAGEM;
+    }
+
+    public void setPORCENTAGEM(Double PORCENTAGEM) {
+        this.PORCENTAGEM = PORCENTAGEM;
     }
 
 }

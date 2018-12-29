@@ -52,8 +52,8 @@ public class PdfPedido implements PdfService {
 
     @Override
     public File gerarPdf() throws FileNotFoundException, DocumentException {
-        String codigoPedido =lancamentos != null ? lancamentos.get(0).getPedido(): lancamento.getPedido();
-        File file = new File(controlePdf.buscarCaminho() + "pedido"+codigoPedido+".pdf");
+        String codigoPedido = lancamentos != null ? lancamentos.get(0).getPedido() : lancamento.getPedido();
+        File file = new File(controlePdf.buscarCaminho() + "pedido" + codigoPedido + ".pdf");
         PdfWriter.getInstance(documento, new FileOutputStream(file));
         documento.open();
         criarCabecalho();
@@ -190,18 +190,21 @@ public class PdfPedido implements PdfService {
     @Override
     public void criarRodape() throws DocumentException {
 
-        PdfPTable tabelaRodape = new PdfPTable(2);
+        PdfPTable tabelaRodape = new PdfPTable(4);
         tabelaRodape.setWidthPercentage(100f);
-        tabelaRodape.setWidths(new float[]{30, 100});
 
         PdfPCell tituloGarcom = controlePdf.criarCelula("Garçom", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
         PdfPCell garcom = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getVendedor() : lancamento.getVendedor(), ControlePdf.FONT_PPB, 1, Element.ALIGN_LEFT);
+        PdfPCell titulopedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
+        PdfPCell pedido = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getPedido() : lancamento.getPedido(), ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
         PdfPCell div = controlePdf.criarCelula(separador, ControlePdf.FONT_PPB, 2, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
 
         tabelaRodape.addCell(tituloGarcom);
         tabelaRodape.addCell(garcom);
+        tabelaRodape.addCell(titulopedido);
+        tabelaRodape.addCell(pedido);
         tabelaRodape.addCell(div);
 
         documento.add(tabelaRodape);

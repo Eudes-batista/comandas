@@ -216,6 +216,20 @@ public class Controle implements ComandaService, Serializable {
         }
         return Integer.parseInt(String.valueOf(object));
     }
+    
+    @Override
+    public String verificarComandaNaMesa(String comanda) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        Object object = null;
+        if (session != null) {
+            object = session.createSQLQuery("select first 1 TECDMESA from sosa98 where  TECOMAND='" + comanda + "' ").uniqueResult();
+            if (object == null) {
+                object = 0;
+            }
+            session.close();
+        }
+        return String.valueOf(object);
+    }
 
     @Override
     public boolean verificarStatusMesa(String comanda) {
@@ -330,17 +344,21 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos) {
+    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos,String usuarioTransferencia) {
         List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
-        String pedido;
+        String pedido,status,pessoas;
         if (comandas.isEmpty()) {
             pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
+            status="";
+            pessoas= comanda.getPESSOAS() == null ? "1":comanda.getPESSOAS();
         } else {
             pedido = String.valueOf(comandas.get(0).getPEDIDO());
+            status = comandas.get(0).getSTATUS();
+            pessoas=  comandas.get(0).getPESSOAS();
         }
         String numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
-        executarSql("update          sosa98 set testatus='"+comandas.get(0).getSTATUS()+"' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-        executarSql("update espelho_comanda set status='"+comandas.get(0).getSTATUS()+"' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+        executarSql("update          sosa98 set testatus='"+status+"' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='"+usuarioTransferencia+"',pessoas_mesa='"+pessoas+"',status='"+status+"' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
         List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
         for (int i = 0; i < itensTransferencia.size(); i++) {
             transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));

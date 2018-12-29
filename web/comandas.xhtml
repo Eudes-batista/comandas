@@ -126,7 +126,14 @@
                                                 <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" 
                                                                update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.COMANDA)}"
                                                                oncomplete="PF('dialogoUsuario').show();"
-                                                               partialSubmit="true" disabled="#{item.STATUS eq 'P'}"/>
+                                                               partialSubmit="true" disabled="#{item.STATUS eq 'P'}"
+                                                               rendered="#{comandasBean.codigoMesa ne 'RSVA'}"/>
+                                                
+                                                <p:commandLink class="btn-modal btn btn-success btn-block fa fa-exchange" 
+                                                               update="frmTransferencia:header" process="@this" actionListener="#{comandasBean.setComandaOrigem(item.COMANDA)}"
+                                                               oncomplete="PF('dialogoTransferencia').show();"
+                                                               partialSubmit="true" disabled="#{item.STATUS eq 'P'}"
+                                                               rendered="#{comandasBean.codigoMesa eq 'RSVA'}"/>
                                             </li>
                                             <li>
                                                 <p:commandLink class="btn-modal btn btn-danger btn-block fa fa-trash" actionListener="#{comandasBean.receberCodigoExcluxao(item)}" oncomplete="PF('dialogoUsuario').show();"
@@ -192,7 +199,7 @@
                                     <p:selectOneRadio id="selecaoTransferencia" columns="2" onchange="selecionarMesaComanda(this);"
                                                       widgetVar="radio" value="#{comandasBean.tipoTransferencia}">
                                         <f:selectItem itemLabel="Mesa" itemValue="mesa" />
-                                        <f:selectItem itemLabel="Comanda" itemValue="comanda"/>
+                                        <f:selectItem itemLabel="Comanda" itemValue="comanda" itemDisabled="#{comandasBean.codigoMesa eq 'RSVA'}"/>
                                     </p:selectOneRadio>       
                                 </div>
                             </div>

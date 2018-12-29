@@ -34,6 +34,8 @@ public interface ComandaService {
     public void excluirMesa(String mesa,String comanda);
     
     public int verificarComanda(String mesa,String comanda);
+    
+    public String verificarComandaNaMesa(String comanda);
 
     public void transferirComandaParaMesa(String mesa,Comandas comandas);
     
@@ -53,6 +55,6 @@ public interface ComandaService {
     
     public void transferirItens(String numero,String item);
     
-    public void transferenciaItensParaMesaComanda(Comandas comanda,List<Lancamento> lancamentos);
+    public void transferenciaItensParaMesaComanda(Comandas comanda,List<Lancamento> lancamentos,String usuarioTransferencia);
         
 }

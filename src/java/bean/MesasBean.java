@@ -92,7 +92,7 @@ public class MesasBean implements Serializable {
         boolean filtroEntrada = gerenciaEntrada.filtroEntrada();
         if (filtroEntrada) {
             logMesa = new Log(controle);
-            mesa = new Mesa();
+            novo();
             listarMesas();
         }
     }
@@ -306,7 +306,7 @@ public class MesasBean implements Serializable {
         logMesa.registrarExclusao(this.mesa.getMESA(), usuario);
         controle.excluirMesa(this.mesa.getMESA());
         mesas.remove(new Mesa(this.mesa.getMESA()));
-        espelhoComandaService.atualizarStatusItens(this.mesa.getPEDIDO());
+        espelhoComandaService.atualizarStatusItens(this.mesa.getPEDIDO(),usuario);
     }
 
     public void transferiMesa() {
@@ -374,7 +374,6 @@ public class MesasBean implements Serializable {
             this.mostrareabrimesa = false;
             PrimeFaces.current().executeScript("PF('dialogoUsuario').show();");
         }
-        mesa = null;
     }
 
     private void atualizarDataPreContaPessoasPagantes(String data, Mesa mesa) {
@@ -396,8 +395,7 @@ public class MesasBean implements Serializable {
         PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
         PrimeFaces.current().executeScript("PF('dialogoPreconta').hide();");
         this.senha = "";
-        this.mesa = null;
-        this.mesa = new Mesa();
+        novo();
     }
 
     public void realizarAcaoDeImpressao(String tipo) {
@@ -416,11 +414,28 @@ public class MesasBean implements Serializable {
     }
 
     public void abrirMesa() {
+        if (!this.mesas.contains(this.mesa)) {
+            Messages.addGlobalWarn("Não existe essa mesa aberta.");
+            return;
+        }
+        if (this.mesa.getPEDIDO() == null) {
+            this.reabrimesa = true;
+        }
         this.mesa = this.mesas.get(this.mesas.indexOf(this.mesa));
         if (this.reabrimesa) {
             mesa.setSTATUS("");
             controle.atualizarStatusPreconta(mesa, "REABRIR");
+            PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");            
         }
     }
 
+    public void novo() {
+        this.mesa = null;
+        this.mesa = new Mesa();
+    }
+    
+    public void selecionarComandaParaPreconta(String mesa){
+        Mesa mesaParaPreconta = inserirPessoasNaMesa(mesa);
+        this.mesa= mesaParaPreconta;
+    }
 }

@@ -45,6 +45,7 @@ import servico.ComandaService;
 import servico.GrupoAcompanhamentoService;
 import servico.GrupoServico;
 import servico.ItemAcompanhamentoService;
+import servico.PdfService;
 import servico.ProdutoService;
 import servico.SubGrupoService;
 import servico.UsuarioService;
@@ -105,6 +106,7 @@ public class ProdutoBean implements Serializable {
     private String mensagem;
     private String pedido;
     private String status;
+    private String usuarioTransferencia;
 
     private Lancamento lancamentoAcompanhamento = new Lancamento();
     private ControlePedido controlePedido;
@@ -114,6 +116,11 @@ public class ProdutoBean implements Serializable {
     private Comandas comandaTransferencia;
 
     public void init() {
+        if (this.mesa == null || this.comanda == null) {
+            mensagem = "Mesa ou comanda inexistente.";
+            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+            return;
+        }
         listarProdutos();
         controlePedido = new ControlePedido(controleService, comanda);
         pedido = pedido == null ? controlePedido.gerarNumero() : pedido;
@@ -191,6 +198,9 @@ public class ProdutoBean implements Serializable {
     }
 
     public void adicionarItemQuantidadeMetade(Produto p) {
+        if (verificarSeComandaJaExiste()) {
+            return;
+        }
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setComanda(this.comanda);
         lancamentoItem.setMesa(this.mesa);
@@ -210,6 +220,9 @@ public class ProdutoBean implements Serializable {
     }
 
     public void adicionarItem(Produto p) {
+        if (verificarSeComandaJaExiste()) {
+            return;
+        }
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setComanda(this.comanda);
         lancamentoItem.setMesa(this.mesa);
@@ -235,6 +248,9 @@ public class ProdutoBean implements Serializable {
     }
 
     public void adicionarItem() {
+        if (verificarSeComandaJaExiste()) {
+            return;
+        }
         this.produto = this.produtoServico.buscarProduto(produto.getReferencia());
         if (this.produto == null) {
             this.produto = new Produto();
@@ -273,6 +289,16 @@ public class ProdutoBean implements Serializable {
                 lancamento.getPedido()
         ));
         salvarEspelho(lancamento, data);
+    }
+
+    private boolean verificarSeComandaJaExiste() {
+        String verificarComanda = controleService.verificarComandaNaMesa(comanda);
+        if (!verificarComanda.equals(mesa) && !"0".equals(verificarComanda)) {
+            mensagem = "Comanda já existe em outra mesa.";
+            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+            return true;
+        }
+        return false;
     }
 
     private void alterar(Lancamento lancamento) {
@@ -377,6 +403,7 @@ public class ProdutoBean implements Serializable {
                 reipressao(this.lancamento);
                 break;
             case "T":
+                this.usuarioTransferencia = this.usuario;
                 PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
                 break;
         }
@@ -407,7 +434,10 @@ public class ProdutoBean implements Serializable {
                 StringBuilder cupom = new Relatorio().montarCupomPedido(lancamentos, lanc);
                 ControleRelatorio.imprimir(caminhoDaImpressora, cupom);
             } else {
-                new ControleImpressao(caminhoDaImpressora).imprime(new PdfPedido(lancamentos, lanc, itemAcompanhamentoService).gerarPdf());
+                ControleImpressao controleImpressao = new ControleImpressao(caminhoDaImpressora);
+                PdfService pdfPedido = new PdfPedido(lancamentos, lanc, itemAcompanhamentoService);
+                File gerarPdf = pdfPedido.gerarPdf();
+                controleImpressao.imprime(gerarPdf);
             }
             controleService.atualizarStatusImpressao(comanda);
             espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(comanda);
@@ -415,7 +445,7 @@ public class ProdutoBean implements Serializable {
         } catch (IOException ex) {
             mensagem = "Impressora desligada ou cambo desconectado.";
         } catch (DocumentException | PrinterException ex) {
-            mensagem = "Erro ao gerar cupom de pedido.";
+            mensagem = "Erro ao gerar cupom de pedido. " + ex.getMessage();
         }
     }
 
@@ -533,8 +563,9 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(lancamento.getNumero())));
         this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         double qtd = quantidade;
-        if(quantidade != lancamento.getQuantidade())
-            qtd= lancamento.getQuantidade() - quantidade;
+        if (quantidade != lancamento.getQuantidade()) {
+            qtd = lancamento.getQuantidade() - quantidade;
+        }
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(qtd);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
         this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario);
@@ -560,7 +591,7 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        controleService.transferenciaItensParaMesaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia);
+        controleService.transferenciaItensParaMesaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, usuarioTransferencia.toUpperCase());
         if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");

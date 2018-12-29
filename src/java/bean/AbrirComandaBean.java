@@ -24,7 +24,7 @@ public class AbrirComandaBean implements Serializable {
     private ComandaService controleService;
     
     public String verificar() {
-        if (!mesa.equals("RSVA")) {
+        if (!"RSVA".equals(mesa)) {
             mesa = String.format("%04d", Integer.parseInt(mesa));
         }
         comanda = String.format("%04d", Integer.parseInt(comanda));

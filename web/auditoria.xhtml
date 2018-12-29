@@ -52,33 +52,35 @@
             <p:dataTable id="tabela" value="#{auditoriaBean.comandas}" var="comanda" emptyMessage="Não há comandas."
                          tableStyleClass="tabela-auditoria" rowIndexVar="index" reflow="true" >
                 <p:column headerText="Mesa" priority="1" width="45" >
-                    #{comanda.MESA}
+                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.MESA}</span>
                 </p:column>
                 <p:column headerText="Comanda">
-                    #{comanda.COMANDA}
+                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.COMANDA}</span>
                 </p:column>
                 <p:column headerText="Pedido" >
-                    #{comanda.PEDIDO}
+                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.PEDIDO}</span>
                 </p:column>
                 <p:column headerText="Pessoas" >
-                    #{comanda.PESSOAS}
+                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.PESSOAS}</span>
                 </p:column>
                 <p:column headerText="Status" sortBy="#{comanda.STATUS}">
                     <span style="color: #{comanda.STATUS eq 'P' ? 'red' : '#000'}">#{comanda.STATUS eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
                 </p:column>
-                <p:column headerText="Total" >
-                    <h:outputLabel value="#{comanda.TOTAL}" class="total">
+                <p:column headerText="Total">
+                    <h:outputLabel value="#{comanda.TOTAL}" class="total" style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
                 <p:column headerText="T.+10%" >
-                    <h:outputLabel value="#{comanda.DESCRICAO eq '' ? comanda.TOTAL * 1.1 : comanda.TOTAL}">
+                    <h:outputLabel value="#{comanda.DESCRICAO eq '' ? comanda.TOTAL * 1.1 : comanda.TOTAL}"
+                                   style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
                 </p:column>
                 <p:column width="120">
                     <p:commandButton value="SEM 10%" actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
-                                     process="@this" update="frmAuditoria:msgAuditoria"
+                                     process="@this" update="frmAuditoria:msgAuditoria frmAuditoria:tabela"
+                                     action="#{auditoriaBean.listarComandas()}"
                                      disabled="#{comanda.STATUS ne 'P'}"
                                      onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                         <p:confirm header="Confirmação" message="Tem certeza que deseja retirar os 10%?" icon="fa fa-exclamation-triangle" />
@@ -102,7 +104,8 @@
                             </p:panelGrid>
                             <p:commandLink id="confirmaValor" value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
-                                           process="frmAuditoria:tabela:#{index}:valor @this" update="msg frmAuditoria:msgAuditoria"
+                                           process="frmAuditoria:tabela:#{index}:valor @this" update="msg frmAuditoria:msgAuditoria frmAuditoria:tabela"
+                                           action="#{auditoriaBean.listarComandas()}"
                                            partialSubmit="true"
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
                         </div> 

@@ -30,6 +30,7 @@ import relatorio.PdfComanda;
 import relatorio.Relatorio;
 import servico.ComandaService;
 import servico.EmpresaService;
+import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
 import servico.MesaService;
 import servico.UsuarioService;
@@ -53,6 +54,8 @@ public class ComandasBean implements Serializable {
     private EmpresaService empresaService;
     @ManagedProperty(value = "#{itemAcompanhamentoService}")
     private ItemAcompanhamentoService itemAcompanhamentoService;
+    @ManagedProperty(value = "#{espelhoComandaService}")
+    private EspelhoComandaService espelhoComandaService;
 
     private List<Comandas> comandas = new ArrayList<>();
     private List<Lancamento> lancamentos = new ArrayList<>();
@@ -145,6 +148,7 @@ public class ComandasBean implements Serializable {
                 lancamento.setPreco(Double.parseDouble(String.valueOf(l[6])));
                 lancamento.setPrecoTotal(Double.parseDouble(String.valueOf(l[7])));
                 lancamento.setVendedor(String.valueOf(l[8]));
+                lancamento.setPedido(String.valueOf(l[13]));
                 lancamentos.add(lancamento);
             });
             String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
@@ -206,6 +210,7 @@ public class ComandasBean implements Serializable {
             if ("EXCLUIR".equals(this.tipo)) {
                 controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
                 comandas.remove(this.comanda);
+                espelhoComandaService.atualizarStatusItens(this.comanda.getPEDIDO(), usuario);
                 totalMesa();
             }else if("TRANFERENCIA".equals(this.tipo)){
                 PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");

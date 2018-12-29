@@ -244,7 +244,10 @@ public class PdfDetalhado implements PdfService {
 
         PdfPCell vendedor = controlePdf.criarCelula(garcons + vendedores.stream().collect(Collectors.joining(",")), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
-
+        
+        PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        PdfPCell pedido = controlePdf.criarCelula(this.mesa.getPEDIDO(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        
         PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
@@ -258,6 +261,8 @@ public class PdfDetalhado implements PdfService {
         tabelaRodape.addCell(total);
         tabelaRodape.addCell(hora);
         tabelaRodape.addCell(vendedor);
+        tabelaRodape.addCell(tituloPedido);
+        tabelaRodape.addCell(pedido);
         tabelaRodape.addCell(div);
 
         documento.add(tabelaRodape);

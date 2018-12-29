@@ -18,10 +18,12 @@ import util.HibernateUtil;
 public class MesaControle implements MesaService, Serializable {
 
     private final GerenciaArquivo gerenciarArquivoService = new GerenciaArquivo();
-
+    private Session session=null;
+    
+    
     @Override
     public List<Mesa> listarMesas() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         List<Mesa> lista=null;
         if (session != null) {
             List<Object[]> list = (List<Object[]>) session.createSQLQuery("select tecdmesa,testatus,tepedido from sosa98 where tecdmesa is not null group by tecdmesa,testatus,tepedido order by tecdmesa,testatus desc").list();
@@ -33,7 +35,7 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public Object somarTotal(String mesa) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         Object lista = null;
         if (session != null) {
             lista = session.createSQLQuery("select sum(EEPLQTB1*TEQUANTI) from sosa98 inner join scea07 on(eerefere=terefere and eecodemp='" + gerenciarArquivoService.bucarInformacoes().getConfiguracao().getEmpresa() + "') where tecdmesa='" + mesa + "'").uniqueResult();
@@ -44,7 +46,7 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public List<Object[]> listarComandasPorMesa(String mesa) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         List<Object[]> lista = null;
         if (session != null) {
             lista = session.createSQLQuery("select TECOMAND,TEREFERE,PRDESCRI,TEQUANTI,EEPLQTB1,coalesce((TEQUANTI*EEPLQTB1),0),TEOBSERV from sosa98 inner join scea07 on(eerefere=terefere) inner join scea01 on(prrefere=eerefere) where TECDMESA='" + mesa + "' order by TECOMAND;").list();
@@ -66,7 +68,7 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public List<Mesa> listarMesas(String mesa) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         List<Mesa> lista = null;
         if (session != null) {
             List<Object[]> list = (List<Object[]>) session.createSQLQuery("select tecdmesa,testatus,tepedido from sosa98 where tecdmesa is not null and tecdmesa like '%" + mesa + "%' order by tecdmesa,testatus,tepedido desc").list();
@@ -84,7 +86,7 @@ public class MesaControle implements MesaService, Serializable {
     }
 
     private void executarSql(String sql) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         session.getTransaction().begin();
         session.createSQLQuery(sql).executeUpdate();
         session.getTransaction().commit();
@@ -94,7 +96,7 @@ public class MesaControle implements MesaService, Serializable {
 
     @Override
     public List<Object[]> listarLancamentos(String mesa) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        session = HibernateUtil.getSessionFactory().openSession();
         StringBuilder sb = new StringBuilder();
         sb.append("select ")
                 .append("Tenumero as numero,Tenumseq as item,")
@@ -130,5 +132,5 @@ public class MesaControle implements MesaService, Serializable {
         });
         return listaMesas;
     }
-
+    
 }

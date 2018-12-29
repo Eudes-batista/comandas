@@ -80,8 +80,9 @@ public class EspelhoComandaBean implements Serializable {
         return (valorPago / (valorCompra / 100d) - 100);
     }
 
-    public void atualizarStatusItemParaCancelado(String pedidos) {
-        espelhoComandaService.atualizarStatusItens(pedidos);
+    public void atualizarStatusItemParaCancelado(String pedidos,String usuario) {
+        espelhoComandaService.atualizarStatusItens(pedidos,usuario);
     }
+       
 
 }
