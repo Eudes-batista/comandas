@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class PdfDetalhado implements PdfService {
     private final Set<String> vendedores = new HashSet<>();
     private final DecimalFormat df = new DecimalFormat("##,##0.00");
     private ItemAcompanhamentoService itemAcompanhamentoService;
-            
+
     public PdfDetalhado() {
     }
 
@@ -175,18 +176,18 @@ public class PdfDetalhado implements PdfService {
                 tabelaItens.addCell(valor);
                 tabelaItens.addCell(subTotal);
 
-                List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(String.valueOf(c[7]),String.valueOf(c[8]));
+                List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(String.valueOf(c[7]), String.valueOf(c[8]));
                 for (ItemAcompanhamento acompanhamento : acompanhamentos) {
                     PdfPCell itemAcompanhamento = controlePdf.criarCelula(acompanhamento.getAcompanhamento(), ControlePdf.FONT_PPP, 4, Element.ALIGN_CENTER);
                     itemAcompanhamento.setPaddingTop(-5f);
                     tabelaItens.addCell(itemAcompanhamento);
                 }
-                
+
                 tabelaItens.addCell(horaItem);
                 tabelaItens.addCell(garcomItem);
-                
+
                 tabelaItens.addCell(div);
-                
+
                 totalComanda += valorTotal;
                 vendedores.add(String.valueOf(c[6]));
                 lancamentos.add(new Lancamento(descricao, valorTotal));
@@ -223,7 +224,7 @@ public class PdfDetalhado implements PdfService {
         }
     }
 
-    private List<ItemAcompanhamento> listarAcompanhamentos(String item,String pedido) {
+    private List<ItemAcompanhamento> listarAcompanhamentos(String item, String pedido) {
         return itemAcompanhamentoService.pesquisarItem(item, pedido);
     }
 
@@ -244,10 +245,11 @@ public class PdfDetalhado implements PdfService {
 
         PdfPCell vendedor = controlePdf.criarCelula(garcons + vendedores.stream().collect(Collectors.joining(",")), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
-        
+
         PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
-        PdfPCell pedido = controlePdf.criarCelula(this.mesa.getPEDIDO(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
-        
+        String pedidos = Arrays.asList(this.mesa.getPEDIDO().split(",")).stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","));
+        PdfPCell pedido = controlePdf.criarCelula(pedidos, ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+
         PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
