@@ -273,6 +273,7 @@ public class ProdutoBean implements Serializable {
                 itemAcompanhamento.setItem(Integer.parseInt(lancamentoAcompanhamento.getItem()));
                 itemAcompanhamento.setNumeroItem(String.valueOf(i + 1));
                 itemAcompanhamento.setPedido(pedido);
+                itemAcompanhamento.setStatus("N");
                 itemAcompanhamentoService.salvar(itemAcompanhamento);
             }
         }
@@ -593,6 +594,7 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
         this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
         this.espelhoComandaBean.alterar();
+        this.itemAcompanhamentoService.atualizarStatusAcompanhamento(lancamento, "C");
     }
 
     private void excluirProdutoJaImpressoSosa98() {

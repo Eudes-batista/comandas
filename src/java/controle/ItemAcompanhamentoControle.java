@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.ItemAcompanhamento;
+import modelo.Lancamento;
 import org.hibernate.Session;
 import servico.ItemAcompanhamentoService;
 import util.HibernateUtil;
@@ -78,6 +79,11 @@ public class ItemAcompanhamentoControle implements ItemAcompanhamentoService, Se
     @Override
     public void excluirTodos(String pedido) {
         executarSql("delete from item_acompanhamento where pedido='"+pedido+"'");
+    }
+
+    @Override
+    public void atualizarStatusAcompanhamento(Lancamento lancamento, String status) {
+        executarSql("update item_acompanhamento set status='"+status+"' where pedido='"+lancamento.getPedido()+"' item='"+lancamento.getItem()+"'");
     }
     
     private void executarSql(String sql) {

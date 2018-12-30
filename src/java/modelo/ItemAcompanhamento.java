@@ -32,6 +32,9 @@ public class ItemAcompanhamento implements Serializable{
         
     @Column(name="acompanhamento",length = 50,nullable = false)
     private String acompanhamento; 
+    
+    @Column(name="status",nullable = true,length = 1)    
+    private String status;
 
     public ItemAcompanhamento() {
     }

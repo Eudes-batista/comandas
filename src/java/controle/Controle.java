@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import modelo.Comandas;
 import modelo.Lancamento;
 import modelo.Sosa98;
+import modelo.dto.ItemAcompanhamentoTransferencia;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -146,7 +147,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void salvar(Sosa98 sosa98) throws Exception{
+    public void salvar(Sosa98 sosa98) throws Exception {
         session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try {
@@ -216,7 +217,7 @@ public class Controle implements ComandaService, Serializable {
         }
         return Integer.parseInt(String.valueOf(object));
     }
-    
+
     @Override
     public String verificarComandaNaMesa(String comanda) {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -261,7 +262,7 @@ public class Controle implements ComandaService, Serializable {
     public void transferirComandaParaComanda(Comandas comandaOrigem, String comandaDestino) {
         List<Comandas> comanda = pesquisarComandaPorCodigo(comandaDestino);
         String mesaDestino, pedido, sqlSoa98, sqlEspelhoComanda, status;
-        int somaQauntidadePessoasMesa;
+        int somaQuantidadePessoasMesa;
         if (comanda.isEmpty()) {
             sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
             sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
@@ -272,23 +273,17 @@ public class Controle implements ComandaService, Serializable {
         mesaDestino = String.valueOf(comanda.get(0).getMESA());
         pedido = String.valueOf(comanda.get(0).getPEDIDO());
         status = String.valueOf(comanda.get(0).getSTATUS());
-        somaQauntidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) + Integer.parseInt(comandaOrigem.getPESSOAS());
+        somaQuantidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) + Integer.parseInt(comandaOrigem.getPESSOAS());
+        List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(comandaOrigem.getCOMANDA());
+        for (int i = 0; i < itemAcompanhamentoTransferencias.size(); i++) {
+            ItemAcompanhamentoTransferencia item = itemAcompanhamentoTransferencias.get(i);
+            item.setITEM(i + 1);
+            atualizarSeguenciaItemComanda(item, pedido);
+        }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQauntidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
-        List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
-        for (int i = 0; i < itensTransferencia.size(); i++) {
-            transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));
-        }
-    }
-
-    @Override
-    public List<Object[]> pesquisarItensTransferencia(String pedidos) {
-        session = HibernateUtil.getSessionFactory().openSession();
-        List<Object[]> resultado = session.createSQLQuery("select TENUMERO from  sosa98 inner join espelho_comanda on(numero=tenumero) where pedido ='" + pedidos + "';").list();
-        session.close();
-        return resultado;
     }
 
     @Override
@@ -344,25 +339,100 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos,String usuarioTransferencia) {
+    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos, String usuarioTransferencia) {
         List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
-        String pedido,status,pessoas;
+        String pedido, status, pessoas, numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
         if (comandas.isEmpty()) {
             pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
-            status="";
-            pessoas= comanda.getPESSOAS() == null ? "1":comanda.getPESSOAS();
+            status = "";
+            pessoas = comanda.getPESSOAS() == null ? "1" : comanda.getPESSOAS();
+            for (Lancamento lancamento : lancamentos) {
+                ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+            }
         } else {
             pedido = String.valueOf(comandas.get(0).getPEDIDO());
             status = comandas.get(0).getSTATUS();
-            pessoas=  comandas.get(0).getPESSOAS();
+            pessoas = comandas.get(0).getPESSOAS();
+            for (Lancamento lancamento : lancamentos) {
+                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+                if (itemAcompanhamentoTransferencias.isEmpty()) {
+                    int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+                    int quantidadeItemOrigem = lancamentos.size();
+                    int auxilizar;
+                    if (quantidadeItemOrigem > ultimoItemComandaDestino) {
+                        auxilizar = quantidadeItemOrigem;
+                        quantidadeItemOrigem = ultimoItemComandaDestino;
+                        ultimoItemComandaDestino = auxilizar;
+                    }
+                    for (int i = quantidadeItemOrigem; i < ultimoItemComandaDestino; i++) {
+                        int seguencia = ultimoItemComandaDestino + 1;
+                        executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentos.get(0).getPedido() + "' and tenumseq='" + lancamentos.get(0).getItem() + "'");
+                        executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentos.get(0).getPedido() + "' and numero_item='" + lancamentos.get(0).getItem() + "'");
+                    }
+                } else {
+                    for (int i = 0; i < itemAcompanhamentoTransferencias.size(); i++) {
+                        ItemAcompanhamentoTransferencia item = itemAcompanhamentoTransferencias.get(i);
+                        item.setITEM(i + 1);
+                        atualizarSeguenciaItemComanda(item, pedido);
+                    }
+                }
+            }
         }
-        String numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
-        executarSql("update          sosa98 set testatus='"+status+"' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='"+usuarioTransferencia+"',pessoas_mesa='"+pessoas+"',status='"+status+"' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
-        List<Object[]> itensTransferencia = pesquisarItensTransferencia(pedido);
-        for (int i = 0; i < itensTransferencia.size(); i++) {
-            transferirItens(String.valueOf(itensTransferencia.get(i)), String.valueOf(i + 1));
+        executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+    }
+
+    @Override
+    public List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido, String item) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            return session.createSQLQuery("select ITEM,PEDIDO from sosa98 inner join item_acompanhamento on(pedido=tepedido) where tepedido='" + pedido + "' and tenumseq='" + item + "' group by ITEM,PEDIDO")
+                    .setResultTransformer(Transformers.aliasToBean(ItemAcompanhamentoTransferencia.class))
+                    .list();
         }
+        return null;
+    }
+
+    private List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            return session.createSQLQuery("select ITEM,PEDIDO from sosa98 inner join item_acompanhamento on(pedido=tepedido) where tepedido='" + pedido + "' group by ITEM,PEDIDO")
+                    .setResultTransformer(Transformers.aliasToBean(ItemAcompanhamentoTransferencia.class))
+                    .list();
+        }
+        return null;
+    }
+
+    private void atualizarSeguenciaItemComanda(ItemAcompanhamentoTransferencia acompanhamentoTransferencia, String pedido) {
+        String seguencia = acompanhamentoTransferencia.getITEM() + "0" + acompanhamentoTransferencia.getITEM();
+        while (verificarSeJaExisteSeguenciaItem(seguencia, pedido)) {
+            int valor = Integer.parseInt(seguencia) + 1;
+            seguencia = String.valueOf(valor);
+        }
+        executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and tenumseq='" + acompanhamentoTransferencia.getITEM() + "'");
+        executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and numero_item='" + acompanhamentoTransferencia.getITEM() + "'");
+        executarSql("update item_acompanhamento set item ='" + seguencia + "',pedido='" + pedido + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "'");
+    }
+
+    private int buscarUltimoItemComandaDestino(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object uniqueResult = session.createSQLQuery("select first 1 tenumseq from sosa98 where tepedido='" + pedido + "' group by tenumseq order by tenumseq desc")
+                    .uniqueResult();
+            return uniqueResult == null ? 1 : Integer.parseInt(String.valueOf(uniqueResult));
+        }
+        return 0;
+    }
+
+    private boolean verificarSeJaExisteSeguenciaItem(String item, String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object uniqueResult = session.createSQLQuery("select count(*) from sosa98 where tepedido='" + pedido + "' and tenumseq='" + item + "'")
+                    .uniqueResult();
+            return Integer.parseInt(String.valueOf(uniqueResult)) != 0;
+        }
+        return false;
     }
 
 }

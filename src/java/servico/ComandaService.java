@@ -4,6 +4,7 @@ import java.util.List;
 import modelo.Comandas;
 import modelo.Lancamento;
 import modelo.Sosa98;
+import modelo.dto.ItemAcompanhamentoTransferencia;
 
 public interface ComandaService {
 
@@ -51,7 +52,7 @@ public interface ComandaService {
     
     public void alterarQuantidadeItem(double quantidade,String numero);
     
-    public List<Object[]> pesquisarItensTransferencia(String pedidos);
+    public List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido,String item);
     
     public void transferirItens(String numero,String item);
     
