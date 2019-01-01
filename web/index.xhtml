@@ -11,27 +11,27 @@
         <title>Abrir Comanda</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
-        <link rel="stylesheet" href="resources/css/incluir-mesa.css" /> 
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <link rel="stylesheet" href="resources/css/incluir-mesa.css" />
         <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
         <script>
-            $(document).ready(function () {
-                $(".numero").keyup(function () {
+            $(document).ready(function() {
+                $(".numero").keyup(function() {
                     var regExp = /[^0-9]/g;
                     this.value = this.value.replace(regExp, "");
                 });
-                $(".numero-comanda").keypress(function (evt) {
+                $(".numero-comanda").keypress(function(evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:quantidadePessoa").focus();
                         document.getElementById("form:quantidadePessoa").select();
                     }
                 });
-                document.getElementById("form:quantidadePessoa").onkeypress =function (evt) {
+                document.getElementById("form:quantidadePessoa").onkeypress = function(evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:abrirComanda").click();
                     }
                 };
-                document.getElementById("form:mesa").onkeypress = function (evt) {
+                document.getElementById("form:mesa").onkeypress = function(evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:numero").focus();
                     }
@@ -44,7 +44,7 @@
                     }
                 }
             });
-            var verificarReserva = function () {
+            var verificarReserva = function() {
                 var check = document.getElementById("form:check");
                 if (check.checked) {
                     document.getElementById("form:numero").focus();
@@ -52,7 +52,7 @@
                     document.getElementById("form:mesa").focus();
                 }
             };
-            document.addEventListener("keydown", function (evt) {
+            document.addEventListener("keydown", function(evt) {
                 if (evt.keyCode === 27) {
                     location.href = "mesas.jsf";
                     return;
@@ -65,7 +65,7 @@
         </script>
     </h:head>
     <h:body >
-        <h:form id="form" >  
+        <h:form id="form" >
             <div class="ui-fluid">
                 <div class="comanda">
                     <div class="container-fluid text-center">
@@ -82,30 +82,31 @@
                         <div class="col-md-12 text-center">
                             <h:inputText id="mesa" class="numero" maxlength="4" required="true" requiredMessage="Número da mesa é Obrigatorio!" readonly="#{not empty abrirComandaBean.mesa}"
                                          value="#{abrirComandaBean.mesa}">
-                                <f:passThroughAttribute name="type" value="tel" />        
-                                <f:passThroughAttribute name="autofocus" value="true" />       
-                                <f:passThroughAttribute name="placeholder" value="#{abrirComandaBean.mesa == null? 'Número da Mesa': abrirComandaBean.mesa}" />       
+                                <f:passThroughAttribute name="type" value="tel" />
+                                <f:passThroughAttribute name="autofocus" value="true" />
+                                <f:passThroughAttribute name="placeholder" value="#{abrirComandaBean.mesa == null? 'Número da Mesa': abrirComandaBean.mesa}" />
                             </h:inputText>
                         </div>
                     </div>
                     <div class="row text-center" style="margin-bottom: 10px;">
                         <div class="col-md-12 text-center">
                             <h:inputText id="numero" class="numero numero-comanda" required="true" maxlength="4" value="#{abrirComandaBean.comanda}" requiredMessage="Número  da comanda é Obrigatorio!">
-                                <f:passThroughAttribute name="type" value="tel" />        
-                                <f:passThroughAttribute name="autofocus" value="true" />        
-                                <f:passThroughAttribute name="placeholder" value="Número da Comandas" />             
+                                <f:passThroughAttribute name="type" value="tel" />
+                                <f:passThroughAttribute name="autofocus" value="true" />
+                                <f:passThroughAttribute name="placeholder" value="Número da Comandas" />
                             </h:inputText>
                         </div>
                     </div>
                     <ul class="text-center" style="margin-bottom: 10px;">
                         <li>
                             <h3  class="label-campo">Nº de Pessoas na Mesa</h3>
-                        </li>                        
+                        </li>
                         <li class="text-center">
-                            <h:inputText id="quantidadePessoa" class="numero" required="true" maxlength="4" value="#{abrirComandaBean.quantidadePessoa}" requiredMessage="Número  de pessoas é Obrigatorio!">
-                                <f:passThroughAttribute name="type" value="tel" />        
-                                <f:passThroughAttribute name="autofocus" value="true" />        
-                                <f:passThroughAttribute name="placeholder" value="Quantidade Pessoas" />             
+                            <h:inputText id="quantidadePessoa" class="numero" required="true" maxlength="4" value="#{abrirComandaBean.quantidadePessoa}" requiredMessage="Número  de pessoas é Obrigatorio!"
+                                         maxlength="2">
+                                <f:passThroughAttribute name="type" value="tel" />
+                                <f:passThroughAttribute name="autofocus" value="true" />
+                                <f:passThroughAttribute name="placeholder" value="Quantidade Pessoas" />
                             </h:inputText>
                         </li>
                     </ul>
@@ -126,18 +127,18 @@
                             <p:commandLink id="abrirComanda" class="btn btn-success btn-block"
                                            action="#{abrirComandaBean.verificar()}" update="msg" process="mesa numero quantidadePessoa @this">
                                 <i class="fa fa-check"></i>
-                            </p:commandLink>   
+                            </p:commandLink>
                             <p:tooltip for="abrirComanda" value="Abri Comanda ( F2 )" showEffect="fade" hideEffect="fade"
                                        position="bottom"/>
                         </div>
                         <div class="col-md-6">
                             <a id="voltar" class="btn btn-danger btn-block" href="mesas.jsf">
-                                <i class="fa fa-remove"></i> 
+                                <i class="fa fa-remove"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </h:form>  
+        </h:form>
     </h:body>
 </html>
