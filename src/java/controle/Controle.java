@@ -17,10 +17,10 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.transform.Transformers;
-import org.omnifaces.util.Messages;
 import servico.ComandaService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
+import util.Log;
 
 @ManagedBean(name = "controle")
 @ViewScoped
@@ -155,15 +155,31 @@ public class Controle implements ComandaService, Serializable {
             session.save(sosa98);
             transaction.commit();
         } catch (Exception ex) {
+            registrarErroAoSalvarProduto(sosa98, ex);
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            Messages.addGlobalError("Erro ao Adiconar Comanda: detalhe do erro \n" + ex.getMessage());
+            throw ex;
         } finally {
             if (this.session != null) {
                 session.close();
             }
         }
+    }
+
+    private void registrarErroAoSalvarProduto(Sosa98 sosa98, Exception ex) {
+        Lancamento lancamento = new Lancamento();
+        lancamento.setComanda(sosa98.getTecomand());
+        lancamento.setMesa(sosa98.getTecdmesa());
+        lancamento.setItem(sosa98.getId().getTenumseq());
+        lancamento.setNumero(sosa98.getId().getTenumero());
+        lancamento.setReferencia(sosa98.getTerefere());
+        lancamento.setQuantidade(sosa98.getTequanti());
+        lancamento.setObservacao(sosa98.getTeobserv());
+        lancamento.setVendedor(sosa98.getTevended());
+        lancamento.setStatus(sosa98.getTestatus());
+        lancamento.setPedido(sosa98.getTepedido());
+        new Log().registrarErroAoSalvarProduto(ex.getMessage(), lancamento);
     }
 
     @Override

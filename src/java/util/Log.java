@@ -33,7 +33,6 @@ public class Log implements Serializable {
     public Log() {
         this.mesaService = null;
     }
-    
 
     public void registrarExclusao(String mesa, String usuario) {
         mesaService.listarLancamentos(mesa).forEach(m -> {
@@ -58,6 +57,8 @@ public class Log implements Serializable {
 
     public void salvarLancamento(Lancamento lancamento, String usuario) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(path.toFile(), true))) {
+            pw.println();
+            pw.println("------- Salvando produto ---------");
             pw.println("usuario data-hora " + usuario.toUpperCase() + " " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
             pw.println("mesa    " + lancamento.getMesa());
             pw.println("comanda " + lancamento.getComanda());
@@ -74,7 +75,25 @@ public class Log implements Serializable {
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
         }
+    }
 
+    public void registrarErroAoSalvarProduto(String error, Lancamento lancamento) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(path.toFile(), true))) {
+            pw.println();
+            pw.println("------- error ao salvar produto ---------");
+            pw.println("usuario data-hora " + lancamento.getVendedor().toUpperCase() + " " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
+            pw.println("mesa    " + lancamento.getMesa());
+            pw.println("comanda " + lancamento.getComanda());
+            pw.println("referencia " + lancamento.getReferencia());
+            pw.println("quantidade " + lancamento.getQuantidade());
+            pw.println("observacao " + lancamento.getObservacao());
+            pw.println("vendedor " + lancamento.getVendedor());
+            pw.println("pedido " + lancamento.getPedido());
+            pw.println("_________________________");
+            pw.flush();
+        } catch (IOException ex) {
+            Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
+        }
     }
 
     public StringBuilder recuperarLog() {

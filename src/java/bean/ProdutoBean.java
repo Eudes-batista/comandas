@@ -190,7 +190,7 @@ public class ProdutoBean implements Serializable {
         });
         totalizarItensAdicionado();
         comandaTransferencia = new Comandas();
-        this.produtoSalvo =  lancamentosAdicionados.size();
+        this.produtoSalvo = lancamentosAdicionados.size();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -223,7 +223,7 @@ public class ProdutoBean implements Serializable {
         preparaItem(lancamentoItem);
     }
 
-    public void adicionarItem(Produto p) {        
+    public void adicionarItem(Produto p) {
         if (verificarSeComandaJaExiste()) {
             return;
         }
@@ -286,9 +286,12 @@ public class ProdutoBean implements Serializable {
         try {
             Date data = new Date();
             controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
-                    lancamento.getComanda(), lancamento.getReferencia(),
-                    lancamento.getQuantidade(), data,
-                    lancamento.getVendedor(), lancamento.getObservacao(),
+                    lancamento.getComanda(),
+                    lancamento.getReferencia(),
+                    lancamento.getQuantidade(),
+                    data,
+                    lancamento.getVendedor(),
+                    lancamento.getObservacao(),
                     lancamento.getMesa(),
                     lancamento.getStatus(),
                     lancamento.getImprimir(),
@@ -304,7 +307,7 @@ public class ProdutoBean implements Serializable {
     }
 
     private boolean verificarSeComandaJaExiste() {
-        if(vendedor == null || "".equals(vendedor)){
+        if (vendedor == null || "".equals(vendedor)) {
             return true;
         }
         String verificarComanda = controleService.verificarComandaNaMesa(comanda);
