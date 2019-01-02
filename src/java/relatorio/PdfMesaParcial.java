@@ -12,29 +12,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import modelo.Empresa;
-import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
 import modelo.Mesa;
 import servico.ComandaService;
-import servico.ItemAcompanhamentoService;
 import servico.PdfService;
 import util.CalcularPreconta;
 
-public class PdfDetalhado implements PdfService {
+public class PdfMesaParcial implements PdfService {
 
     private final ControlePdf controlePdf = new ControlePdf();
     private final Document documento = ControlePdf.getDocumento();
@@ -44,17 +38,15 @@ public class PdfDetalhado implements PdfService {
     private Mesa mesa;
     private final Set<String> vendedores = new HashSet<>();
     private final DecimalFormat df = new DecimalFormat("##,##0.00");
-    private ItemAcompanhamentoService itemAcompanhamentoService;
 
-    public PdfDetalhado() {
+    public PdfMesaParcial() {
     }
 
-    public PdfDetalhado(Empresa empresa, Map<String, List<Object[]>> mapComanda, ComandaService comandaService, Mesa mesa, ItemAcompanhamentoService itemAcompanhamentoService) {
+    public PdfMesaParcial(Empresa empresa, Map<String, List<Object[]>> mapComanda, ComandaService comandaService, Mesa mesa) {
         this.empresa = empresa;
         this.mapComanda = mapComanda;
         this.comandaService = comandaService;
         this.mesa = mesa;
-        this.itemAcompanhamentoService = itemAcompanhamentoService;
     }
 
     @Override
@@ -65,7 +57,7 @@ public class PdfDetalhado implements PdfService {
         Paragraph endereco = new Paragraph(empresa.getEndereco() + ", " + empresa.getNumero(), ControlePdf.FONT_PP);
         Paragraph cepFone = new Paragraph("CEP: " + empresa.getCep() + " Fone: " + empresa.getTelefone(), ControlePdf.FONT_PP);
         Paragraph cnpjInsc = new Paragraph("CNPJ: " + empresa.getCnpj() + " Insc.Est.: " + empresa.getInscricaoEstadual(), ControlePdf.FONT_PP);
-        Paragraph tipo = new Paragraph("DETALHADA" , ControlePdf.FONT_MB);
+        Paragraph tipo = new Paragraph("PARCIAL", ControlePdf.FONT_MB);
         Paragraph espaco = new Paragraph(10f, " ");
 
         razao.setAlignment(Element.ALIGN_CENTER);
@@ -150,23 +142,14 @@ public class PdfDetalhado implements PdfService {
             for (Object[] c : comandas) {
                 String descricao = String.valueOf(c[1]);
                 String quantidade = df.format(Double.parseDouble(String.valueOf(c[2])));
-                String valorUnitario = df.format(Double.parseDouble(String.valueOf(c[3])));
-                String hora = "";
-                try {
-                    hora = new SimpleDateFormat("HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(c[9])));
-                } catch (ParseException ex) {
-                    Logger.getLogger(PdfDetalhado.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                String garcom = String.valueOf(c[6]);
-                double valorTotal = Double.parseDouble(String.valueOf(c[4]));
+                String vUnitario = df.format(Double.parseDouble(String.valueOf(c[3])));
+                double vTotal = Double.parseDouble(String.valueOf(c[4]));
 
                 PdfPCell qtd = controlePdf.criarCelula(quantidade, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
                 PdfPCell produto = controlePdf.criarCelula(descricao, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-                PdfPCell valor = controlePdf.criarCelula(valorUnitario, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-                PdfPCell subTotal = controlePdf.criarCelula(df.format(valorTotal), ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
-                PdfPCell horaItem = controlePdf.criarCelula(hora, ControlePdf.FONT_PPP, 2, Element.ALIGN_LEFT);
-                PdfPCell garcomItem = controlePdf.criarCelula(garcom, ControlePdf.FONT_PPP, 2, Element.ALIGN_RIGHT);
-                PdfPCell div = controlePdf.criarCelula("...............................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
+                PdfPCell valor = controlePdf.criarCelula(vUnitario, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
+                PdfPCell subTotal = controlePdf.criarCelula(df.format(vTotal), ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
+                PdfPCell div = controlePdf.criarCelula("..............................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
 
                 qtd.setPaddingTop(-7f);
                 produto.setPaddingTop(-5f);
@@ -178,22 +161,10 @@ public class PdfDetalhado implements PdfService {
                 tabelaItens.addCell(produto);
                 tabelaItens.addCell(valor);
                 tabelaItens.addCell(subTotal);
-
-                List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(String.valueOf(c[7]), String.valueOf(c[8]));
-                for (ItemAcompanhamento acompanhamento : acompanhamentos) {
-                    PdfPCell itemAcompanhamento = controlePdf.criarCelula(acompanhamento.getAcompanhamento(), ControlePdf.FONT_PPP, 4, Element.ALIGN_CENTER);
-                    itemAcompanhamento.setPaddingTop(-5f);
-                    tabelaItens.addCell(itemAcompanhamento);
-                }
-
-                tabelaItens.addCell(horaItem);
-                tabelaItens.addCell(garcomItem);
-
                 tabelaItens.addCell(div);
-
-                totalComanda += valorTotal;
+                totalComanda += vTotal;
                 vendedores.add(String.valueOf(c[6]));
-                lancamentos.add(new Lancamento(descricao, valorTotal));
+                lancamentos.add(new Lancamento(descricao, vTotal));
             }
             documento.add(divider1);
             documento.add(espaco);
@@ -227,10 +198,6 @@ public class PdfDetalhado implements PdfService {
         }
     }
 
-    private List<ItemAcompanhamento> listarAcompanhamentos(String item, String pedido) {
-        return itemAcompanhamentoService.pesquisarItem(item, pedido);
-    }
-
     @Override
     public void criarRodape() throws DocumentException {
         PdfPTable tabelaRodape = new PdfPTable(4);
@@ -239,7 +206,7 @@ public class PdfDetalhado implements PdfService {
 
         String quantidadePessoasPagantes = this.mesa.getPAGANTES();
         String garcons = vendedores.size() > 1 ? "Garçons " : "Garçom ";
-
+        
         PdfPCell tituloPessaosPagantes = controlePdf.criarCelula("Pagantes: " + quantidadePessoasPagantes, ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
         PdfPCell totalPessaosPagantes = controlePdf.criarCelula(df.format(totalzilaCupom / Integer.parseInt(quantidadePessoasPagantes)), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
@@ -248,10 +215,9 @@ public class PdfDetalhado implements PdfService {
 
         PdfPCell vendedor = controlePdf.criarCelula(garcons + vendedores.stream().collect(Collectors.joining(",")), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
-
+        
         PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
-        String pedidos = Arrays.asList(this.mesa.getPEDIDO().split(",")).stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","));
-        PdfPCell pedido = controlePdf.criarCelula(pedidos, ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        PdfPCell pedido = controlePdf.criarCelula(this.mesa.getPEDIDO(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
 
         PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
@@ -276,7 +242,7 @@ public class PdfDetalhado implements PdfService {
 
     @Override
     public File gerarPdf() throws FileNotFoundException, DocumentException {
-        File file = new File(controlePdf.buscarCaminho() + "detalhado.pdf");
+        File file = new File(controlePdf.buscarCaminho() + "mesaPreConta.pdf");
         PdfWriter.getInstance(documento, new FileOutputStream(file));
         documento.open();
         criarCabecalho();

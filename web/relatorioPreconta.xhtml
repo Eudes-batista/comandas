@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <f:metadata>
+        <f:viewAction action="#{relatorioPrecontaBean.init()}"/>
+    </f:metadata>
+    <h:head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <h:outputStylesheet library="css" name="rel-venda.css" />
+        <h:outputScript library="js" name="jquery-3.2.1.min.js" />
+        <h:outputScript library="js" name="bootstrap.min.js" />
+        <script>
+            document.addEventListener('keydown', function (evt) {
+                if (evt.keyCode === 121) {
+                    document.getElementById("filtro:confimarFiltro").click();
+                }
+            });
+            function printContent(el) {
+                var restorepage = $('body').html();
+                var printcontent = $('#' + el).clone();
+                $('body').empty().html(printcontent);
+                window.print();
+                window.close();
+                $('body').html(restorepage);
+            }
+            function imprimir() {
+                mostrarFomularios("none", "block");
+                printContent('print');
+                //<![CDATA[  
+                if (window.innerWidth >= 360 && window.innerWidth <= 767) {
+                    setTimeout(function () {
+                        mostrarFomularios("block", "none");
+                        document.getElementById("filtro:dataInicial").focus();
+                    }, 2000);
+                } else {
+                    mostrarFomularios("block", "none");
+                    document.getElementById("filtro:dataInicial").focus();
+                }
+                //]]>
+            }
+            function mostrarFomularios(isfiltro, relatorio) {
+                var filtro = document.getElementById("filtro");
+                filtro.style.display = isfiltro;
+                var print = document.getElementById("print");
+                print.style.display = relatorio;
+                var principal = document.getElementById("principal");
+                principal.style.display = relatorio;
+            }
+        </script>
+        <title>Relatorio de Itens Vendidos</title>
+    </h:head>
+    <h:body>
+        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;max-width: 800px;margin-top: 20px;padding: 20px;">
+            <h:form id="filtro">
+                <div class="container-fluid">
+                    <h3>Filtro</h3>
+                    <div class="row espaco">
+                        <div class="col-xs-4">
+                            <label >Data Inicial</label>
+                            <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioPrecontaBean.filtroRelatorioPreconta.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
+                                   autofocus="true"/>
+                        </div>
+                        <div class="col-xs-4">
+                            <label >Data Final</label>
+                            <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioPrecontaBean.filtroRelatorioPreconta.dataFinal}" type="date" class="form-control" placeholder="Data Final" />                    
+                        </div>
+                        <div class="col-md-4">
+                            <label >Garçom</label>
+                            <h:selectOneMenu id="garcom" value="#{relatorioPrecontaBean.filtroRelatorioPreconta.vendedor}"
+                                             class="form-control">
+                                <f:selectItem noSelectionOption="true" itemLabel="Selecione um Garçom" />
+                                <f:selectItems value="#{relatorioPrecontaBean.vendedores}" var="garcom" itemLabel="#{garcom.nome}" itemValue="#{garcom.nome}"/>
+                            </h:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="row espaco">
+                        <div class="col-xs-4">
+                            <label >Pedido</label>
+                            <h:inputText class="form-control" value="#{relatorioPrecontaBean.filtroRelatorioPreconta.pedido}" maxlength="6">
+                                <f:passThroughAttribute name="placeholder" value="Pedido"/>
+                            </h:inputText>
+                        </div>
+                        <div class="col-xs-4">
+                            <label >Mesa</label>
+                            <h:inputText class="form-control" value="#{relatorioPrecontaBean.filtroRelatorioPreconta.mesa}" maxlength="4">
+                                <f:passThroughAttribute name="placeholder" value="Mesa"/>
+                            </h:inputText>
+                        </div>
+                        <div class="col-xs-4">
+                            <label >Comanda</label>
+                            <h:inputText class="form-control" value="#{relatorioPrecontaBean.filtroRelatorioPreconta.comanda}" maxlength="4">
+                                <f:passThroughAttribute name="placeholder" value="Comanda"/>
+                            </h:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
+                                           update="corpo:tabela corpo:periodo corpo:empresa"
+                                           process="filtro" actionListener="#{relatorioPrecontaBean.listarTudo()}">
+                                <i class="fa fa-print"></i> Imprimir ( F10 )
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <div class="container-fluid" id="principal" style="display: none;">
+            <h:form id="corpo">
+                <div id="print" style="display: none;">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="row">
+                                <img  class="logo" src="resources/imagens/logo.jpg"/>
+                            </div>
+                            <div class="row texto-logo">
+                                <h:panelGroup id="empresa">
+                                    <span>#{relatorioPrecontaBean.empresa.codigo} - #{relatorioPrecontaBean.empresa.razao}</span>
+                                </h:panelGroup>
+                            </div>
+                        </div>
+                        <div class="coml-xs-8  cabecalho">
+                            <div class="row">
+                                <div class="col-xs-8"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
+                                    <c:set var="garcom" value="#{relatorioPrecontaBean.filtroRelatorioPreconta.vendedor}"/>
+                                    <h:panelGroup id="periodo">
+                                        <span style="font-weight: bold;">RELATÓRIO PRECONTAS/TRANSFERENCIA/PARCIAIS</span> <br/>
+                                        <span style="font-size: 8pt;padding: 20px;">
+                                            Período: #{relatorioPrecontaBean.filtroRelatorioPreconta.dataInicial} à #{relatorioPrecontaBean.filtroRelatorioPreconta.dataFinal}    
+                                        </span>
+                                    </h:panelGroup>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h:panelGroup id="tabela">
+                                <!--Tabela Itens Vendidos-->
+                                <table class="table table-striped"  style="font-size: 8pt">
+                                    <thead>
+                                        <tr style="background: #f1f1f1;">
+                                            <th>Pedido</th>
+                                            <th >RESPONSAVEL TRANSFERENCIA</th>
+                                            <th >RESPONSAVEL PRECONTA</th>
+                                            <th >RESPONSAVEL PARCIAL</th>
+                                            <th >Mesa</th>
+                                            <th >Comanda</th>
+                                            <th >Data Preconta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size: 8pt">
+                                        <ui:repeat value="#{relatorioPrecontaBean.relatorioPrecontas}" var="relatorioPreconta">
+                                            <tr>
+                                                <td>#{relatorioPreconta.PEDIDO}</td>
+                                                <td>#{relatorioPreconta.RESPONSAVEL_TRANSFERENCIA}</td>
+                                                <td >#{relatorioPreconta.RESPONSAVEL_PRECONTA}</td>
+                                                <td >#{relatorioPreconta.RESPONSAVEL_PARCIAL}</td>
+                                                <td >#{relatorioPreconta.MESA}</td>
+                                                <td >#{relatorioPreconta.COMANDA}</td>
+                                                <td >
+                                                    <h:outputText value="#{relatorioPreconta.DATA_PRECONTA}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                                    </h:outputText>
+                                                </td>
+                                            </tr>
+                                        </ui:repeat>  
+                                    </tbody>
+                                </table>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </h:form>           
+        </div>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Pesquisa de Produto</h4>
+                    </div>
+                    <h:form id="frmProduto">
+                        <div class="modal-body">
+                            <h:inputText value="#{relatorioItemVendidoBean.pesquisa}" class="form-control">
+                                <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
+                                <f:ajax event="keyup" render="linha" execute="@this" listener="#{relatorioItemVendidoBean.pesquisarProduto()}"/>
+                            </h:inputText>
+                            <div class="table-responsive" style="overflow: auto;height: 380px;">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Referencia</th>
+                                            <th>Descrição</th>
+                                            <th>Preço</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody jsf:id="linha">
+                                        <ui:repeat id="repeat" value="#{relatorioItemVendidoBean.produtos}" var="produto">
+                                            <tr>
+                                                <td>
+                                                    <button jsf:id="confirma"  data-dismiss="modal" class="btn btn-link">
+                                                        <i class="fa fa-check"></i>
+                                                        <f:ajax event="click" listener="#{relatorioItemVendidoBean.selecionarProduto(produto)}" render="filtro:referencia" execute="@this" />
+                                                    </button>
+                                                </td>
+                                                <td>#{produto.referencia}</td>
+                                                <td>#{produto.descricao}</td>
+                                                <td>#{produto.preco}</td>
+                                            </tr>
+                                        </ui:repeat>  
+                                    </tbody>
+                                </table>
+                            </div>  
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">
+                                Fechar
+                            </button>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>
+

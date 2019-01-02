@@ -32,6 +32,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import relatorio.PdfDetalhado;
 import relatorio.PdfMesa;
+import relatorio.PdfMesaParcial;
 import relatorio.Relatorio;
 import servico.ComandaService;
 import servico.EmpresaService;
@@ -191,9 +192,11 @@ public class MesasBean implements Serializable {
             Map<String, List<Object[]>> mapComanda = controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
             String impressora = gerenciaArquivo.getConfiguracao().getImpressora();
             PdfService pdfService;
-            if (tipo.equals("normal") || tipo.equals("parcial")) {
+            if (tipo.equals("normal")) {
                 pdfService = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
-            } else {
+            } else if ( tipo.equals("parcial")){
+                pdfService = new PdfMesaParcial(empresa, mapComanda, comandaService, mesa);
+            }else{
                 pdfService = new PdfDetalhado(empresa, mapComanda, comandaService, mesa, itemAcompanhamentoService);
             }
             try {

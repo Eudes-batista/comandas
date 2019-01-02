@@ -106,11 +106,13 @@ public class PdfPedido implements PdfService {
         tabelaValores.addCell(numeroComanda);
         tabelaValores.addCell(hora);
         tabelaValores.setWidthPercentage(100f);
-
+        
+        documento.add(new Paragraph(30f, "  "));
         documento.add(tabelaReimpressao);
         documento.add(tabelaTitulo);
         documento.add(tabelaValores);
         documento.add(divider1);
+        documento.add(new Paragraph(20f, "  "));
 
     }
 
