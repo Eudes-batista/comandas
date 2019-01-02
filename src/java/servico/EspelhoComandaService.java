@@ -20,4 +20,5 @@ public interface EspelhoComandaService {
     public void atualizarResponsavelPreconta(String pedido,String responsavel);
     public void atualizarResponsavelParcial(String pedido,String responsavel);
     public void atualizarResponsavelTransferencia(String pedido,String responsavel);
+    public String buscarDataPreconta(String pedido); 
 }

@@ -83,6 +83,9 @@ public class EspelhoComandaBean implements Serializable {
     public void atualizarStatusItemParaCancelado(String pedidos,String usuario) {
         espelhoComandaService.atualizarStatusItens(pedidos,usuario);
     }
-       
+
+    public String buscarDataPreconta(String pedido){
+        return espelhoComandaService.buscarDataPreconta(pedido);
+    }
 
 }

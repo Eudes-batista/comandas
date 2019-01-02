@@ -8,6 +8,8 @@ import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -343,6 +345,16 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setObservacao(lancamento.getObservacao());
         espelhoComanda.setStatusItem("N");
         espelhoComanda.setValorItem(lancamento.getPreco());
+        if ("P".equals(status)) {
+            try {
+                String dataPreconta = espelhoComandaBean.buscarDataPreconta(pedido);
+                Date dataPrecontaBanco = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataPreconta);
+                espelhoComanda.setDataPreconta(dataPrecontaBanco);
+            } catch (ParseException ex) {
+                mensagem = "Erro ao converter data da preconta.";
+                PrimeFaces.current().executeScript("PF('dialogoErro').show();");
+            }
+        }
         if (!new GerenciaArquivo().bucarInformacoes().getConfiguracao().getCobraDezPorcento().isEmpty()) {
             espelhoComanda.setPorcentagem(10d);
             double valorComDezPOrcento = lancamento.getPrecoTotal() * 0.10;

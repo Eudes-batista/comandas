@@ -154,5 +154,19 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     public void atualizarResponsavelTransferencia(String pedido, String responsavel) {
         executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='"+responsavel+"' where pedido in("+pedido+") ");
     }
+
+    @Override
+    public String buscarDataPreconta(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object object = session.createQuery("select DATA_PRECONTA from espelho_comanda where pedido='"+pedido+"' group by pedido").uniqueResult();
+            String dataPreconta =object != null ? String.valueOf(object) :null;
+            session.close();
+            return dataPreconta;
+        }
+        return null;
+    }
+    
+    
     
 }
