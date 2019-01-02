@@ -311,7 +311,7 @@ public class MesasBean implements Serializable {
         cancelamento.setUsuario(usuario.toUpperCase());
         cancelamento.setPedidos(this.mesa.getPEDIDO());
         cancelamento.setStatus("M");
-        cancelamento.setMotivo(1);
+        cancelamento.setMotivo(99);
         espelhoComandaService.atualizarStatusItens(cancelamento);
     }
 

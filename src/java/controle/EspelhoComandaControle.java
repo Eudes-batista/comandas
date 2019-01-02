@@ -138,7 +138,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarStatusItens(Cancelamento cancelamento) {
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='"+cancelamento.getStatus()+"',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento="+cancelamento.getMotivo()+" where pedido in(" + cancelamento.getPedidos() + ")");
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='"+cancelamento.getStatus()+"',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento="+cancelamento.getMotivo()+" where pedido in(" + cancelamento.getPedidos() + ") and MOTIVO_CANCELAMENTO is null ");
     }
 
     @Override

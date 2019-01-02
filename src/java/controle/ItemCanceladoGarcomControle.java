@@ -47,7 +47,7 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append(" where")
                     .append(" DATA BETWEEN ").append("'").append(filtroItemCancelado.getDataInical()).append(" 00:00:00' ")
                     .append(" AND '").append(filtroItemCancelado.getDataFinal()).append(" 23:59:59'")
-                    .append(" AND STATUS_ITEM ='").append("C").append("'")
+                    .append(" AND (STATUS_ITEM ='C' OR STATUS_ITEM='M' OR STATUS_ITEM='D')")
                     .append(" group by")
                     .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());

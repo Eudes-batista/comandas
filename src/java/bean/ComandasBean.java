@@ -215,7 +215,7 @@ public class ComandasBean implements Serializable {
                 cancelamento.setUsuario(usuario.toUpperCase());
                 cancelamento.setPedidos(this.comanda.getPEDIDO());
                 cancelamento.setStatus("D");
-                cancelamento.setMotivo(2);
+                cancelamento.setMotivo(100);
                 espelhoComandaService.atualizarStatusItens(cancelamento);
                 totalMesa();
             } else if ("TRANFERENCIA".equals(this.tipo)) {

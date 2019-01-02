@@ -82,7 +82,7 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append(" DATA BETWEEN ").append("'").append(filtroItemVendido.getDataInicial()).append(" 00:00:00' ")
                     .append(" AND '").append(filtroItemVendido.getDataFinal()).append(" 23:59:59'")
                     .append(" AND (REFERENCIA like '%").append(filtroItemVendido.getProduto()).append("%' AND  ").append(" PRCGRUPO like '%").append(grupo).append("%' AND  ").append(" VENDEDOR like '%").append(filtroItemVendido.getGarcom()).append("%' )")
-                    .append(" AND STATUS_ITEM ='").append("C").append("'")
+                    .append(" AND (STATUS_ITEM ='C' OR STATUS_ITEM='M' OR STATUS_ITEM='D')")
                     .append(" group by")
                     .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
