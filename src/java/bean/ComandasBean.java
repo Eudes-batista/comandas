@@ -21,6 +21,7 @@ import modelo.Comandas;
 import modelo.Empresa;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
+import modelo.dto.Cancelamento;
 import org.ini4j.Ini;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -210,9 +211,14 @@ public class ComandasBean implements Serializable {
             if ("EXCLUIR".equals(this.tipo)) {
                 controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
                 comandas.remove(this.comanda);
-                espelhoComandaService.atualizarStatusItens(this.comanda.getPEDIDO(), usuario);
+                Cancelamento cancelamento = new Cancelamento();
+                cancelamento.setUsuario(usuario.toUpperCase());
+                cancelamento.setPedidos(this.comanda.getPEDIDO());
+                cancelamento.setStatus("D");
+                cancelamento.setMotivo(2);
+                espelhoComandaService.atualizarStatusItens(cancelamento);
                 totalMesa();
-            }else if("TRANFERENCIA".equals(this.tipo)){
+            } else if ("TRANFERENCIA".equals(this.tipo)) {
                 PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
             }
             setUsuario("");

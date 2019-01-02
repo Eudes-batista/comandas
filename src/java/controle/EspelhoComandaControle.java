@@ -7,6 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.EspelhoComanda;
 import modelo.Mesa;
+import modelo.dto.Cancelamento;
 import org.hibernate.Session;
 import servico.EspelhoComandaService;
 import util.GerenciaArquivo;
@@ -136,8 +137,8 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     }
 
     @Override
-    public void atualizarStatusItens(String pedidos, String usuario) {
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + usuario + "' ,status_item='M' where pedido in(" + pedidos + ")");
+    public void atualizarStatusItens(Cancelamento cancelamento) {
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='"+cancelamento.getStatus()+"',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento="+cancelamento.getMotivo()+" where pedido in(" + cancelamento.getPedidos() + ")");
     }
 
     @Override

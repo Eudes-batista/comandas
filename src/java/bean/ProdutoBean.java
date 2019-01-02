@@ -434,8 +434,13 @@ public class ProdutoBean implements Serializable {
                 reipressao(this.lancamento);
                 break;
             case "T":
-                this.usuarioTransferencia = this.usuario;
-                PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
+                if ("P".equals(this.status)) {
+                    mensagem = "Comanda em preconta, reabra a comanda para transferir.";
+                    PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+                } else {
+                    this.usuarioTransferencia = this.usuario;
+                    PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
+                }
                 break;
         }
     }
@@ -604,7 +609,7 @@ public class ProdutoBean implements Serializable {
         }
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(qtd);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
-        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario);
+        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario.toUpperCase());
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
         this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
         this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());

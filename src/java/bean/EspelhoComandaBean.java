@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import modelo.Comandas;
 import modelo.EspelhoComanda;
+import modelo.dto.Cancelamento;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 import servico.EspelhoComandaService;
@@ -80,8 +81,8 @@ public class EspelhoComandaBean implements Serializable {
         return (valorPago / (valorCompra / 100d) - 100);
     }
 
-    public void atualizarStatusItemParaCancelado(String pedidos,String usuario) {
-        espelhoComandaService.atualizarStatusItens(pedidos,usuario);
+    public void atualizarStatusItemParaCancelado(Cancelamento cancelamento) {
+        espelhoComandaService.atualizarStatusItens(cancelamento);
     }
 
     public String buscarDataPreconta(String pedido){

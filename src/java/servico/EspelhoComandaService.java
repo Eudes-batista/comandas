@@ -3,6 +3,7 @@ package servico;
 import java.util.List;
 import modelo.EspelhoComanda;
 import modelo.Mesa;
+import modelo.dto.Cancelamento;
 
 public interface EspelhoComandaService {
     public void salvar(EspelhoComanda espelhoComanda);
@@ -16,7 +17,7 @@ public interface EspelhoComandaService {
     public void atualizarPorcentagem(String pedido,double porcentagem);
     public List<Object[]> listarProdutosPedido(String pedido);
     public void atualizarValorPorcentagemItens(String pedido);
-    public void atualizarStatusItens(String pedidos,String usuario);
+    public void atualizarStatusItens(Cancelamento cancelamento);
     public void atualizarResponsavelPreconta(String pedido,String responsavel);
     public void atualizarResponsavelParcial(String pedido,String responsavel);
     public void atualizarResponsavelTransferencia(String pedido,String responsavel);

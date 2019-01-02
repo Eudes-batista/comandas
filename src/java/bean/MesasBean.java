@@ -24,6 +24,7 @@ import modelo.Comandas;
 import modelo.Empresa;
 import modelo.Lancamento;
 import modelo.Mesa;
+import modelo.dto.Cancelamento;
 import org.ini4j.Ini;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -306,7 +307,12 @@ public class MesasBean implements Serializable {
         logMesa.registrarExclusao(this.mesa.getMESA(), usuario);
         controle.excluirMesa(this.mesa.getMESA());
         mesas.remove(new Mesa(this.mesa.getMESA()));
-        espelhoComandaService.atualizarStatusItens(this.mesa.getPEDIDO(),usuario);
+        Cancelamento cancelamento = new Cancelamento();
+        cancelamento.setUsuario(usuario.toUpperCase());
+        cancelamento.setPedidos(this.mesa.getPEDIDO());
+        cancelamento.setStatus("M");
+        cancelamento.setMotivo(1);
+        espelhoComandaService.atualizarStatusItens(cancelamento);
     }
 
     public void transferiMesa() {
