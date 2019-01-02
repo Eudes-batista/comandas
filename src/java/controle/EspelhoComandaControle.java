@@ -136,37 +136,35 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     }
 
     @Override
-    public void atualizarStatusItens(String pedidos,String usuario) {
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='"+usuario+"' ,status_item='M' where pedido in(" + pedidos + ")");
+    public void atualizarStatusItens(String pedidos, String usuario) {
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + usuario + "' ,status_item='M' where pedido in(" + pedidos + ")");
     }
 
     @Override
-    public void atualizarResponsavelPreconta(String pedido,String responsavel) {
-        executarSql("update espelho_comanda set responsavel_preconta='"+responsavel+"' where pedido in("+pedido+")");
+    public void atualizarResponsavelPreconta(String pedido, String responsavel) {
+        executarSql("update espelho_comanda set responsavel_preconta='" + responsavel + "' where pedido in(" + pedido + ")");
     }
 
     @Override
-    public void atualizarResponsavelParcial(String pedido,String responsavel) {
-        executarSql("update espelho_comanda set responsavel_parcial='"+responsavel+"' where pedido in("+pedido+")");
+    public void atualizarResponsavelParcial(String pedido, String responsavel) {
+        executarSql("update espelho_comanda set responsavel_parcial='" + responsavel + "' where pedido in(" + pedido + ")");
     }
 
     @Override
     public void atualizarResponsavelTransferencia(String pedido, String responsavel) {
-        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='"+responsavel+"' where pedido in("+pedido+") ");
+        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + responsavel + "' where pedido in(" + pedido + ") ");
     }
 
     @Override
     public String buscarDataPreconta(String pedido) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            Object object = session.createQuery("select DATA_PRECONTA from espelho_comanda where pedido='"+pedido+"' group by pedido").uniqueResult();
+            Object object = session.createSQLQuery("select DATA_PRECONTA as preconta from espelho_comanda where pedido='" + pedido + "' group by DATA_PRECONTA ").uniqueResult();
             String dataPreconta =object != null ? String.valueOf(object) :null;
             session.close();
             return dataPreconta;
         }
         return null;
     }
-    
-    
-    
+
 }
