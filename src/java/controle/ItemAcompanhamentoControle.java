@@ -83,7 +83,7 @@ public class ItemAcompanhamentoControle implements ItemAcompanhamentoService, Se
 
     @Override
     public void atualizarStatusAcompanhamento(Lancamento lancamento, String status) {
-        executarSql("update item_acompanhamento set status='"+status+"' where pedido='"+lancamento.getPedido()+"' item='"+lancamento.getItem()+"'");
+        executarSql("update item_acompanhamento set status='"+status+"' where pedido='"+lancamento.getPedido()+"' and item='"+lancamento.getItem()+"'");
     }
     
     private void executarSql(String sql) {
