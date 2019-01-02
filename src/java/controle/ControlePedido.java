@@ -16,11 +16,25 @@ public class ControlePedido {
 
     public String gerarNumero() {
         int pedido = comandaService.verificarNumeroPedido(comanda);
-        if (pedido ==0) {
-            LocalDate data = LocalDate.now();
-            LocalTime hora = LocalTime.now();
-            return String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + hora.getSecond());
+        if (pedido == 0) {            
+            pedido =gerarPedido();
+            while(verificarPedido(pedido)){
+                pedido =gerarPedido();
+            }
+            return String.valueOf(pedido);
         }
         return String.valueOf(pedido);
+    }
+    
+    private boolean verificarPedido(int pedido){
+        return comandaService.verificarSePedidoJaExiste(String.valueOf(pedido)) != 0;
+    }
+    
+    private int gerarPedido(){
+        LocalDate data = LocalDate.now();
+        LocalTime hora = LocalTime.now();
+        String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
+        int pedido =numero.length() > 6 ? Integer.parseInt(numero.substring(0, 6)) : Integer.parseInt(numero);
+        return pedido;
     }
 }

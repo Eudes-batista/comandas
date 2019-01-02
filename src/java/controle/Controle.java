@@ -451,4 +451,15 @@ public class Controle implements ComandaService, Serializable {
         return false;
     }
 
+    @Override
+    public int verificarSePedidoJaExiste(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object uniqueResult = session.createSQLQuery("select count(*) from espelho_comanda where pedido='"+pedido+"' group by pedido")
+                    .uniqueResult();
+            return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
+        }
+        return 0;
+    }
+
 }
