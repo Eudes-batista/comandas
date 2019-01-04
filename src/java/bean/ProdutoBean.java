@@ -118,7 +118,6 @@ public class ProdutoBean implements Serializable {
     private GrupoAcompanhamento grupoAcompanhamento;
     private Comandas comandaTransferencia;
     private Log log = new Log();
-    private int produtoSalvo;
 
     public void init() {
         if (this.mesa == null || this.comanda == null) {
@@ -194,7 +193,6 @@ public class ProdutoBean implements Serializable {
         });
         totalizarItensAdicionado();
         comandaTransferencia = new Comandas();
-        this.produtoSalvo = lancamentosAdicionados.size();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -306,7 +304,6 @@ public class ProdutoBean implements Serializable {
             ));
             salvarEspelho(lancamento, data);
             log.salvarLancamento(lancamento, vendedor);
-            produtoSalvo++;
         } catch (Exception ex) {
             this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens\n e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
@@ -378,7 +375,6 @@ public class ProdutoBean implements Serializable {
         lancamentosAdicionados.remove(lancamento);
         totalizarItensAdicionado();
         quantidadeItensAdicionados = lancamentosAdicionados.isEmpty() ? 0 : quantidadeItensAdicionados;
-        this.produtoSalvo--;
     }
 
     public void receberCodigo(Lancamento lancamento, String condicao) {
@@ -512,24 +508,26 @@ public class ProdutoBean implements Serializable {
 
     public void imprimirTodos() {
         List<Lancamento> lancamentosMemoria = this.lancamentosAdicionados;
-        listarProdutosAdicionados();
-        if (lancamentosMemoria.size() != this.lancamentosAdicionados.size()) {
-            mensagem = "Erro na comunicação do servidor, verifique a lista dos itens e lançe novamente.";
-            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
-            return;
-        }
-        long count = this.lancamentosAdicionados.stream().filter(l -> l.getDescricao().contains("COUVERT")).count();
-        if (count != 0) {
-            controleService.atualizarStatusImpressao(comanda);
-            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
-        }
-        Map<String, List<Lancamento>> mapLanmentos = separarLancamentoPorGrupo();
-        if (!mapLanmentos.isEmpty()) {
-            mapLanmentos.forEach((subgrupo, lancamentos) -> imprimir(subgrupo, lancamentos, null));
-            this.quantidadeItensAdicionados = 0;
-            mensagem = "Pedido enviado para impressão.";
-            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
-            return;
+        if (!lancamentosMemoria.isEmpty()) {
+            listarProdutosAdicionados();
+            if (lancamentosMemoria.size() != this.lancamentosAdicionados.size()) {
+                mensagem = "Erro na comunicação do servidor, verifique a lista dos itens e lançe novamente.";
+                PrimeFaces.current().executeScript("PF('dialogoErro').show();");
+                return;
+            }
+            long count = this.lancamentosAdicionados.stream().filter(l -> l.getDescricao().contains("COUVERT")).count();
+            if (count != 0) {
+                controleService.atualizarStatusImpressao(comanda);
+                espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
+            }
+            Map<String, List<Lancamento>> mapLanmentos = separarLancamentoPorGrupo();
+            if (!mapLanmentos.isEmpty()) {
+                mapLanmentos.forEach((subgrupo, lancamentos) -> imprimir(subgrupo, lancamentos, null));
+                this.quantidadeItensAdicionados = 0;
+                mensagem = "Pedido enviado para impressão.";
+                PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+                return;
+            }
         }
         mensagem = "Itens já foram enviados para impressão.";
         PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
