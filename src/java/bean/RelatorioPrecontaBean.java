@@ -11,6 +11,7 @@ import lombok.Setter;
 import modelo.Empresa;
 import modelo.Vendedor;
 import modelo.dto.FiltroRelatorioPreconta;
+import modelo.dto.ItemVendido;
 import modelo.dto.RelatorioPreconta;
 import relatorio.Relatorio;
 import servico.EmpresaService;
@@ -32,9 +33,11 @@ public class RelatorioPrecontaBean implements Serializable {
 
     private List<RelatorioPreconta> relatorioPrecontas;
     private List<Vendedor> vendedores;
+    private List<ItemVendido> itemVendidos;
 
     private FiltroRelatorioPreconta filtroRelatorioPreconta;
     private Empresa empresa;
+    private String pedido;
 
     public void init() {
         LocalDate data = LocalDate.now();
@@ -49,6 +52,11 @@ public class RelatorioPrecontaBean implements Serializable {
     public void listarTudo() {
         System.out.println("filtroRelatorioPreconta = " + filtroRelatorioPreconta);
         this.relatorioPrecontas = relatorioPrecontaService.listarTudo(filtroRelatorioPreconta);
+    }
+    
+    public void listarItens(String pedido){
+        filtroRelatorioPreconta.setPedido(pedido);
+        this.itemVendidos = this.relatorioPrecontaService.listarItensVendidos(filtroRelatorioPreconta);
     }
 
     private void listarVendedores() {

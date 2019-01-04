@@ -5,7 +5,10 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.dto.FiltroRelatorioPreconta;
+import modelo.dto.ItemVendido;
 import modelo.dto.RelatorioPreconta;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import servico.RelatorioPrecontaService;
@@ -46,6 +49,36 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     + "   MESA,\n"
                     + "   COMANDA, DATA_PRECONTA;";
             return session.createSQLQuery(sql).setResultTransformer(Transformers.aliasToBean(RelatorioPreconta.class)).list();
+        }
+        return null;
+    }
+    
+    @Override
+    public List<ItemVendido> listarItensVendidos(FiltroRelatorioPreconta filtroRelatorioPreconta) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("SELECT")
+                    .append(" REFERENCIA AS REFERENCIA,")
+                    .append("   PRDESCRI AS DESCRICAO,")
+                    .append("   SUM(QUANTIDADE) AS QUANTIDADE,")
+                    .append("   VALOR_ITEM AS VALOR,")
+                    .append("   SUM(QUANTIDADE*VALOR_ITEM) AS TOTAL")
+                    .append(" FROM")
+                    .append("   ESPELHO_COMANDA ")
+                    .append("   LEFT OUTER JOIN ")
+                    .append("   SCEA01 ON (PRREFERE=REFERENCIA)")
+                    .append(" WHERE")
+                    .append("   DATA_PRECONTA")
+                    .append(" BETWEEN '").append(filtroRelatorioPreconta.getDataInicial()).append(" 00:00:00' ").append(" AND '").append(filtroRelatorioPreconta.getDataFinal()).append(" 23:59:59' ")
+                    .append(" AND  PEDIDO = '").append(filtroRelatorioPreconta.getPedido()).append("'")
+                    .append(" GROUP BY ")
+                    .append("    REFERENCIA,PRDESCRI, VALOR_ITEM")
+                    .append(" ORDER BY")
+                    .append("   QUANTIDADE DESC");
+            SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
+            Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemVendido.class));
+            return query.list();
         }
         return null;
     }

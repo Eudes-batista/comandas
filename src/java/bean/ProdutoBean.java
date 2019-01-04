@@ -130,6 +130,8 @@ public class ProdutoBean implements Serializable {
         controlePedido = new ControlePedido(controleService, comanda);
         pedido = pedido == null ? controlePedido.gerarNumero() : pedido;
         status = status == null ? "" : status;
+        int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(pedido);
+        quantidadePessoas = buscarNumeroDePessoas == 0 ? quantidadePessoas : String.valueOf(buscarNumeroDePessoas);
     }
 
     public void listarGrupoAcompanhamentos() {
@@ -210,7 +212,9 @@ public class ProdutoBean implements Serializable {
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setComanda(this.comanda);
         lancamentoItem.setMesa(this.mesa);
-        lancamentoItem.setItem(this.controleService.gerarSequencia(this.comanda));
+        String item = this.controleService.gerarSequencia(this.comanda);
+        lancamentoItem.setItem(item);
+        lancamentoItem.setNumero(gerarNumero() + item);
         lancamentoItem.setNumero(gerarNumero());
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
@@ -232,8 +236,9 @@ public class ProdutoBean implements Serializable {
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setComanda(this.comanda);
         lancamentoItem.setMesa(this.mesa);
-        lancamentoItem.setItem(this.controleService.gerarSequencia(this.comanda));
-        lancamentoItem.setNumero(gerarNumero());
+        String item = this.controleService.gerarSequencia(this.comanda);
+        lancamentoItem.setItem(item);
+        lancamentoItem.setNumero(gerarNumero() + item);
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(this.quantidade);
@@ -476,7 +481,7 @@ public class ProdutoBean implements Serializable {
                 controleImpressao.imprime(gerarPdf);
             }
             controleService.atualizarStatusImpressao(comanda);
-            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(comanda);
+            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
             listarProdutosAdicionados();
         } catch (IOException ex) {
             mensagem = "Impressora desligada ou cambo desconectado.";
@@ -506,10 +511,17 @@ public class ProdutoBean implements Serializable {
     }
 
     public void imprimirTodos() {
-        if (produtoSalvo < lancamentosAdicionados.size()) {
-            mensagem = "Verifique se o produto foi realmente adicionado.";
-            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+        List<Lancamento> lancamentosMemoria = this.lancamentosAdicionados;
+        listarProdutosAdicionados();
+        if (lancamentosMemoria.size() != this.lancamentosAdicionados.size()) {
+            mensagem = "Erro na comunicação do servidor, verifique a lista dos itens e lançe novamente.";
+            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
             return;
+        }
+        long count = this.lancamentosAdicionados.stream().filter(l -> l.getDescricao().contains("COUVERT")).count();
+        if (count != 0) {
+            controleService.atualizarStatusImpressao(comanda);
+            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
         }
         Map<String, List<Lancamento>> mapLanmentos = separarLancamentoPorGrupo();
         if (!mapLanmentos.isEmpty()) {

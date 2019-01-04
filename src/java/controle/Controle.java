@@ -35,13 +35,12 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO ")
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,tepedido as PEDIDO ")
                 .append("from  sosa98 ")
                 .append("left outer join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("')")
-                .append(" left outer join espelho_comanda on(numero=tenumero)")
                 .append(" where ")
                 .append("tecdmesa='").append(mesa).append("' ")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("group by tecomand,testatus,tecdmesa,tepedido ")
                 .append("order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
@@ -81,14 +80,13 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) TOTAL,testatus STATUS,tecdmesa MESA,pessoas_mesa PESSOAS,tepedido AS PEDIDO ")
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) TOTAL,testatus STATUS,tecdmesa MESA,tepedido AS PEDIDO ")
                 .append("from  sosa98 ")
                 .append("inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("')")
-                .append(" inner join espelho_comanda on(numero=tenumero) ")
                 .append(" where ")
                 .append("tecdmesa='").append(mesa).append("' and")
                 .append(" tecomand like '%").append(comanda).append("%' ")
-                .append("group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido ")
+                .append("group by tecomand,testatus,tecdmesa,tepedido ")
                 .append("order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
@@ -113,11 +111,10 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand AS COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO ")
+                .append("tecomand AS COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,tepedido as PEDIDO ")
                 .append("from  sosa98 ")
                 .append(" inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
-                .append(" inner join espelho_comanda on(numero=tenumero)")
-                .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido")
+                .append(" group by tecomand,testatus,tecdmesa,tepedido")
                 .append(" order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
@@ -131,13 +128,12 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
-                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,pessoas_mesa as PESSOAS,tepedido as PEDIDO")
+                .append("tecomand as COMANDA,sum(tequanti*EEPLQTB1) as TOTAL,testatus as STATUS,tecdmesa as MESA,tepedido as PEDIDO")
                 .append(" from  sosa98 ")
                 .append(" inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
-                .append(" inner join espelho_comanda on(numero=tenumero) ")
                 .append(" where ")
                 .append(" tecomand like '%").append(codigo).append("%' ")
-                .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido")
+                .append(" group by tecomand,testatus,tecdmesa,tepedido")
                 .append(" order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
@@ -289,7 +285,7 @@ public class Controle implements ComandaService, Serializable {
         mesaDestino = String.valueOf(comanda.get(0).getMESA());
         pedido = String.valueOf(comanda.get(0).getPEDIDO());
         status = String.valueOf(comanda.get(0).getSTATUS());
-        somaQuantidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) + Integer.parseInt(comandaOrigem.getPESSOAS());
+        somaQuantidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) +buscarNumeroDePessoas(comandaOrigem.getPEDIDO());
         List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(comandaOrigem.getCOMANDA());
         for (int i = 0; i < itemAcompanhamentoTransferencias.size(); i++) {
             ItemAcompanhamentoTransferencia item = itemAcompanhamentoTransferencias.get(i);
@@ -456,6 +452,17 @@ public class Controle implements ComandaService, Serializable {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             Object uniqueResult = session.createSQLQuery("select count(*) from espelho_comanda where pedido='"+pedido+"' group by pedido")
+                    .uniqueResult();
+            return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
+        }
+        return 0;
+    }
+
+    @Override
+    public int buscarNumeroDePessoas(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object uniqueResult = session.createSQLQuery("select pessoas_mesa from espelho_comanda where pedido='"+pedido+"' group by pessoas_mesa")
                     .uniqueResult();
             return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
         }

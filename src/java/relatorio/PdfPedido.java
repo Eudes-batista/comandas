@@ -94,9 +94,16 @@ public class PdfPedido implements PdfService {
 
         if (lancamento != null) {
             tabelaReimpressao.addCell(reimpressao);
-
-        }
-
+        }                       
+        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
+        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
+        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
+        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
+        tabelaTitulo.addCell(espaco);
+        tabelaTitulo.addCell(espaco1);
+        tabelaTitulo.addCell(espaco2);
+        tabelaTitulo.addCell(espaco3);
+        
         tabelaTitulo.addCell(tituloMesa);
         tabelaTitulo.addCell(tituloComanda);
         tabelaTitulo.addCell(tituloHora);
@@ -105,14 +112,12 @@ public class PdfPedido implements PdfService {
         tabelaValores.addCell(numeroMesa);
         tabelaValores.addCell(numeroComanda);
         tabelaValores.addCell(hora);
-        tabelaValores.setWidthPercentage(100f);
-        
-        documento.add(new Paragraph(30f, "  "));
+        tabelaValores.setWidthPercentage(100f);                               
+                
         documento.add(tabelaReimpressao);
         documento.add(tabelaTitulo);
         documento.add(tabelaValores);
         documento.add(divider1);
-        documento.add(new Paragraph(20f, "  "));
 
     }
 
@@ -180,7 +185,7 @@ public class PdfPedido implements PdfService {
         }
 
         tabelaItens.addCell(obs);
-        tabelaItens.addCell(div);
+        tabelaItens.addCell(div);                
 
         documento.add(tabelaItens);
     }
@@ -208,7 +213,16 @@ public class PdfPedido implements PdfService {
         tabelaRodape.addCell(titulopedido);
         tabelaRodape.addCell(pedido);
         tabelaRodape.addCell(div);
-
+        
+        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
+        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
+        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
+        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
+        tabelaRodape.addCell(espaco);
+        tabelaRodape.addCell(espaco1);
+        tabelaRodape.addCell(espaco2);
+        tabelaRodape.addCell(espaco3);
+        
         documento.add(tabelaRodape);
 
     }

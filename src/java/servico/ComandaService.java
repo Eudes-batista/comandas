@@ -60,4 +60,6 @@ public interface ComandaService {
     
     public int verificarSePedidoJaExiste(String pedido);
     
+    public int buscarNumeroDePessoas(String pedido);
+    
 }

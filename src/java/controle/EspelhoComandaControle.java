@@ -36,8 +36,8 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     }
 
     @Override
-    public void atualizarStatusImpressao(String comanda) {
-        executarSql("update espelho_comanda set impressao='1' where comanda='" + comanda + "'");
+    public void atualizarStatusImpressao(String pedido) {
+        executarSql("update espelho_comanda set impressao='1' where pedido='" + pedido + "'");
     }
 
     @Override

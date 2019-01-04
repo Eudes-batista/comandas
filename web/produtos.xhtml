@@ -443,7 +443,7 @@
                    closable="false" closeOnEscape="true"
                    showEffect="fade" hideEffect="fade" visible="false">
             <span style="color:#fff;">#{produtoBean.mensagem}</span>
-            <a id="voltar" class="btn-modal btn btn-warning btn-block" style="margin-top: 30px; color: #fff;" onclick="PF('dialogoErro').hide();">Lançar Produto novamente</a>
+            <h:link id="Errovoltar" class="btn-modal btn btn-warning btn-block" style="margin-top: 30px; color: #fff;" onclick="PF('dialogoErro').hide();">Lançar Produto novamente</h:link>
         </p:dialog>
         <!--MODAL DE REGISTRO DE PRODUTO-->
         <p:dialog header="Adicionar Produto" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300"  id="dlProduto" widgetVar="dialogoProduto" dynamic="true" 
