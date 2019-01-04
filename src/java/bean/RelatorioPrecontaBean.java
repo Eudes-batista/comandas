@@ -50,7 +50,6 @@ public class RelatorioPrecontaBean implements Serializable {
     }
 
     public void listarTudo() {
-        System.out.println("filtroRelatorioPreconta = " + filtroRelatorioPreconta);
         this.relatorioPrecontas = relatorioPrecontaService.listarTudo(filtroRelatorioPreconta);
     }
     
