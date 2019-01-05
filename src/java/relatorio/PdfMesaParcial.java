@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -139,32 +140,52 @@ public class PdfMesaParcial implements PdfService {
 //        ***********ITENS*************
             double totalComanda = 0.0;
             List<Object[]> comandas = comandaService.listarComandas(numeroComanda);
+            Map<String, Object[]> mapProdutos = new HashMap();
             for (Object[] c : comandas) {
+                String refencia = String.valueOf(c[0]);
                 String descricao = String.valueOf(c[1]);
-                String quantidade = df.format(Double.parseDouble(String.valueOf(c[2])));
-                String vUnitario = df.format(Double.parseDouble(String.valueOf(c[3])));
-                double vTotal = Double.parseDouble(String.valueOf(c[4]));
+                double valorTotal = Double.parseDouble(String.valueOf(c[4]));
+                double quantidade = 0;
+                double total = 0;
+                Object[] produto = mapProdutos.get(refencia);
+                if (produto == null) {
+                    produto = c;
+                } else {
+                    total += Double.parseDouble(String.valueOf(produto[4])) + valorTotal;
+                    quantidade += Double.parseDouble(String.valueOf(produto[2]))+Double.parseDouble(String.valueOf(c[2]));
+                    produto[4] =total;
+                    produto[2] =quantidade;
+                }
+                mapProdutos.put(refencia, produto);
+                totalComanda += valorTotal;
+                vendedores.add(String.valueOf(c[6]));
+                lancamentos.add(new Lancamento(descricao, valorTotal));
+            }
+            for (Map.Entry<String, Object[]> entry : mapProdutos.entrySet()) {
+                String key = entry.getKey();
+                Object[] produto = mapProdutos.get(key);
+                String descricao = String.valueOf(produto[1]);
+                String quantidade = df.format(Double.parseDouble(String.valueOf(produto[2])));
+                String vUnitario = df.format(Double.parseDouble(String.valueOf(produto[3])));
+                double vTotal = Double.parseDouble(String.valueOf(produto[4]));
 
                 PdfPCell qtd = controlePdf.criarCelula(quantidade, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-                PdfPCell produto = controlePdf.criarCelula(descricao, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
+                PdfPCell item = controlePdf.criarCelula(descricao, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
                 PdfPCell valor = controlePdf.criarCelula(vUnitario, ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
                 PdfPCell subTotal = controlePdf.criarCelula(df.format(vTotal), ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
                 PdfPCell div = controlePdf.criarCelula("..............................................................................", ControlePdf.FONT_PP, 4, Element.ALIGN_CENTER);
 
                 qtd.setPaddingTop(-7f);
-                produto.setPaddingTop(-5f);
+                item.setPaddingTop(-5f);
                 valor.setPaddingTop(-5f);
                 subTotal.setPaddingTop(-5f);
                 div.setPaddingTop(-5f);
 
                 tabelaItens.addCell(qtd);
-                tabelaItens.addCell(produto);
+                tabelaItens.addCell(item);
                 tabelaItens.addCell(valor);
                 tabelaItens.addCell(subTotal);
                 tabelaItens.addCell(div);
-                totalComanda += vTotal;
-                vendedores.add(String.valueOf(c[6]));
-                lancamentos.add(new Lancamento(descricao, vTotal));
             }
             documento.add(divider1);
             documento.add(espaco);
