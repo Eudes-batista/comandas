@@ -15,4 +15,5 @@ public interface MotivoCancelamentoService {
     
     public int verificarId();
     
+    public MotivoCancelamento buscarMotivoPorCodigo(int codigo);
 }

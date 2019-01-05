@@ -6,6 +6,7 @@ import controle.ControlePedido;
 import controle.ControleRelatorio;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -34,12 +35,14 @@ import modelo.Lapt51;
 import modelo.Produto;
 import modelo.Sosa98;
 import modelo.Sosa98Id;
+import modelo.dto.ItemCanceladoGarcom;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
+import relatorio.PdfCancelamento;
 import relatorio.PdfPedido;
 import relatorio.Relatorio;
 import servico.AcompanhamentoService;
@@ -598,15 +601,32 @@ public class ProdutoBean implements Serializable {
         if (validarGerente()) {
             excluirProdutoJaImpressoSosa98();
             alterarEspelhoComandaItemExcluido();
+            ItemCanceladoGarcom canceladoGarcom = preencherInformacoesCancelamento();
+            try {
+                imprimirCancelamento(lancamento, canceladoGarcom);
+                PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
+            } catch (DocumentException | IOException | PrinterException ex) {
+                Messages.addGlobalWarn("Erro ao imprimir cancelamento\n verifique se a impressora está ligada.");
+            }
             this.lancamento = null;
             this.lancamento = new Lancamento();
             this.espelhoComandaBean.espelhoComanda = null;
             this.usuario = "";
             this.senha = "";
-            PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
         } else {
             Messages.addGlobalWarn("Usuário não autorizado.");
         }
+    }
+
+    private ItemCanceladoGarcom preencherInformacoesCancelamento() {
+        ItemCanceladoGarcom canceladoGarcom = new ItemCanceladoGarcom();
+        canceladoGarcom.setCANCELAMENTO(espelhoComandaBean.espelhoComanda.getQuantidadeCancelada());
+        int codigoMotivoCancelamento = espelhoComandaBean.espelhoComanda.getCodigoMotivoCancelamento();
+        canceladoGarcom.setMOTIVO(this.motivoCancelamentoBean.buscarPorCodigo(codigoMotivoCancelamento).getNome());
+        canceladoGarcom.setOBSERVACAO(this.espelhoComandaBean.espelhoComanda.getObservacaoMotivo());
+        canceladoGarcom.setPRODUZIDO(this.espelhoComandaBean.espelhoComanda.getFoiProduzido() ? "SIM" : "NÃO");
+        canceladoGarcom.setRESPONSAVEL(this.espelhoComandaBean.espelhoComanda.getRespansavelCancelamento());
+        return canceladoGarcom;
     }
 
     private void alterarEspelhoComandaItemExcluido() {
@@ -654,6 +674,14 @@ public class ProdutoBean implements Serializable {
         }
         PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
         listarProdutosAdicionados();
+    }
+
+    private void imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) throws FileNotFoundException, DocumentException, IOException, PrinterException {
+        PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
+        File pdf = pdfService.gerarPdf();
+        String impressora = new GerenciaArquivo().bucarInformacoes().getConfiguracao().getImpressora();
+        ControleImpressao controleImpressao = new ControleImpressao(impressora);
+        controleImpressao.imprime(pdf);
     }
 
 }

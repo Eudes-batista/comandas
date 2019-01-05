@@ -385,9 +385,10 @@
                         <div class="col-md-12">
                             <p:commandLink id="confirmarCancelamento" style="color: #fff;" class="btn-modal btn btn-success btn-block" value="Confirma" 
                                            update="frm:tabela frm:totalItens frm:valorTotalItens frmCancelamento:msgCancelar" process="frmCancelamento:panelInformacao frmCancelamento:panelAutorizacao @this" 
-                                           resetValues="true" actionListener="#{produtoBean.excluirProdutoJaImpresso()}"/>
+                                           resetValues="true" actionListener="#{produtoBean.excluirProdutoJaImpresso()}"
+                                           onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
                             <a style="color: #fff;font-size: 13pt;" class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoCancelamento').hide();">
-                                Cancelar
+                                Fechar
                             </a>
                         </div>
                     </div>
@@ -421,7 +422,7 @@
                         <div class="col-md-12">
                             <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
                                            update="frm:titulo msgVendedor" process="confirmaSenha @this" actionListener="#{produtoBean.validaVendedor()}"
-                                           oncomplete="selecionarPesquisa();">
+                                           oncomplete="selecionarPesquisa();" onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
                                 OK
                             </p:commandLink> 
                             <p:defaultCommand target="ok" />
@@ -469,5 +470,9 @@
         <p:sidebar id="transferenciaItens" widgetVar="sidebarTransferenciaItens" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
             <ui:include src="transferenciaItens.xhtml" />    
         </p:sidebar>
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
+                  responsive="true" showEffect="fade" hideEffect="fade">
+            <h3 style="text-align: center;">Aguarde...</h3>
+        </p:dialog>
     </h:body>
 </html>

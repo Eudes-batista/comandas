@@ -72,4 +72,16 @@ public class MotivoCancelamentoControle implements MotivoCancelamentoService, Se
         return count;
     }
 
+    @Override
+    public MotivoCancelamento buscarMotivoPorCodigo(int codigo) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if(session != null){
+           MotivoCancelamento motivoCancelamento =(MotivoCancelamento) session.createQuery("from MotivoCancelamento where codigo ="+codigo+" ").uniqueResult();
+           return motivoCancelamento;
+        }
+        return null;
+    }
+    
+    
+
 }

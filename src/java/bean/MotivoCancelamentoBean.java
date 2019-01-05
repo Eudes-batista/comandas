@@ -49,5 +49,9 @@ public class MotivoCancelamentoBean implements Serializable{
         this.motivoCancelamentoService.excluir(motivoCancelamento);
         listarTodos();
     }
+    
+    public MotivoCancelamento buscarPorCodigo(int codigo){
+        return this.motivoCancelamentoService.buscarMotivoPorCodigo(codigo);
+    }
         
 }

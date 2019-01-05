@@ -11,11 +11,13 @@ import controle.ControlePdf;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
+import modelo.dto.ItemCanceladoGarcom;
 import servico.ItemAcompanhamentoService;
 import servico.PdfService;
 
@@ -27,24 +29,15 @@ public class PdfCancelamento implements PdfService {
 
     private final Document documento = ControlePdf.getDocumento();
     private final ControlePdf controlePdf = new ControlePdf();
-    private List<Lancamento> lancamentos = null;
     private Lancamento lancamento = null;
     private ItemAcompanhamentoService itemAcompanhamentoService;
+    private ItemCanceladoGarcom itemCanceladoGarcom;
     private final String separador = "..........................................................";
 
-    public PdfCancelamento(List<Lancamento> lancamentos, Lancamento lancamento, ItemAcompanhamentoService itemAcompanhamentoService) {
-        this.lancamentos = lancamentos;
+    public PdfCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom, ItemAcompanhamentoService itemAcompanhamentoService) {
         this.lancamento = lancamento;
+        this.itemCanceladoGarcom = itemCanceladoGarcom;
         this.itemAcompanhamentoService = itemAcompanhamentoService;
-    }
-
-    public PdfCancelamento(List<Lancamento> lancamentos, Lancamento lancamento) {
-        this.lancamentos = lancamentos;
-        this.lancamento = lancamento;
-    }
-
-    public PdfCancelamento(Lancamento lancamento) {
-        this.lancamento = lancamento;
     }
 
     public PdfCancelamento() {
@@ -52,8 +45,8 @@ public class PdfCancelamento implements PdfService {
 
     @Override
     public File gerarPdf() throws FileNotFoundException, DocumentException {
-        String codigoPedido = lancamentos != null ? lancamentos.get(0).getPedido() : lancamento.getPedido();
-        File file = new File(controlePdf.buscarCaminho() + "pedido" + codigoPedido + ".pdf");
+        String codigoPedido = lancamento.getPedido();
+        File file = new File(controlePdf.buscarCaminho() + "cancelamentoItem" + codigoPedido + ".pdf");
         PdfWriter.getInstance(documento, new FileOutputStream(file));
         documento.open();
         criarCabecalho();
@@ -66,55 +59,45 @@ public class PdfCancelamento implements PdfService {
     @Override
     public void criarCabecalho() throws DocumentException {
 
-        PdfPTable tabelaReimpressao = new PdfPTable(1);
         PdfPTable tabelaTitulo = new PdfPTable(3);
         PdfPTable tabelaValores = new PdfPTable(3);
 
-//        ***********TITULO MESA/COMANDA*************
-        PdfPCell reimpressao = controlePdf.criarCelula("***** REIMPRESSÃO *****", ControlePdf.FONT_MB, 1, Element.ALIGN_CENTER);
+//        ***********TITULO MESA/COMANDA*************      
+        PdfPCell titulo = controlePdf.criarCelula("CANCELAMENTO", ControlePdf.FONT_MB, 3, Element.ALIGN_CENTER);
+        
         PdfPCell tituloMesa = controlePdf.criarCelula("Mesa", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-        PdfPCell tituloComanda = controlePdf.criarCelula("Comanda", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
-        PdfPCell tituloHora = controlePdf.criarCelula("Hora", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
+        PdfPCell tituloComanda = controlePdf.criarCelula("Comanda", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
 
 //        ***********HORA*************
-        PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("HH:mm:ss").format(new Date()), ControlePdf.FONT_PB, 1, Element.ALIGN_CENTER);
+        PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(new Date()), ControlePdf.FONT_PPB, 3, Element.ALIGN_CENTER);
 
 //        ***********NÚMERO MESA*************
-        PdfPCell numeroMesa = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getMesa() : lancamento.getMesa(), ControlePdf.FONT_MB, 1, Element.ALIGN_LEFT);
+        PdfPCell numeroMesa = controlePdf.criarCelula(lancamento.getMesa(), ControlePdf.FONT_P, 1, Element.ALIGN_LEFT);
 
 //        ***********NÚMERO COMANDA************
-        PdfPCell numeroComanda = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getComanda() : lancamento.getComanda(), ControlePdf.FONT_MB, 1, Element.ALIGN_CENTER);
+        PdfPCell numeroComanda = controlePdf.criarCelula(lancamento.getComanda(), ControlePdf.FONT_P, 2, Element.ALIGN_RIGHT);
 
         Paragraph divider1 = new Paragraph(-1f, "______________________________");
+        PdfPCell divisor = controlePdf.criarCelula("______________________________________", ControlePdf.FONT_PPB, 3, Element.ALIGN_LEFT);
 
 //        ***********POSICIONAMENTO DE CAMPOS*************
         numeroMesa.setPaddingTop(-7f);
         numeroComanda.setPaddingTop(-7f);
         hora.setPaddingTop(-3f);
+        divisor.setPaddingTop(-5f);
 
-        if (lancamento != null) {
-            tabelaReimpressao.addCell(reimpressao);
-        }                       
-        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        tabelaTitulo.addCell(espaco);
-        tabelaTitulo.addCell(espaco1);
-        tabelaTitulo.addCell(espaco2);
-        tabelaTitulo.addCell(espaco3);
+        tabelaTitulo.addCell(titulo);
+        tabelaTitulo.addCell(hora);
         
+        tabelaTitulo.addCell(divisor);
         tabelaTitulo.addCell(tituloMesa);
         tabelaTitulo.addCell(tituloComanda);
-        tabelaTitulo.addCell(tituloHora);
         tabelaTitulo.setWidthPercentage(100f);
 
         tabelaValores.addCell(numeroMesa);
         tabelaValores.addCell(numeroComanda);
-        tabelaValores.addCell(hora);
-        tabelaValores.setWidthPercentage(100f);                               
-                
-        documento.add(tabelaReimpressao);
+        tabelaValores.setWidthPercentage(100f);
+
         documento.add(tabelaTitulo);
         documento.add(tabelaValores);
         documento.add(divider1);
@@ -125,57 +108,57 @@ public class PdfCancelamento implements PdfService {
     public void criarCorpo() throws DocumentException {
 
         //        ***********TITULO ITENS*************
-        PdfPTable tabelaCabecalhoItens = new PdfPTable(2);
+        PdfPTable tabelaCabecalhoItens = new PdfPTable(3);
         tabelaCabecalhoItens.setWidthPercentage(100f);
-        tabelaCabecalhoItens.setWidths(new float[]{25, 100});
+        tabelaCabecalhoItens.setWidths(new float[]{25, 100,50});
 
-        PdfPCell tituloQtd = controlePdf.criarCelula("QTD", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-        PdfPCell tituloProduto = controlePdf.criarCelula("Produto", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
+        PdfPCell tituloQtd = controlePdf.criarCelula("QTD", ControlePdf.FONT_PPP, 1, Element.ALIGN_LEFT);
+        PdfPCell tituloProduto = controlePdf.criarCelula("Produto", ControlePdf.FONT_PPP, 1, Element.ALIGN_LEFT);
+        PdfPCell tituloValor = controlePdf.criarCelula("Valor", ControlePdf.FONT_PPP, 1, Element.ALIGN_RIGHT);
         tituloQtd.setPaddingTop(-3f);
         tituloProduto.setPaddingTop(-3f);
+        tituloValor.setPaddingTop(-3f);
 
         tabelaCabecalhoItens.addCell(tituloQtd);
         tabelaCabecalhoItens.addCell(tituloProduto);
+        tabelaCabecalhoItens.addCell(tituloValor);
         documento.add(tabelaCabecalhoItens);
 
 //        ***********ITENS*************
-        String descricaoItem;
-        if (lancamentos != null) {
-            for (Lancamento lanc : lancamentos) {
-                descricaoItem = lanc.getDescricao().toUpperCase();
-                if (verificarNomeCouvertNaDescricao(descricaoItem)) {
-                    carregarItens(lanc);
-                }
-            }
-            return;
-        }
-        descricaoItem = lancamento.getDescricao().toUpperCase();
-        if (verificarNomeCouvertNaDescricao(descricaoItem)) {
-            carregarItens(lancamento);
-        }
-    }
-
-    private boolean verificarNomeCouvertNaDescricao(String descricao) {
-        return !descricao.contains("couvert".toUpperCase());
+        carregarItens(lancamento);
     }
 
     private void carregarItens(Lancamento lanc) throws DocumentException {
-        PdfPTable tabelaItens = new PdfPTable(2);
+        PdfPTable tabelaItens = new PdfPTable(3);
         tabelaItens.setWidthPercentage(100f);
-        tabelaItens.setWidths(new float[]{50, 200});
-
-        PdfPCell qtd = controlePdf.criarCelula(String.valueOf(lanc.getQuantidade()), ControlePdf.FONT_M, 1, Element.ALIGN_LEFT);
-        PdfPCell produto = controlePdf.criarCelula(lanc.getDescricao(), ControlePdf.FONT_PB, 1, Element.ALIGN_LEFT);
-        PdfPCell obs = controlePdf.criarCelula("OBS: " + lanc.getObservacao(), ControlePdf.FONT_P, 2, Element.ALIGN_LEFT);
+        tabelaItens.setWidths(new float[]{50, 150,50});
+        DecimalFormat decimalFormat = new DecimalFormat("###,##0.00");
+        PdfPTable tabelaCancelamento = new PdfPTable(5);
+        tabelaCancelamento.setWidthPercentage(100f);
+        
+        PdfPCell qtd = controlePdf.criarCelula(String.valueOf(lanc.getQuantidade()), ControlePdf.FONT_PPP, 1, Element.ALIGN_LEFT);
+        PdfPCell produto = controlePdf.criarCelula(lanc.getDescricao(), ControlePdf.FONT_PPP, 1, Element.ALIGN_LEFT);
+        PdfPCell valor = controlePdf.criarCelula(decimalFormat.format(lanc.getPrecoTotal()), ControlePdf.FONT_PPP, 1, Element.ALIGN_RIGHT);
+        PdfPCell obs = controlePdf.criarCelula("OBS: " + lanc.getObservacao(), ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);
+        
+        PdfPCell motivo = controlePdf.criarCelula("Motivo: " + itemCanceladoGarcom.getMOTIVO(), ControlePdf.FONT_PP, 5, Element.ALIGN_LEFT);
+        PdfPCell observacao = controlePdf.criarCelula("OBS: " + itemCanceladoGarcom.getOBSERVACAO(), ControlePdf.FONT_PP, 5, Element.ALIGN_LEFT);
+        PdfPCell cancelamento = controlePdf.criarCelula("QTD.CANCELADA: " + itemCanceladoGarcom.getCANCELAMENTO(), ControlePdf.FONT_PP,5, Element.ALIGN_LEFT);
+        PdfPCell responsavel = controlePdf.criarCelula("RESPONSAVEL: " + itemCanceladoGarcom.getRESPONSAVEL(), ControlePdf.FONT_PP,5, Element.ALIGN_LEFT);
+        PdfPCell produzido = controlePdf.criarCelula("Foi Produzido: " + itemCanceladoGarcom.getPRODUZIDO(), ControlePdf.FONT_PP, 5, Element.ALIGN_LEFT);
+        
+        
         PdfPCell div = controlePdf.criarCelula(separador, ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
         qtd.setPaddingTop(-7f);
         produto.setPaddingTop(-5f);
         obs.setPaddingTop(-5f);
+        valor.setPaddingTop(-5f);
         div.setPaddingTop(-5f);
 
         tabelaItens.addCell(qtd);
         tabelaItens.addCell(produto);
+        tabelaItens.addCell(valor);
 
         List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(lanc);
         for (ItemAcompanhamento acompanhamento : acompanhamentos) {
@@ -183,11 +166,18 @@ public class PdfCancelamento implements PdfService {
             itemAcompanhamento.setPaddingTop(-5f);
             tabelaItens.addCell(itemAcompanhamento);
         }
-
         tabelaItens.addCell(obs);
-        tabelaItens.addCell(div);                
+        
+        tabelaCancelamento.addCell(motivo);
+        tabelaCancelamento.addCell(observacao);
+        tabelaCancelamento.addCell(cancelamento);
+        tabelaCancelamento.addCell(responsavel);
+        tabelaCancelamento.addCell(produzido);
+        
+        tabelaCancelamento.addCell(div);
 
         documento.add(tabelaItens);
+        documento.add(tabelaCancelamento);
     }
 
     private List<ItemAcompanhamento> listarAcompanhamentos(Lancamento lancamento) {
@@ -201,9 +191,9 @@ public class PdfCancelamento implements PdfService {
         tabelaRodape.setWidthPercentage(100f);
 
         PdfPCell tituloGarcom = controlePdf.criarCelula("Garçom", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
-        PdfPCell garcom = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getVendedor() : lancamento.getVendedor(), ControlePdf.FONT_PPB, 1, Element.ALIGN_LEFT);
+        PdfPCell garcom = controlePdf.criarCelula(lancamento.getVendedor(), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
         PdfPCell titulopedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
-        PdfPCell pedido = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getPedido() : lancamento.getPedido(), ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
+        PdfPCell pedido = controlePdf.criarCelula(lancamento.getPedido(), ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
         PdfPCell div = controlePdf.criarCelula(separador, ControlePdf.FONT_PPB, 2, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
@@ -213,16 +203,7 @@ public class PdfCancelamento implements PdfService {
         tabelaRodape.addCell(titulopedido);
         tabelaRodape.addCell(pedido);
         tabelaRodape.addCell(div);
-        
-        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        tabelaRodape.addCell(espaco);
-        tabelaRodape.addCell(espaco1);
-        tabelaRodape.addCell(espaco2);
-        tabelaRodape.addCell(espaco3);
-        
+
         documento.add(tabelaRodape);
 
     }
