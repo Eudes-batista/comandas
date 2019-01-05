@@ -210,7 +210,7 @@ public class MesasBean implements Serializable {
         if ("normal".equals(tipo)) {
             fecharMesa(this.mesa);
         }
-    }
+    }    
 
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));

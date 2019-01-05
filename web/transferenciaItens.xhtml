@@ -19,10 +19,14 @@
                     <h:outputText value="#{lancamentoTransferencia.quantidade}" />
                 </p:column>
                 <p:column headerText="">
-                    <h:outputText value="#{lancamentoTransferencia.preco}" />
+                    <h:outputText value="#{lancamentoTransferencia.preco}" >
+                        <f:convertNumber pattern="###,##0.00"/>
+                    </h:outputText>
                 </p:column>
                 <p:column headerText="">
-                    <h:outputText value="#{lancamentoTransferencia.precoTotal}" />
+                    <h:outputText value="#{lancamentoTransferencia.precoTotal}" >
+                        <f:convertNumber pattern="###,##0.00"/>
+                    </h:outputText>
                 </p:column>
             </p:dataTable>
         </div>    

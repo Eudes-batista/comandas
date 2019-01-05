@@ -370,13 +370,6 @@ public class Controle implements ComandaService, Serializable {
                 List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
                 if (itemAcompanhamentoTransferencias.isEmpty()) {
                     int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
-                    int quantidadeItemOrigem = lancamentos.size();
-                    int auxilizar;
-                    if (quantidadeItemOrigem > ultimoItemComandaDestino) {
-                        auxilizar = quantidadeItemOrigem;
-                        quantidadeItemOrigem = ultimoItemComandaDestino;
-                        ultimoItemComandaDestino = auxilizar;
-                    }
                     int seguencia = ultimoItemComandaDestino + 1;
                     executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentos.get(0).getPedido() + "' and tenumseq='" + lancamentos.get(0).getItem() + "'");
                     executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentos.get(0).getPedido() + "' and numero_item='" + lancamentos.get(0).getItem() + "'");

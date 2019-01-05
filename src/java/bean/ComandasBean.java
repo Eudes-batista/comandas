@@ -144,6 +144,7 @@ public class ComandasBean implements Serializable {
                 Lancamento lancamento = new Lancamento();
                 lancamento.setComanda(comanda);
                 lancamento.setMesa(codigoMesa);
+                lancamento.setReferencia(String.valueOf(l[3]));
                 lancamento.setDescricao(String.valueOf(l[4]));
                 lancamento.setQuantidade(Double.parseDouble(String.valueOf(l[5])));
                 lancamento.setPreco(Double.parseDouble(String.valueOf(l[6])));

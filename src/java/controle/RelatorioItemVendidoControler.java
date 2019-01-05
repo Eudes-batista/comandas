@@ -64,7 +64,7 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append(" ''||NUMERO as NUMERO")
                     .append(",PEDIDO as PEDIDO")
                     .append(",VENDEDOR as GARCOM")
-                    .append(",SUM(QUANTIDADE_CANCELADA) as TOTAL")
+                    .append(",SUM(QUANTIDADE_CANCELADA*VALOR_ITEM) as TOTAL")
                     .append(",QUANTIDADE_CANCELADA as CANCELAMENTO")
                     .append(",PRDESCRI as ITEM")
                     .append(",NOME as MOTIVO")

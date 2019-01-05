@@ -14,7 +14,9 @@ import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import modelo.Empresa;
 import modelo.Lancamento;
 import servico.PdfService;
@@ -120,8 +122,24 @@ public class PdfComanda implements PdfService {
         tabelaCabecalhoItens.addCell(tituloProduto);
         tabelaCabecalhoItens.addCell(tituloValor);
         tabelaCabecalhoItens.addCell(tituloSubTotal);
-
+        Map<String, Lancamento> mapLancamento = new HashMap();
         lancamentos.forEach((lancamento) -> {
+            String refencia = lancamento.getReferencia();
+            Lancamento lancamentoMap = mapLancamento.get(refencia);
+            double total = 0, quantidade = 0;
+            if (lancamentoMap == null) {
+                lancamentoMap = lancamento;
+            } else {
+                total += lancamentoMap.getPrecoTotal() + lancamento.getPrecoTotal();
+                quantidade += lancamentoMap.getQuantidade() + lancamento.getQuantidade();
+                lancamentoMap.setPrecoTotal(total);
+                lancamentoMap.setQuantidade(quantidade);
+            }
+            mapLancamento.put(refencia, lancamentoMap);
+        });
+        for (Map.Entry<String, Lancamento> entry : mapLancamento.entrySet()) {
+            String key = entry.getKey();
+            Lancamento lancamento = mapLancamento.get(key);
             PdfPCell qtd = controlePdf.criarCelula(df.format(lancamento.getQuantidade()), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
             PdfPCell produto = controlePdf.criarCelula(lancamento.getDescricao(), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
             PdfPCell valor = controlePdf.criarCelula(df.format(lancamento.getPreco()), ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
@@ -139,7 +157,7 @@ public class PdfComanda implements PdfService {
             tabelaItens.addCell(valor);
             tabelaItens.addCell(subTotal);
             tabelaItens.addCell(div);
-        });
+        }
         documento.add(tabelaCabecalhoItens);
         documento.add(tabelaItens);
 
@@ -186,7 +204,7 @@ public class PdfComanda implements PdfService {
 
         PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
         PdfPCell pedido = controlePdf.criarCelula(this.lancamentos.get(0).getPedido(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
-        
+
         tabelaRodape.addCell(tituloTotal);
         tabelaRodape.addCell(total);
         tabelaRodape.addCell(div);

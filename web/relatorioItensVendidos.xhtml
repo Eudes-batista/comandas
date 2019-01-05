@@ -220,6 +220,7 @@
                                             <th>Pedido</th>
                                             <th>Item</th>
                                             <th>Cancelamentos</th>
+                                            <th>Total</th>
                                             <th>Motivo</th>
                                             <th>Situação</th>
                                             <th>Responsavel</th>
@@ -234,6 +235,11 @@
                                                 <td>#{item.PEDIDO}</td>
                                                 <td>#{item.ITEM}</td>
                                                 <td>#{item.CANCELAMENTO}</td>
+                                                <td>
+                                                    <h:outputText value="#{item.TOTAL}">
+                                                        <f:convertNumber pattern="###,##0.00"/>
+                                                    </h:outputText>
+                                                </td>
                                                 <td>#{item.MOTIVO}</td>
                                                 <td>#{item.PRODUZIDO eq '1' ? 'Foi produzido' :'Não foi produzido'}</td>
                                                 <td>#{item.RESPONSAVEL}</td>
@@ -243,6 +249,21 @@
                                             </tr>                                
                                         </ui:repeat>  
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="2" style="text-align: right;">Total:</td>
+                                            <td>
+                                                <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
+                                                    <f:convertNumber />
+                                                </h:outputText>
+                                            </td>
+                                            <td>
+                                                <h:outputText value="#{relatorioItemVendidoBean.total}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </h:panelGroup>
                         </div>
