@@ -351,7 +351,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferenciaItensParaMesaComanda(Comandas comanda, List<Lancamento> lancamentos, String usuarioTransferencia) {
+    public void transferenciaItensParaComanda(Comandas comanda, List<Lancamento> lancamentos, String usuarioTransferencia) {
         List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
         String pedido, status, pessoas, numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
         if (comandas.isEmpty()) {
@@ -359,8 +359,11 @@ public class Controle implements ComandaService, Serializable {
             status = "";
             pessoas = "1";
             for (Lancamento lancamento : lancamentos) {
-                ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+                if (!itemAcompanhamentoTransferencias.isEmpty()) {
+                    ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                    atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+                }
             }
         } else {
             pedido = String.valueOf(comandas.get(0).getPEDIDO());

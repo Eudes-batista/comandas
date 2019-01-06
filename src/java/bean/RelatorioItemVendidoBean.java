@@ -93,7 +93,7 @@ public class RelatorioItemVendidoBean implements Serializable {
         }else{
             this.itemCanceladoGarcons = this.relatorioItemVendidoService.listarItensCanceladosPorGarcom(filtroItemVendido);
             this.quantidade = this.itemCanceladoGarcons.stream().filter(item -> item.getCANCELAMENTO() != null).mapToDouble(ItemCanceladoGarcom::getCANCELAMENTO).sum();
-            this.total = this.itemCanceladoGarcons.stream().mapToDouble(ItemCanceladoGarcom::getTOTAL).sum();
+            this.total = this.itemCanceladoGarcons.stream().filter(item -> item.getCANCELAMENTO() != null).mapToDouble(ItemCanceladoGarcom::getTOTAL).sum();
         }
     }
 

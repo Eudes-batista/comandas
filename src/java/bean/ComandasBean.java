@@ -139,7 +139,7 @@ public class ComandasBean implements Serializable {
             }
         } else {
             Empresa empresa = relatorio.getEmpresa();
-            List<Lancamento> lancamentos = new ArrayList<>();
+            List<Lancamento> lancamentosImpressao = new ArrayList<>();
             controleService.ListarLancamentos(comanda, codigoMesa).forEach(l -> {
                 Lancamento lancamento = new Lancamento();
                 lancamento.setComanda(comanda);
@@ -151,11 +151,11 @@ public class ComandasBean implements Serializable {
                 lancamento.setPrecoTotal(Double.parseDouble(String.valueOf(l[7])));
                 lancamento.setVendedor(String.valueOf(l[8]));
                 lancamento.setPedido(String.valueOf(l[13]));
-                lancamentos.add(lancamento);
+                lancamentosImpressao.add(lancamento);
             });
             String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
             try {
-                PdfComanda pdfComanda = new PdfComanda(lancamentos, empresa);
+                PdfComanda pdfComanda = new PdfComanda(lancamentosImpressao, empresa);
                 ControleImpressao controleImpressao = new ControleImpressao(impressora);
                 File file = pdfComanda.gerarPdf();
                 controleImpressao.imprime(file);

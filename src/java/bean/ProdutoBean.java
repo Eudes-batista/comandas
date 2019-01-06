@@ -663,7 +663,7 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        controleService.transferenciaItensParaMesaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, usuarioTransferencia.toUpperCase());
+        controleService.transferenciaItensParaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, usuarioTransferencia.toUpperCase());
         if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");

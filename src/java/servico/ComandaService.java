@@ -56,7 +56,7 @@ public interface ComandaService {
     
     public void transferirItens(String numero,String item);
     
-    public void transferenciaItensParaMesaComanda(Comandas comanda,List<Lancamento> lancamentos,String usuarioTransferencia);
+    public void transferenciaItensParaComanda(Comandas comanda,List<Lancamento> lancamentos,String usuarioTransferencia);
     
     public int verificarSePedidoJaExiste(String pedido);
     

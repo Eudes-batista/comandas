@@ -57,8 +57,8 @@ public class MesasBean implements Serializable {
     private MesaService controle;
     @ManagedProperty(value = "#{controle}")
     private ComandaService comandaService;
-    @ManagedProperty(value = "#{usuarioService}")
-    private UsuarioService usuarioService;
+    @ManagedProperty(value = "#{usuarioBean}")
+    private UsuarioBean usuarioBean;
     @ManagedProperty(value = "#{empresaService}")
     private EmpresaService empresaService;
     @ManagedProperty(value = "#{espelhoComandaService}")
@@ -191,14 +191,7 @@ public class MesasBean implements Serializable {
             Empresa empresa = relatorio.getEmpresa();
             Map<String, List<Object[]>> mapComanda = controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
             String impressora = gerenciaArquivo.getConfiguracao().getImpressora();
-            PdfService pdfService;
-            if (tipo.equals("normal")) {
-                pdfService = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
-            } else if ( tipo.equals("parcial")){
-                pdfService = new PdfMesaParcial(empresa, mapComanda, comandaService, mesa);
-            }else{
-                pdfService = new PdfDetalhado(empresa, mapComanda, comandaService, mesa, itemAcompanhamentoService);
-            }
+            PdfService pdfService = selecionarTipoImpressao(tipo, empresa, mapComanda);
             try {
                 new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
             } catch (FileNotFoundException | DocumentException ex) {
@@ -211,6 +204,22 @@ public class MesasBean implements Serializable {
             fecharMesa(this.mesa);
         }
     }    
+
+    private PdfService selecionarTipoImpressao(String tipo, Empresa empresa, Map<String, List<Object[]>> mapComanda) {
+        PdfService pdfService;
+        switch (tipo) {
+            case "normal":
+                pdfService = new PdfMesa(empresa, mapComanda, comandaService, this.mesa);
+                break;
+            case "parcial":
+                pdfService = new PdfMesaParcial(empresa, mapComanda, comandaService, mesa);
+                break;
+            default:
+                pdfService = new PdfDetalhado(empresa, mapComanda, comandaService, mesa, itemAcompanhamentoService);
+                break;
+        }
+        return pdfService;
+    }
 
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));
@@ -225,36 +234,38 @@ public class MesasBean implements Serializable {
         this.mostrareabrimesa = false;
     }
 
-    private String gerarSenha() {
-        StringBuilder sb = new StringBuilder();
-        this.senha = getSenha();
-        String senhaCript = "";
-        for (int i = 1; i < 300; i++) {
-            sb.append((char) i);
-        }
-        sb.append(" ");
-        for (int i = 1; i <= this.senha.length(); i++) {
-            int cod = sb.indexOf(String.valueOf(this.senha.charAt(i - 1))) + (i + 11);
-            senhaCript += (char) cod;
-        }
-        return senhaCript;
-    }
-
-    private boolean validarGerente() {
-        if (getUsuario().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
-            return false;
-        }
-        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().toUpperCase(), gerarSenha());
-        if (usuarios.isEmpty()) {
-            return false;
-        }
-        return String.valueOf(usuarios.get(0)[2]).equals("T");
-    }
+//    private String gerarSenha() {
+//        StringBuilder sb = new StringBuilder();
+//        this.senha = getSenha();
+//        String senhaCript = "";
+//        for (int i = 1; i < 300; i++) {
+//            sb.append((char) i);
+//        }
+//        sb.append(" ");
+//        for (int i = 1; i <= this.senha.length(); i++) {
+//            int cod = sb.indexOf(String.valueOf(this.senha.charAt(i - 1))) + (i + 11);
+//            senhaCript += (char) cod;
+//        }
+//        return senhaCript;
+//    }
+//
+//    private boolean validarGerente() {
+//        if (getUsuario().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
+//            return false;
+//        }
+//        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().toUpperCase(), gerarSenha());
+//        if (usuarios.isEmpty()) {
+//            return false;
+//        }
+//        return String.valueOf(usuarios.get(0)[2]).equals("T");
+//    }
 
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
-        if (validarGerente()) {
+        usuarioBean.getUsuario().setUsuario(usuario);
+        usuarioBean.getUsuario().setSenha(senha);
+        if (usuarioBean.validarGerente()) {
             verificarAcaoUsuario();
             setUsuario("");
             setSenha("");
@@ -390,7 +401,8 @@ public class MesasBean implements Serializable {
     }
 
     public void validaVendedor() {
-        String permissao = vendedorService.validarVendedor(gerarSenha());
+        usuarioBean.getUsuario().setSenha(senha);
+        String permissao = vendedorService.validarVendedor(usuarioBean.gerarSenha());
         if (!"null".equals(permissao)) {
             this.vendedor = permissao;
             realizarAcaoDeImpressao(this.tipoImpressao);
