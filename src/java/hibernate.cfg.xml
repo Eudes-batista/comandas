@@ -4,7 +4,7 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.FirebirdDialect</property>
     <property name="hibernate.connection.driver_class">org.firebirdsql.jdbc.FBDriver</property>
-    <property name="hibernate.connection.url">jdbc:firebirdsql:25.81.71.149:c:\omega\dba\porto-mix-rest.gdb</property>
+    <property name="hibernate.connection.url">jdbc:firebirdsql:25.81.81.142:c:\omega\dba\porto-mix-rest.gdb</property>
     <property name="hibernate.connection.username">SYSDBA</property>
     <property name="hibernate.connection.password">masterkey</property>
     <property name="hibernate.current_session_context_class">thread</property>

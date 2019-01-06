@@ -137,6 +137,7 @@ public class PdfComanda implements PdfService {
             }
             mapLancamento.put(refencia, lancamentoMap);
         });
+        lancamentos.clear();
         for (Map.Entry<String, Lancamento> entry : mapLancamento.entrySet()) {
             String key = entry.getKey();
             Lancamento lancamento = mapLancamento.get(key);
@@ -157,6 +158,7 @@ public class PdfComanda implements PdfService {
             tabelaItens.addCell(valor);
             tabelaItens.addCell(subTotal);
             tabelaItens.addCell(div);
+            lancamentos.add(lancamento);
         }
         documento.add(tabelaCabecalhoItens);
         documento.add(tabelaItens);
