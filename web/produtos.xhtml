@@ -85,7 +85,8 @@
                                 </li>
                                 <li style="width: 50% ;text-align: center;">
                                     <p:commandLink id="imprimirTodos" value="Imprimir Pedido" class="btn-modal btn btn-success btn-block" 
-                                                   update="@this" actionListener="#{produtoBean.imprimirTodos()}" process="@this"/>
+                                                   update="@this" actionListener="#{produtoBean.imprimirTodos()}" process="@this"
+                                                   onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
                                     <p:tooltip for="imprimirTodos" value="Imprimir Pedido ( F7 )" showEffect="fade" hideEffect="fade"
                                                position="bottom"/>
                                 </li>
@@ -199,7 +200,7 @@
                                                 <p:commandLink id="observacao" style="color: #2aabd2; border-radius: 50px !important; font-size: 15pt;"
                                                                actionListener="#{produtoBean.setLancamentoAcompanhamento(lancamento)}" update="frm:obs" process="@this" 
                                                                oncomplete="PF('sidebarObs').show();" disabled="#{lancamento.descricao.contains('COUVERT')}"
-                                                               >
+                                                               onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
                                                     <i class="fa fa-info-circle"></i>
                                                 </p:commandLink>
                                             </td>
@@ -231,7 +232,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}">
+                                <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}"
+                                               onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
                                     <i class="fa fa-print"></i> imprimir
                                 </p:commandLink>
                             </div>
@@ -444,7 +446,7 @@
                    closable="false" closeOnEscape="true"
                    showEffect="fade" hideEffect="fade" visible="false">
             <span style="color:#fff;">#{produtoBean.mensagem}</span>
-            <h:link id="Errovoltar" class="btn-modal btn btn-warning btn-block" style="margin-top: 30px; color: #fff;" onclick="PF('dialogoErro').hide();">Lançar Produto novamente</h:link>
+            <a id="Errovoltar" class="btn-modal btn btn-warning btn-block" style="margin-top: 30px; color: #fff;" onclick="PF('dialogoErro').hide();"><h4>Lançar Produto novamente</h4></a>
         </p:dialog>
         <!--MODAL DE REGISTRO DE PRODUTO-->
         <p:dialog header="Adicionar Produto" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300"  id="dlProduto" widgetVar="dialogoProduto" dynamic="true" 

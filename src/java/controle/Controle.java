@@ -285,12 +285,22 @@ public class Controle implements ComandaService, Serializable {
         mesaDestino = String.valueOf(comanda.get(0).getMESA());
         pedido = String.valueOf(comanda.get(0).getPEDIDO());
         status = String.valueOf(comanda.get(0).getSTATUS());
-        somaQuantidadePessoasMesa = Integer.parseInt(String.valueOf(comanda.get(0).getPESSOAS())) + buscarNumeroDePessoas(comandaOrigem.getPEDIDO());
-        List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(comandaOrigem.getCOMANDA());
-        for (int i = 0; i < itemAcompanhamentoTransferencias.size(); i++) {
-            ItemAcompanhamentoTransferencia item = itemAcompanhamentoTransferencias.get(i);
-            item.setITEM(i + 1);
-            atualizarSeguenciaItemComanda(item, pedido);
+        somaQuantidadePessoasMesa = Integer.parseInt(String.valueOf(buscarNumeroDePessoas(pedido))) + buscarNumeroDePessoas(comandaOrigem.getPEDIDO());
+        int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+        List<Object> buscarSeguenciaDeItemComanda = buscarSeguenciaDeItemComanda(comandaOrigem.getPEDIDO());
+        for (Object item : buscarSeguenciaDeItemComanda) {
+            List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento = pesquisarItensComAcompanhamento(comandaOrigem.getPEDIDO(), String.valueOf(item));
+            if (pesquisarItensComAcompanhamento.isEmpty()) {
+                ultimoItemComandaDestino++;
+                while (verificarSeJaExisteSeguenciaItem(String.valueOf(ultimoItemComandaDestino), comandaOrigem.getPEDIDO())) {
+                    ultimoItemComandaDestino++;
+                }
+                executarSql("update sosa98 set tenumseq='" + ultimoItemComandaDestino + "' where tepedido='" + comandaOrigem.getPEDIDO() + "' and tenumseq='" + item + "'");
+                executarSql("update espelho_comanda set NUMERO_ITEM='" + ultimoItemComandaDestino + "' where pedido='" + comandaOrigem.getPEDIDO() + "' and numero_item='" + item + "'");
+            } else {
+                ItemAcompanhamentoTransferencia itemTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(String.valueOf(item)), comandaOrigem.getPEDIDO());
+                atualizarSeguenciaItemComanda(itemTransferencia, pedido);
+            }
         }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
         sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
@@ -377,11 +387,8 @@ public class Controle implements ComandaService, Serializable {
                     executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentos.get(0).getPedido() + "' and tenumseq='" + lancamentos.get(0).getItem() + "'");
                     executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentos.get(0).getPedido() + "' and numero_item='" + lancamentos.get(0).getItem() + "'");
                 } else {
-                    for (int i = 0; i < itemAcompanhamentoTransferencias.size(); i++) {
-                        ItemAcompanhamentoTransferencia item = itemAcompanhamentoTransferencias.get(i);
-                        item.setITEM(i + 1);
-                        atualizarSeguenciaItemComanda(item, pedido);
-                    }
+                    ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                    atualizarSeguenciaItemComanda(item, pedido);
                 }
             }
         }
@@ -411,14 +418,14 @@ public class Controle implements ComandaService, Serializable {
     }
 
     private void atualizarSeguenciaItemComanda(ItemAcompanhamentoTransferencia acompanhamentoTransferencia, String pedido) {
-        String seguencia = acompanhamentoTransferencia.getITEM() + "0" + acompanhamentoTransferencia.getITEM();
-        while (verificarSeJaExisteSeguenciaItem(seguencia, pedido)) {
-            int valor = Integer.parseInt(seguencia) + 1;
-            seguencia = String.valueOf(valor);
+        int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+        String novaSeguenciaDoItem = String.valueOf(ultimoItemComandaDestino + 1);
+        while (verificarSeJaExisteSeguenciaItem(novaSeguenciaDoItem, acompanhamentoTransferencia.getPEDIDO())) {
+            novaSeguenciaDoItem = String.valueOf((Integer.parseInt(novaSeguenciaDoItem) + 1));
         }
-        executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and tenumseq='" + acompanhamentoTransferencia.getITEM() + "'");
-        executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and numero_item='" + acompanhamentoTransferencia.getITEM() + "'");
-        executarSql("update item_acompanhamento set item ='" + seguencia + "',pedido='" + pedido + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "'");
+        executarSql("update sosa98 set tenumseq='" + novaSeguenciaDoItem + "' where tepedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and tenumseq='" + acompanhamentoTransferencia.getITEM() + "'");
+        executarSql("update espelho_comanda set NUMERO_ITEM='" + novaSeguenciaDoItem + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and numero_item='" + acompanhamentoTransferencia.getITEM() + "'");
+        executarSql("update item_acompanhamento set item ='" + novaSeguenciaDoItem + "',pedido='" + pedido + "' where pedido='" + acompanhamentoTransferencia.getPEDIDO() + "' and item='" + acompanhamentoTransferencia.getITEM() + "'");
     }
 
     private int buscarUltimoItemComandaDestino(String pedido) {
@@ -429,6 +436,16 @@ public class Controle implements ComandaService, Serializable {
             return uniqueResult == null ? 1 : Integer.parseInt(String.valueOf(uniqueResult));
         }
         return 0;
+    }
+
+    private List<Object> buscarSeguenciaDeItemComanda(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            List<Object> seguencias = session.createSQLQuery("select tenumseq from sosa98 where tepedido='" + pedido + "' group by tenumseq order by tenumseq")
+                    .list();
+            return seguencias;
+        }
+        return null;
     }
 
     private boolean verificarSeJaExisteSeguenciaItem(String item, String pedido) {

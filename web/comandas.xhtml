@@ -212,7 +212,8 @@
                         <div class="row">
                             <div class="cold-md-12">
                                 <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" update="frm:tabelaComanda msgTrans" process="panelTrans @this"
-                                               actionListener="#{comandasBean.transferirComanda()}">
+                                               actionListener="#{comandasBean.transferirComanda()}"
+                                               onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
                                     Confirma
                                 </p:commandLink>
                             </div>
@@ -276,6 +277,10 @@
                 <p:commandLink value="Não" type="button" styleClass="ui-confirmdialog-no btn-modal btn btn-danger"  />
             </p:confirmDialog>
         </h:form>
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
+                  responsive="true" showEffect="fade" hideEffect="fade">
+            <h3 style="text-align: center;">Aguarde...</h3>
+        </p:dialog>
     </h:body>
 </html>
 
