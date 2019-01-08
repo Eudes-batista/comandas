@@ -25,8 +25,8 @@ public class DashboardBean implements Serializable{
         
     public void init() {
         totalVenda= dashboardService.listarTotasVendasDoDia();
-        quantidadeClientesAtendidos = dashboardService.listarClientesAtendidos().stream().mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
-        quantidadeClientesEmAtendimentos = dashboardService.listarClientesEmAtendimento().stream().mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
+        quantidadeClientesAtendidos = dashboardService.listarClientesAtendidos().stream().filter(p -> p.getPESSOAS() != null).mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
+        quantidadeClientesEmAtendimentos = dashboardService.listarClientesEmAtendimento().stream().filter(p -> p.getPESSOAS() != null).mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
         couvert = dashboardService.listarTotalCouvert();
     }
     
