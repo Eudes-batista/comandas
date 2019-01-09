@@ -342,7 +342,7 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setData(data);
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
-        espelhoComanda.setPessoasMesa(quantidadePessoas == null ? String.valueOf(controleService.buscarNumeroDePessoas(lancamento.getPedido())) : quantidadePessoas);
+        espelhoComanda.setPessoasMesa(quantidadePessoas);
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
         espelhoComanda.setImpressao(lancamento.getImprimir());

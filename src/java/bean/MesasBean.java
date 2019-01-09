@@ -40,7 +40,6 @@ import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
 import servico.MesaService;
 import servico.PdfService;
-import servico.UsuarioService;
 import servico.VendedorService;
 import util.GerenciaArquivo;
 import util.GerenciaEntrada;
@@ -233,33 +232,6 @@ public class MesasBean implements Serializable {
         this.condicao = condicao;
         this.mostrareabrimesa = false;
     }
-
-//    private String gerarSenha() {
-//        StringBuilder sb = new StringBuilder();
-//        this.senha = getSenha();
-//        String senhaCript = "";
-//        for (int i = 1; i < 300; i++) {
-//            sb.append((char) i);
-//        }
-//        sb.append(" ");
-//        for (int i = 1; i <= this.senha.length(); i++) {
-//            int cod = sb.indexOf(String.valueOf(this.senha.charAt(i - 1))) + (i + 11);
-//            senhaCript += (char) cod;
-//        }
-//        return senhaCript;
-//    }
-//
-//    private boolean validarGerente() {
-//        if (getUsuario().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
-//            return false;
-//        }
-//        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().toUpperCase(), gerarSenha());
-//        if (usuarios.isEmpty()) {
-//            return false;
-//        }
-//        return String.valueOf(usuarios.get(0)[2]).equals("T");
-//    }
-
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
@@ -310,7 +282,7 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaLancamentoItens() {
         try {
-            String uri = "produtos.jsf?comanda=" + this.comanda.getCOMANDA() + "&mesa=" + this.comanda.getMESA() + "&pessoas=" + this.comanda.getPESSOAS() + "&pedido=" + this.comanda.getPEDIDO() + "&status=" + this.comanda.getSTATUS();
+            String uri = "produtos.jsf?comanda=" + this.comanda.getCOMANDA() + "&mesa=" + this.comanda.getMESA() + "&pedido=" + this.comanda.getPEDIDO() + "&status=" + this.comanda.getSTATUS();
             Faces.redirect(uri);
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
