@@ -171,7 +171,10 @@ public class ComandasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa() {
+        mesasBean.setPesquisa(codigoMesa);
+        mesasBean.pesquisarMesas();
         mesasBean.imprimirPreconta(codigoMesa);
+        listarComandas();
     }
 
     public void receberCodigoExcluxao(Comandas comanda) {
