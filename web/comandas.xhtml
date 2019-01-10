@@ -78,7 +78,7 @@
                                        position="bottom"/>
                         </li>
                         <li class="col-md-3">
-                            <p:commandLink id="imprimirPreconta" class="btn-modal btn btn-warning btn-block" actionListener="#{comandasBean.imprimirPrecontaMesa()}" update="@this" process="@this"
+                            <p:commandLink id="imprimirPreconta" class="btn-modal btn btn-warning btn-block" actionListener="#{comandasBean.imprimirPrecontaMesa()}" update="frm:tabelaComanda" process="@this"
                                            disabled="#{comandasBean.codigoMesa eq 'RSVA'}">
                                 <i class="fa fa-print"></i>
                                 <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />

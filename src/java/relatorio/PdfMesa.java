@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -236,7 +237,9 @@ public class PdfMesa implements PdfService {
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()), ControlePdf.FONT_PP, 4, Element.ALIGN_LEFT);
 
         PdfPCell tituloPedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
-        PdfPCell pedido = controlePdf.criarCelula(this.mesa.getPEDIDO(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+        List<String> pedidos = Arrays.asList(this.mesa.getPEDIDO().split(","));
+        String pedidosUnicos = pedidos.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","));
+        PdfPCell pedido = controlePdf.criarCelula(pedidosUnicos, ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
 
         PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
