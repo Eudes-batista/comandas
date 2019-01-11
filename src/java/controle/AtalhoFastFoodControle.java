@@ -21,7 +21,6 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializabl
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            transaction.begin();
             session.save(atalhoFastFood);
             transaction.commit();
         } catch (Exception ex) {
@@ -42,7 +41,6 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializabl
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            transaction.begin();
             session.delete(atalhoFastFood);
             transaction.commit();
         } catch (Exception ex) {

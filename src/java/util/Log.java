@@ -89,6 +89,7 @@ public class Log implements Serializable {
             pw.println("observacao " + lancamento.getObservacao());
             pw.println("vendedor " + lancamento.getVendedor());
             pw.println("pedido " + lancamento.getPedido());
+            pw.println("Erro " + error);
             pw.println("_________________________");
             pw.flush();
         } catch (IOException ex) {
