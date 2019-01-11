@@ -87,6 +87,7 @@ public class MesasBean implements Serializable {
     private Status condicao;
     private boolean reabrimesa;
     private boolean mostrareabrimesa;
+    private boolean transferirComanda;
 
     public void init() {
         GerenciaEntrada gerenciaEntrada = new GerenciaEntrada();
@@ -317,6 +318,8 @@ public class MesasBean implements Serializable {
         Mesa mesaDes = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
         if ((mesaDes != null && !mesaDes.getSTATUS().equals("V")) || mesaDes == null) {
             Mesa m = this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem)));
+            if(transferirComanda)
+                m.setCOMANDA(m.getMESA());
             controle.transferirMesa(m, mesaDestino.toUpperCase());
             espelhoComandaService.atualizarResponsavelTransferencia(m.getPEDIDO(), usuarioTransferencia.toUpperCase());
             listarMesas();

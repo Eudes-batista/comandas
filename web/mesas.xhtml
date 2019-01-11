@@ -184,6 +184,10 @@
                 <p:messages id="msgTrans" closable="true" showIcon="false"/>
                 <div class="ui-fluid">
                     <p:panelGrid id="panelTrans" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-10,ui-grid-col-2">
+                            <h:outputLabel for="transferenciaComanda" style="color:#fff;" value="Mudar comanda?" />
+                            <h:selectBooleanCheckbox id="transferenciaComanda" class="checkbox" value="#{mesasBean.transferirComanda}" style="height: 18px;"/>                            
+                        </p:panelGrid>
                         <h:inputText id="mesaDestino" class="form-control"  value="#{mesasBean.mesaDestino}" required="true" requiredMessage="mesa de destino Obrigatorio.">
                             <f:passThroughAttribute name="placeholder" value="Mesa de destino" />
                         </h:inputText>
