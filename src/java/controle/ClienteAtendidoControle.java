@@ -54,6 +54,7 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
         List<ClienteAtendidoPorMes> clienteAtendidos = new ArrayList<>();
         Map<Integer, Integer> mapPessoas = new HashMap<>();
         while (resultSet.next()) {
+            if(resultSet.getObject("mes") == null) break;
             Integer mes = Integer.parseInt(String.valueOf(resultSet.getObject("mes")));
             Integer quantidades = mapPessoas.get(mes);
             boolean existe = true;
@@ -69,7 +70,8 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
             }
             mapPessoas.put(mes, quantidades);
         }
-        mapPessoas.forEach((chave, valor) -> clienteAtendidos.add(new ClienteAtendidoPorMes(valor, chave)));
+        if(!mapPessoas.isEmpty())
+            mapPessoas.forEach((chave, valor) -> clienteAtendidos.add(new ClienteAtendidoPorMes(valor, chave)));
         return clienteAtendidos;
     }
 
