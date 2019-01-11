@@ -317,6 +317,11 @@ public class ProdutoBean implements Serializable {
         if (vendedor == null || "".equals(vendedor)) {
             return true;
         }
+        if(this.mesa == null || this.comanda ==null){
+            this.mensagem = "Erro inclusão do Item, verifique a lista dos itens\n e lançe novamente.";
+            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
+            return true;
+        }
         String verificarComanda = controleService.verificarComandaNaMesa(comanda);
         if (!verificarComanda.equals(mesa) && !"0".equals(verificarComanda)) {
             mensagem = "Comanda já existe em outra mesa.";
