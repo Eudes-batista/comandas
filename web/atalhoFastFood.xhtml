@@ -28,7 +28,32 @@
                 </div>
                 <h:form id="frm">
                     <div class="container-fluid">
-                       
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia01}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 1"/>
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao01}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 1"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia02}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 2"/>
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao02}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 2"/>
+                                </h:inputText>
+                            </div>
+                        </div>
                     </div>
                 </h:form>
             </div>
