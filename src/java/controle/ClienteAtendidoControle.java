@@ -58,7 +58,10 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
             Integer quantidades = mapPessoas.get(mes);
             boolean existe = true;
             if (quantidades == null) {
-                quantidades = Integer.parseInt(String.valueOf(resultSet.getObject("QUANTIDADE")));
+                quantidades = 0;
+                if (resultSet.getObject("QUANTIDADE") != null) {
+                    quantidades = Integer.parseInt(String.valueOf(resultSet.getObject("QUANTIDADE")));
+                }
                 existe = false;
             }
             if (existe) {
