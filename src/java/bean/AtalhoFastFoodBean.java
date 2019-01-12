@@ -26,7 +26,7 @@ public class AtalhoFastFoodBean implements Serializable {
     private AtalhoFastFood atalhoFastFood;
 
     public void init() {
-//        this.atalhoFastFood = atalhoFastFoodService.carregar();
+        this.atalhoFastFood = atalhoFastFoodService.carregar();
         if (this.atalhoFastFood == null) {
             this.atalhoFastFood = new AtalhoFastFood();
         }
