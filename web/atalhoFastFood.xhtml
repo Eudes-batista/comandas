@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewAction action="#{atalhoFastFoodBean.init()}" />
     </f:metadata>
@@ -21,6 +22,9 @@
         </script>
     </h:head>    
     <h:body>
+        <h:form>
+            <p:growl autoUpdate="true"/>
+        </h:form>
         <div class="container-fluid comanda">
             <div class="row">
                 <div class="col-md-12 label-campo">
@@ -32,10 +36,12 @@
                             <div class="col-md-6">
                                 <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia01}">
                                     <f:passThroughAttribute name="placeholder" value="Refencia 1"/>
+                                    <f:ajax event="valueChange" render="descricao1" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaUm()}" />
+                                    <f:passThroughAttribute name="autofocus" value="true"/>
                                 </h:inputText>
                             </div>
                             <div class="col-md-6">
-                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao01}"
+                                <h:inputText id="descricao1" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao01}"
                                              readonly="true">
                                     <f:passThroughAttribute name="placeholder" value="Descrição 1"/>
                                 </h:inputText>
@@ -45,13 +51,162 @@
                             <div class="col-md-6">
                                 <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia02}">
                                     <f:passThroughAttribute name="placeholder" value="Refencia 2"/>
+                                    <f:ajax event="valueChange" render="descricao2" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaDois()}" />
                                 </h:inputText>
                             </div>
                             <div class="col-md-6">
-                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao02}"
+                                <h:inputText id="descricao2" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao02}"
                                              readonly="true">
                                     <f:passThroughAttribute name="placeholder" value="Descrição 2"/>
                                 </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia03}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 3"/>
+                                    <f:ajax event="valueChange" render="descricao3" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaTres()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao3" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao03}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 3"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia04}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 4"/>
+                                    <f:ajax event="valueChange" render="descricao4" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaQuatro()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao4" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao04}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 4"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia05}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 5"/>
+                                    <f:ajax event="valueChange" render="descricao5" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaCinco()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao5" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao05}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 5"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia06}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 6"/>
+                                    <f:ajax event="valueChange" render="descricao6" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaSeis()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao6" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao06}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 6"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia07}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 7"/>
+                                    <f:ajax event="valueChange" render="descricao7" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaSete()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao7" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao07}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 7"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia08}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 8"/>
+                                    <f:ajax event="valueChange" render="descricao8" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaOito()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao8" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao08}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 8"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia09}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 9"/>
+                                    <f:ajax event="valueChange" render="descricao9" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaNove()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao9" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao09}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 9"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia10}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 10"/>
+                                    <f:ajax event="valueChange" render="descricao10" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaDez()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao10" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao10}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 10"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia11}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 11"/>
+                                    <f:ajax event="valueChange" render="descricao11" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaOnze()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao11" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao11}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 11"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:inputText class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.referencia12}">
+                                    <f:passThroughAttribute name="placeholder" value="Refencia 12"/>
+                                    <f:ajax event="valueChange" render="descricao12" execute="@this" listener="#{atalhoFastFoodBean.pesquisarReferenciaDoze()}" />
+                                </h:inputText>
+                            </div>
+                            <div class="col-md-6">
+                                <h:inputText id="descricao12" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao12}"
+                                             readonly="true">
+                                    <f:passThroughAttribute name="placeholder" value="Descrição 12"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:commandLink actionListener="#{atalhoFastFoodBean.salvar()}"
+                                               process="@form" class="btn btn-success btn-block">
+                                    Salvar <i class="glyphicon glyphicon-ok"></i>
+                                </p:commandLink>
                             </div>
                         </div>
                     </div>

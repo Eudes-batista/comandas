@@ -21,7 +21,12 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializabl
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            session.save(atalhoFastFood);
+            if(atalhoFastFood.getCodigo() == null){
+                atalhoFastFood.setCodigo(verificarId());
+                session.save(atalhoFastFood);
+            }else{
+                session.update(atalhoFastFood);
+            }        
             transaction.commit();
         } catch (Exception ex) {
             if (transaction != null && transaction.isActive()) {
@@ -62,6 +67,19 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializabl
             return (AtalhoFastFood) session.createQuery("from AtalhoFastFood ").uniqueResult();
         }
         return null;
+    }
+
+    
+    private int verificarId() {
+        session = HibernateUtil.getSessionFactory().openSession();
+        int count=1;
+        if(session != null){
+           Object qtd= session.createSQLQuery("select first 1 CODIGO  from atalho_fastfood order by codigo desc").uniqueResult();
+           if(qtd != null){
+               count =Integer.parseInt(String.valueOf(qtd))+1;
+           }
+        }
+        return count;
     }
 
 }
