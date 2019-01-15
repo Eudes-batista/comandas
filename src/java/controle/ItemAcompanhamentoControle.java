@@ -54,38 +54,52 @@ public class ItemAcompanhamentoControle implements ItemAcompanhamentoService, Se
         session = HibernateUtil.getSessionFactory().openSession();
         List<ItemAcompanhamento> itemAcompanhamentos = null;
         if (session != null) {
-            itemAcompanhamentos = session.createQuery("from ItemAcompanhamento where acompanhamento like '%"+nome+"%'").list();
+            itemAcompanhamentos = session.createQuery("from ItemAcompanhamento where acompanhamento like '%" + nome + "%'").list();
             session.close();
         }
         return itemAcompanhamentos;
     }
 
     @Override
-    public List<ItemAcompanhamento> pesquisarItem(String item,String pedido) {
+    public List<ItemAcompanhamento> pesquisarItem(String item, String pedido) {
         session = HibernateUtil.getSessionFactory().openSession();
         List<ItemAcompanhamento> itemAcompanhamentos = null;
         if (session != null) {
-            itemAcompanhamentos = session.createQuery("from ItemAcompanhamento where item ='"+item+"' and pedido='"+pedido+"'").list();
+            itemAcompanhamentos = session.createQuery("from ItemAcompanhamento where item ='" + item + "' and pedido='" + pedido + "'").list();
             session.close();
         }
         return itemAcompanhamentos;
     }
 
     @Override
-    public void excluirTodos(String Item,String pedido) {
-        executarSql("delete from item_acompanhamento where item='"+Item+"' and pedido='"+pedido+"'");
+    public void excluirTodos(String Item, String pedido) {
+        executarSql("delete from item_acompanhamento where item='" + Item + "' and pedido='" + pedido + "'");
     }
 
     @Override
     public void excluirTodos(String pedido) {
-        executarSql("delete from item_acompanhamento where pedido='"+pedido+"'");
+        executarSql("delete from item_acompanhamento where pedido='" + pedido + "'");
     }
 
     @Override
     public void atualizarStatusAcompanhamento(Lancamento lancamento, String status) {
-        executarSql("update item_acompanhamento set status='"+status+"' where pedido='"+lancamento.getPedido()+"' and item='"+lancamento.getItem()+"'");
+        executarSql("update item_acompanhamento set status='" + status + "' where pedido='" + lancamento.getPedido() + "' and item='" + lancamento.getItem() + "'");
     }
-    
+
+    @Override
+    public boolean pesquisarSeExisteAcompanahmento(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        boolean existe;
+        if (session != null) {
+            Object o = session.createSQLQuery("select count(*) from item_acompanhamento where pedido='" + pedido + "' ").uniqueResult();
+            int valor = o != null ? Integer.parseInt(String.valueOf(o)) : 0;
+            existe = valor != 0;
+            session.close();
+            return existe;
+        }
+        return false;
+    }
+
     private void executarSql(String sql) {
         session = HibernateUtil.getSessionFactory().openSession();
         session.getTransaction().begin();
@@ -94,5 +108,5 @@ public class ItemAcompanhamentoControle implements ItemAcompanhamentoService, Se
         session.flush();
         session.close();
     }
-    
+
 }

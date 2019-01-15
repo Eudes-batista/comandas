@@ -13,4 +13,5 @@ public interface ItemAcompanhamentoService {
      public void excluirTodos(String Item,String pedido);
      public void excluirTodos(String pedido);
      public void atualizarStatusAcompanhamento(Lancamento lancamento,String status);
+     public boolean pesquisarSeExisteAcompanahmento(String pedido);
 }

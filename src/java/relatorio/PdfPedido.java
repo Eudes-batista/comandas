@@ -31,6 +31,7 @@ public class PdfPedido implements PdfService {
     private Lancamento lancamento = null;
     private ItemAcompanhamentoService itemAcompanhamentoService;
     private final String separador = "..........................................................";
+    private boolean existeAcompanhamento;
 
     public PdfPedido(List<Lancamento> lancamentos, Lancamento lancamento, ItemAcompanhamentoService itemAcompanhamentoService) {
         this.lancamentos = lancamentos;
@@ -60,6 +61,7 @@ public class PdfPedido implements PdfService {
         criarCorpo();
         criarRodape();
         documento.close();
+        existeAcompanhamento=false;
         return file;
     }
 
@@ -94,16 +96,16 @@ public class PdfPedido implements PdfService {
 
         if (lancamento != null) {
             tabelaReimpressao.addCell(reimpressao);
-        }                       
-        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
-        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);        
+        }
+        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);
+        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);
+        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);
+        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 3, Element.ALIGN_LEFT);
         tabelaTitulo.addCell(espaco);
         tabelaTitulo.addCell(espaco1);
         tabelaTitulo.addCell(espaco2);
         tabelaTitulo.addCell(espaco3);
-        
+
         tabelaTitulo.addCell(tituloMesa);
         tabelaTitulo.addCell(tituloComanda);
         tabelaTitulo.addCell(tituloHora);
@@ -112,8 +114,8 @@ public class PdfPedido implements PdfService {
         tabelaValores.addCell(numeroMesa);
         tabelaValores.addCell(numeroComanda);
         tabelaValores.addCell(hora);
-        tabelaValores.setWidthPercentage(100f);                               
-                
+        tabelaValores.setWidthPercentage(100f);
+
         documento.add(tabelaReimpressao);
         documento.add(tabelaTitulo);
         documento.add(tabelaValores);
@@ -141,6 +143,7 @@ public class PdfPedido implements PdfService {
 //        ***********ITENS*************
         String descricaoItem;
         if (lancamentos != null) {
+            existeAcompanhamento = itemAcompanhamentoService.pesquisarSeExisteAcompanahmento(lancamentos.get(0).getPedido());
             for (Lancamento lanc : lancamentos) {
                 descricaoItem = lanc.getDescricao().toUpperCase();
                 if (verificarNomeCouvertNaDescricao(descricaoItem)) {
@@ -149,6 +152,7 @@ public class PdfPedido implements PdfService {
             }
             return;
         }
+        existeAcompanhamento = itemAcompanhamentoService.pesquisarSeExisteAcompanahmento(lancamento.getPedido());
         descricaoItem = lancamento.getDescricao().toUpperCase();
         if (verificarNomeCouvertNaDescricao(descricaoItem)) {
             carregarItens(lancamento);
@@ -176,16 +180,16 @@ public class PdfPedido implements PdfService {
 
         tabelaItens.addCell(qtd);
         tabelaItens.addCell(produto);
-
-        List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(lanc);
-        for (ItemAcompanhamento acompanhamento : acompanhamentos) {
-            PdfPCell itemAcompanhamento = controlePdf.criarCelula(acompanhamento.getAcompanhamento(), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
-            itemAcompanhamento.setPaddingTop(-5f);
-            tabelaItens.addCell(itemAcompanhamento);
+        if (existeAcompanhamento) {
+            List<ItemAcompanhamento> acompanhamentos = listarAcompanhamentos(lanc);
+            for (ItemAcompanhamento acompanhamento : acompanhamentos) {
+                PdfPCell itemAcompanhamento = controlePdf.criarCelula(acompanhamento.getAcompanhamento(), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
+                itemAcompanhamento.setPaddingTop(-5f);
+                tabelaItens.addCell(itemAcompanhamento);
+            }
         }
-
         tabelaItens.addCell(obs);
-        tabelaItens.addCell(div);                
+        tabelaItens.addCell(div);
 
         documento.add(tabelaItens);
     }
@@ -213,16 +217,16 @@ public class PdfPedido implements PdfService {
         tabelaRodape.addCell(titulopedido);
         tabelaRodape.addCell(pedido);
         tabelaRodape.addCell(div);
-        
-        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
-        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);        
+
+        PdfPCell espaco = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);
+        PdfPCell espaco1 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);
+        PdfPCell espaco2 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);
+        PdfPCell espaco3 = controlePdf.criarCelula(".", ControlePdf.FONT_PPP, 4, Element.ALIGN_LEFT);
         tabelaRodape.addCell(espaco);
         tabelaRodape.addCell(espaco1);
         tabelaRodape.addCell(espaco2);
         tabelaRodape.addCell(espaco3);
-        
+
         documento.add(tabelaRodape);
 
     }
