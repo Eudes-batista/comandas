@@ -56,10 +56,12 @@ public interface ComandaService {
     
     public void transferirItens(String numero,String item);
     
-    public void transferenciaItensParaComanda(Comandas comanda,List<Lancamento> lancamentos,String usuarioTransferencia);
+    public void transferenciaItensParaComanda(Comandas comanda,List<Lancamento> lancamentosTransferencia,List<Lancamento> lancamentosOrigem,String usuarioTransferencia);
     
     public int verificarSePedidoJaExiste(String pedido);
     
     public int buscarNumeroDePessoas(String pedido);
+    
+    public String gerarNumero();
     
 }

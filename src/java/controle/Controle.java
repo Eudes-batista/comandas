@@ -2,14 +2,22 @@ package controle;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import lombok.Getter;
+import lombok.Setter;
 import modelo.Comandas;
+import modelo.EspelhoComanda;
+import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
 import modelo.Sosa98;
+import modelo.Sosa98Id;
 import modelo.dto.ItemAcompanhamentoTransferencia;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
@@ -18,6 +26,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.transform.Transformers;
 import servico.ComandaService;
+import servico.EspelhoComandaService;
+import servico.ItemAcompanhamentoService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
 import util.Log;
@@ -29,6 +39,15 @@ public class Controle implements ComandaService, Serializable {
     private Session session = null;
     private StringBuilder sb = null;
     private final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
+
+    @Getter
+    @Setter
+    @ManagedProperty(value = "#{espelhoComandaService}")
+    private EspelhoComandaService espelhoComandaService;
+    @Getter
+    @Setter
+    @ManagedProperty(value = "#{itemAcompanhamentoService}")
+    private ItemAcompanhamentoService itemAcompanhamentoService;
 
     @Override
     public List<Comandas> listarComandasPorMesas(String mesa) {
@@ -303,7 +322,7 @@ public class Controle implements ComandaService, Serializable {
             }
         }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','"+pedido+"')";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
     }
@@ -361,39 +380,63 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferenciaItensParaComanda(Comandas comanda, List<Lancamento> lancamentos, String usuarioTransferencia) {
+    public void transferenciaItensParaComanda(Comandas comanda, List<Lancamento> lancamentosTransferencia, List<Lancamento> lancamentosOrigem, String usuarioTransferencia) {
         List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
-        String pedido, status, pessoas, numeros = lancamentos.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
+        String pedido, status, pessoas, numeros = lancamentosTransferencia.stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
         if (comandas.isEmpty()) {
             pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
             status = "";
             pessoas = "1";
-            for (Lancamento lancamento : lancamentos) {
-                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
-                if (!itemAcompanhamentoTransferencias.isEmpty()) {
-                    ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                    atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+            lancamentosTransferencia.forEach((lancamento) -> {
+                Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
+                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias;
+                if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
+                    itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+                    if (!itemAcompanhamentoTransferencias.isEmpty()) {
+                        ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                        atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+                    }
+                    executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                    return;
                 }
-            }
+                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido,pessoas);
+            });
         } else {
             pedido = String.valueOf(comandas.get(0).getPEDIDO());
             status = comandas.get(0).getSTATUS();
             pessoas = String.valueOf(buscarNumeroDePessoas(pedido));
-            for (Lancamento lancamento : lancamentos) {
-                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
-                if (itemAcompanhamentoTransferencias.isEmpty()) {
-                    int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
-                    int seguencia = ultimoItemComandaDestino + 1;
-                    executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentos.get(0).getPedido() + "' and tenumseq='" + lancamentos.get(0).getItem() + "'");
-                    executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentos.get(0).getPedido() + "' and numero_item='" + lancamentos.get(0).getItem() + "'");
-                } else {
-                    ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                    atualizarSeguenciaItemComanda(item, pedido);
+            lancamentosTransferencia.forEach((lancamento) -> {
+                Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
+                if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
+                    List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+                    if (itemAcompanhamentoTransferencias.isEmpty()) {
+                        int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+                        int seguencia = ultimoItemComandaDestino + 1;
+                        executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentosTransferencia.get(0).getPedido() + "' and tenumseq='" + lancamentosTransferencia.get(0).getItem() + "'");
+                        executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentosTransferencia.get(0).getPedido() + "' and numero_item='" + lancamentosTransferencia.get(0).getItem() + "'");
+                    } else {
+                        ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                        atualizarSeguenciaItemComanda(item, pedido);
+                    }
+                    executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                    return;
                 }
-            }
+                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido,pessoas);
+            });
         }
-        executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-        executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+    }
+
+    private void transferenciaParcialDeItens(Comandas comanda, Lancamento lancamento, Lancamento lancamentoOrigem, String usuarioTransferencia, String pedido,String pessoas) {
+        lancamento.setNumero(gerarNumero() + lancamento.getItem());
+        lancamento.setPedido(pedido);
+        lancamento.setComanda(comanda.getCOMANDA());
+        lancamento.setMesa(comanda.getMESA());
+        preencherSosa98(lancamento, usuarioTransferencia.toUpperCase(),pessoas);
+        salvarAcompanhamento(pedido, lancamentoOrigem);
+        double quantidadeItem = lancamentoOrigem.getQuantidade() - lancamento.getQuantidade();
+        alterarQuantidade(quantidadeItem, lancamentoOrigem.getNumero());
     }
 
     @Override
@@ -405,6 +448,78 @@ public class Controle implements ComandaService, Serializable {
                     .list();
         }
         return null;
+    }
+
+    private List<ItemAcompanhamento> pesquisarAcompanhamento(String pedido, String item) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            return session.createQuery("from ItemAcompanhamento where pedido='" + pedido + "' and item='" + item + "'")
+                    .list();
+        }
+        return null;
+    }
+
+    private void salvarAcompanhamento(String pedido, Lancamento lancamentoOrigem) {
+        List<ItemAcompanhamento> itemAcompanhamentos = pesquisarAcompanhamento(lancamentoOrigem.getPedido(), lancamentoOrigem.getItem());
+        if (!itemAcompanhamentos.isEmpty()) {
+            itemAcompanhamentos.forEach(itemAcompanhamento -> {
+                itemAcompanhamento.setPedido(pedido);
+                itemAcompanhamentoService.salvar(itemAcompanhamento);
+            });
+        }
+    }
+
+    private void preencherSosa98(Lancamento lancamento, String usuario,String pessoas) {
+        Date data = new Date();
+        Sosa98 sosa98 = new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
+                lancamento.getComanda(),
+                lancamento.getReferencia(),
+                lancamento.getQuantidade(),
+                data,
+                lancamento.getVendedor(),
+                lancamento.getObservacao(),
+                lancamento.getMesa(),
+                lancamento.getStatus(),
+                lancamento.getImprimir(),
+                lancamento.getPedido()
+        );
+        try {
+            salvar(sosa98);
+            salvarEspelho(lancamento, data, usuario,pessoas);
+        } catch (Exception ex) {
+            registrarErroAoSalvarProduto(sosa98, ex);
+        }
+    }
+
+    private void salvarEspelho(Lancamento lancamento, Date data, String usuario,String pessoas) {
+        EspelhoComanda espelhoComanda = new EspelhoComanda();
+        espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
+        espelhoComanda.setPedido(lancamento.getPedido());
+        espelhoComanda.setMesa(lancamento.getMesa());
+        espelhoComanda.setComanda(lancamento.getComanda());
+        espelhoComanda.setNumeroItem(lancamento.getItem());
+        espelhoComanda.setReferencia(lancamento.getReferencia());
+        espelhoComanda.setQuantidade(lancamento.getQuantidade());
+        espelhoComanda.setVendedor(lancamento.getVendedor());
+        espelhoComanda.setImpressao(lancamento.getImprimir());
+        espelhoComanda.setStatus(lancamento.getStatus());
+        espelhoComanda.setObservacao(lancamento.getObservacao());
+        espelhoComanda.setValorItem(lancamento.getPreco());
+        espelhoComanda.setStatusItem("N");
+        espelhoComanda.setPessoasMesa(pessoas);
+        espelhoComanda.setRespansavelTransferencia(usuario);
+        espelhoComanda.setData(data);
+        if (!new GerenciaArquivo().bucarInformacoes().getConfiguracao().getCobraDezPorcento().isEmpty()) {
+            espelhoComanda.setPorcentagem(10d);
+            double valorComDezPOrcento = lancamento.getPrecoTotal() * 0.10;
+            espelhoComanda.setValorPorcentagem(valorComDezPOrcento);
+        }
+        espelhoComandaService.salvar(espelhoComanda);
+    }
+
+    private void alterarQuantidade(double quantidade, String numero) {
+        alterarQuantidadeItem(quantidade, numero);
+        executarSql("update espelho_comanda set quantidade=" + quantidade + " where numero='" + numero + "'");
     }
 
     private List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido) {
@@ -478,6 +593,17 @@ public class Controle implements ComandaService, Serializable {
             return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
         }
         return 0;
+    }
+
+    /*
+     *Gera chave primaria dos itens
+     */
+    @Override
+    public String gerarNumero() {
+        LocalDate data = LocalDate.now();
+        LocalTime hora = LocalTime.now();
+        String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
+        return numero.length() > 6 ? numero.substring(0, 6) : numero;
     }
 
 }

@@ -92,7 +92,9 @@ public class ProdutoBean implements Serializable {
     private List<Lapt51> grupos;
     private List<Produto> produtos = new ArrayList<>();
     private List<Lancamento> lancamentosAdicionados = new ArrayList<>();
+    private List<Lancamento> lancamentosAdicionadosAuxlizar = new ArrayList<>();
     private List<Lancamento> lancamentosSelecionadadosTransferencia;
+    private List<Lancamento> lancamentosTransferencias;
     private List<Acompanhamento> acompanhamentos;
     private List<GrupoAcompanhamento> grupoAcompanhamentos;
     private List<String> itensAcompanhamentos;
@@ -177,6 +179,7 @@ public class ProdutoBean implements Serializable {
 
     public void listarProdutosAdicionados() {
         lancamentosAdicionados.clear();
+       lancamentosAdicionadosAuxlizar.clear();
         controleService.ListarLancamentos(comanda, mesa).forEach(l -> {
             lancamentosAdicionados.add(new Lancamento(String.valueOf(l[0]),
                     String.valueOf(l[1]),
@@ -193,9 +196,22 @@ public class ProdutoBean implements Serializable {
                     String.valueOf(l[12]).equals("null") ? "" : String.valueOf(l[12]),
                     String.valueOf(l[13]).equals("null") ? "" : String.valueOf(l[13])
             ));
+            lancamentosAdicionadosAuxlizar.add(new Lancamento(String.valueOf(l[0]),
+                    String.valueOf(l[1]),
+                    String.valueOf(l[2]),
+                    String.valueOf(l[3]),
+                    String.valueOf(l[4]),
+                    Double.parseDouble(String.valueOf(l[5])),
+                    Double.parseDouble(String.valueOf(l[6])),
+                    Double.parseDouble(String.valueOf(l[7])),
+                    String.valueOf(l[8]),
+                    String.valueOf(l[9]),
+                    String.valueOf(l[10]),
+                    String.valueOf(l[11]).equals("null") ? "" : String.valueOf(l[11]),
+                    String.valueOf(l[12]).equals("null") ? "" : String.valueOf(l[12]),
+                    String.valueOf(l[13]).equals("null") ? "" : String.valueOf(l[13])));
         });
         totalizarItensAdicionado();
-        comandaTransferencia = new Comandas();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -215,8 +231,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setMesa(this.mesa);
         String item = this.controleService.gerarSequencia(this.comanda);
         lancamentoItem.setItem(item);
-        lancamentoItem.setNumero(gerarNumero() + item);
-        lancamentoItem.setNumero(gerarNumero());
+        lancamentoItem.setNumero(this.controleService.gerarNumero() + item);
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(0.5);
@@ -239,7 +254,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setMesa(this.mesa);
         String item = this.controleService.gerarSequencia(this.comanda);
         lancamentoItem.setItem(item);
-        lancamentoItem.setNumero(gerarNumero() + item);
+        lancamentoItem.setNumero(this.controleService.gerarNumero() + item);
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(this.quantidade);
@@ -312,33 +327,8 @@ public class ProdutoBean implements Serializable {
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
         }
     }
-
-    private boolean verificarSeComandaJaExiste() {
-        if (vendedor == null || "".equals(vendedor)) {
-            return true;
-        }
-        if(this.mesa == null || this.comanda ==null){
-            this.mensagem = "Erro inclusão do Item, verifique a lista dos itens\n e lançe novamente.";
-            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
-            return true;
-        }
-        String verificarComanda = controleService.verificarComandaNaMesa(comanda);
-        if (!verificarComanda.equals(mesa) && !"0".equals(verificarComanda)) {
-            mensagem = "Comanda já existe em outra mesa.";
-            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
-            return true;
-        }
-        return false;
-    }
-
-    private void alterar(Lancamento lancamento) {
-        Sosa98 sosa98 = new Sosa98();
-        sosa98.setTeobserv(lancamento.getObservacao());
-        sosa98.setId(new Sosa98Id(lancamento.getNumero()));
-        controleService.alterar(sosa98);
-    }
-
-    private void salvarEspelho(Lancamento lancamento, Date data) {
+    
+     private void salvarEspelho(Lancamento lancamento, Date data) {
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
@@ -374,6 +364,31 @@ public class ProdutoBean implements Serializable {
         espelhoComandaBean.salvar();
     }
 
+    private boolean verificarSeComandaJaExiste() {
+        if (vendedor == null || "".equals(vendedor)) {
+            return true;
+        }
+        if(this.mesa == null || this.comanda ==null){
+            this.mensagem = "Erro inclusão do Item, verifique a lista dos itens\n e lançe novamente.";
+            PrimeFaces.current().executeScript("PF('dialogoErro').show();");
+            return true;
+        }
+        String verificarComanda = controleService.verificarComandaNaMesa(comanda);
+        if (!verificarComanda.equals(mesa) && !"0".equals(verificarComanda)) {
+            mensagem = "Comanda já existe em outra mesa.";
+            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+            return true;
+        }
+        return false;
+    }
+
+    private void alterar(Lancamento lancamento) {
+        Sosa98 sosa98 = new Sosa98();
+        sosa98.setTeobserv(lancamento.getObservacao());
+        sosa98.setId(new Sosa98Id(lancamento.getNumero()));
+        controleService.alterar(sosa98);
+    }
+
     public void excluirItem(Lancamento lancamento) {
         controleService.excluir(lancamento.getNumero());
         if ("0".equals(lancamento.getImprimir())) {
@@ -392,6 +407,11 @@ public class ProdutoBean implements Serializable {
             this.quantidade = this.lancamento.getQuantidade();
             this.espelhoComandaBean.init();
             this.motivoCancelamentoBean.listarTodos();
+            return;
+        }
+        if("T".equals(condicao)){
+            this.lancamentosTransferencias = this.lancamentosAdicionados;
+             comandaTransferencia = new Comandas();
         }
     }
 
@@ -595,13 +615,6 @@ public class ProdutoBean implements Serializable {
         listarItensAcompanhamento(lancamentoAcompanhamento.getItem(), pedido);
     }
 
-    public String gerarNumero() {
-        LocalDate data = LocalDate.now();
-        LocalTime hora = LocalTime.now();
-        String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
-        return numero.length() > 6 ? numero.substring(0, 6) : numero;
-    }
-
     public void excluirProdutoJaImpresso() {
         if (validarGerente()) {
             excluirProdutoJaImpressoSosa98();
@@ -668,7 +681,7 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        controleService.transferenciaItensParaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, usuarioTransferencia.toUpperCase());
+        controleService.transferenciaItensParaComanda(comandaTransferencia,lancamentosSelecionadadosTransferencia,lancamentosAdicionadosAuxlizar, usuarioTransferencia.toUpperCase());
         if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");
@@ -679,7 +692,11 @@ public class ProdutoBean implements Serializable {
         }
         PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
         listarProdutosAdicionados();
-    }
+    }        
+    
+    public void pegarQuantidadeTransferencia(Lancamento lancamentoTransferencia) {
+        this.lancamento=lancamentoTransferencia;
+    }   
 
     private void imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) throws FileNotFoundException, DocumentException, IOException, PrinterException {
         PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);

@@ -159,7 +159,7 @@
                                                                update="frm:totalItens frm:notificacao" process="@this" 
                                                                partialSubmit="true" oncomplete="PF('bar').show();fecharNotificacao();selecionarPesquisa();"
                                                                >
-                                                        1/2
+                                                    1/2
                                                 </p:commandLink>
                                             </li> 
                                             <li>
@@ -475,6 +475,34 @@
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
                   responsive="true" showEffect="fade" hideEffect="fade">
             <h3 style="text-align: center;">Aguarde...</h3>
+        </p:dialog>
+         <!--MODAL DE QUANTIDADE TRANSFERENCIA DE ITENS-->
+        <p:dialog id="dlQuantidade" header="Alterar Quantidade" widgetVar="dialogQuantidade" modal="true" draggable="false" closable="false" resizable="false"
+                  responsive="true" showEffect="fade" hideEffect="fade" dynamic="true" width="300" styleClass="mesa-modal"
+                  fitViewport="true" >
+            <h:form id="frmQuantidade">
+                <h:inputText id="quantidadeTransfencia" class="form-control" onkeyup="validarQuantidadeTransferencia(this);"
+                             value="#{produtoBean.lancamento.quantidade}">
+                    <f:passThroughAttribute name="placeholder" value="Quantidade" />
+                    <f:passThroughAttribute name="type" value="tel"/>
+                    <f:convertNumber />
+                </h:inputText>
+                <p:commandLink class="btn btn-success btn-block btn-modal" process="@this frmQuantidade"
+                               update="frmTransferenciaItens:tabelaTransferenciaItens" oncomplete="PF('dialogQuantidade').hide();">
+                    Alterar
+                </p:commandLink>
+                <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogQuantidade').hide();" style="color: #fff;">Fechar</a>
+            </h:form>
+            <script type="text/javascript">
+                var valorQuantidade = document.getElementById("frmQuantidade:quantidadeTransfencia").value;
+                function validarQuantidadeTransferencia(input) {
+                    input.value = input.value.replace(/[^0-9]/g, '');
+                    var valor = input.value;
+                    if (parseInt(valor) > parseInt(valorQuantidade)) {
+                        document.getElementById("frmQuantidade:quantidadeTransfencia").value = valorQuantidade;
+                    }
+                }
+            </script>
         </p:dialog>
     </h:body>
 </html>
