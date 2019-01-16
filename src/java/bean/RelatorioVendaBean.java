@@ -54,7 +54,7 @@ public class RelatorioVendaBean implements Serializable {
     }
 
     private void calcularQuantidadeClientesAtendidos() {
-        quantidadeClientesAtendidos = relatorioVendaService.listarClientesAtendidos(filtroVendaDetalhe).stream().mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
+        quantidadeClientesAtendidos = relatorioVendaService.listarClientesAtendidos(filtroVendaDetalhe).stream().filter(p -> p.getPESSOAS() != null).mapToInt(p -> Integer.parseInt(p.getPESSOAS())).sum();
     }
 
     private void listarVendasGarcom() {
