@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -135,7 +133,7 @@ public class ProdutoBean implements Serializable {
         pedido = pedido == null ? controlePedido.gerarNumero() : pedido;
         status = status == null ? "" : status;
         int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(pedido);
-        quantidadePessoas = buscarNumeroDePessoas == 0 ? quantidadePessoas : String.valueOf(buscarNumeroDePessoas);
+        quantidadePessoas = buscarNumeroDePessoas == 0 ? String.valueOf(Integer.parseInt(quantidadePessoas)) : String.valueOf(buscarNumeroDePessoas);
     }
 
     public void listarGrupoAcompanhamentos() {
