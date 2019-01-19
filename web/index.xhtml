@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:jsf="http://xmlns.jcp.org/jsf">
     <f:metadata>
         <f:viewParam name="mesa" value="#{abrirComandaBean.mesa}"/>
     </f:metadata>
@@ -13,25 +14,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="resources/css/bootstrap.css" />
         <link rel="stylesheet" href="resources/css/incluir-mesa.css" />
-        <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
+        <script src="resources/js/jquery-3.2.1.min.js"></script>
+        <script src="resources/js/bootstrap.min.js"></script>
         <script>
-            $(document).ready(function() {
-                $(".numero").keyup(function() {
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+                $(".numero").keyup(function () {
                     var regExp = /[^0-9]/g;
                     this.value = this.value.replace(regExp, "");
                 });
-                $(".numero-comanda").keypress(function(evt) {
+                $(".numero-comanda").keypress(function (evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:quantidadePessoa").focus();
                         document.getElementById("form:quantidadePessoa").select();
                     }
                 });
-                document.getElementById("form:quantidadePessoa").onkeypress = function(evt) {
+                document.getElementById("form:quantidadePessoa").onkeypress = function (evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:abrirComanda").click();
                     }
                 };
-                document.getElementById("form:mesa").onkeypress = function(evt) {
+                document.getElementById("form:mesa").onkeypress = function (evt) {
                     if (evt.keyCode === 13) {
                         document.getElementById("form:numero").focus();
                     }
@@ -44,7 +47,7 @@
                     }
                 }
             });
-            var verificarReserva = function() {
+            var verificarReserva = function () {
                 var check = document.getElementById("form:check");
                 if (check.checked) {
                     document.getElementById("form:numero").focus();
@@ -52,7 +55,7 @@
                     document.getElementById("form:mesa").focus();
                 }
             };
-            document.addEventListener("keydown", function(evt) {
+            document.addEventListener("keydown", function (evt) {
                 if (evt.keyCode === 27) {
                     location.href = "mesas.jsf";
                     return;
@@ -70,66 +73,73 @@
                 <div class="comanda">
                     <div class="container-fluid text-center">
                         <div class="row text-center">
-                            <div class="col-md-12 text-center">
-                                <p:growl id="msg"  />
-                            </div>
-                        </div>
-                        <div class="row text-center">
                             <img src="resources/imagens/food_1.png" alt="food" />
                         </div>
                     </div><br/>
-                    <div class="row text-center" style="margin-bottom: 30px;">
-                        <div class="col-md-12 text-center">
-                            <h:inputText id="mesa" class="numero" maxlength="4" required="true" requiredMessage="Número da mesa é Obrigatorio!" readonly="#{not empty abrirComandaBean.mesa}"
-                                         value="#{abrirComandaBean.mesa}">
-                                <f:passThroughAttribute name="type" value="tel" />
-                                <f:passThroughAttribute name="autofocus" value="true" />
-                                <f:passThroughAttribute name="placeholder" value="#{abrirComandaBean.mesa == null? 'Número da Mesa': abrirComandaBean.mesa}" />
-                            </h:inputText>
+                    <h:panelGroup id="panel">
+                        <div class="row text-center" style="margin-bottom: 30px;">
+                            <div class="col-md-12 text-center">
+                                <h:inputText id="mesa" class="numero" maxlength="4" required="true" requiredMessage="Número da mesa é Obrigatorio!" 
+                                             value="#{abrirComandaBean.mesa}">
+                                    <f:passThroughAttribute name="type" value="tel" />
+                                    <f:passThroughAttribute name="autofocus" value="true" />
+                                    <f:passThroughAttribute name="placeholder" value="#{abrirComandaBean.mesa == null? 'Número da Mesa': abrirComandaBean.mesa}" />
+                                </h:inputText>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row text-center" style="margin-bottom: 10px;">
-                        <div class="col-md-12 text-center">
-                            <h:inputText id="numero" class="numero numero-comanda" required="true" maxlength="4" value="#{abrirComandaBean.comanda}" requiredMessage="Número  da comanda é Obrigatorio!">
-                                <f:passThroughAttribute name="type" value="tel" />
-                                <f:passThroughAttribute name="autofocus" value="true" />
-                                <f:passThroughAttribute name="placeholder" value="Número da Comandas" />
-                            </h:inputText>
+                        <div class="row text-center" style="margin-bottom: 10px;">
+                            <div class="col-md-12 text-center">
+                                <h:inputText id="numero" class="numero numero-comanda" required="true" maxlength="4" value="#{abrirComandaBean.comanda}" requiredMessage="Número  da comanda é Obrigatorio!">
+                                    <f:passThroughAttribute name="type" value="tel" />
+                                    <f:passThroughAttribute name="autofocus" value="true" />
+                                    <f:passThroughAttribute name="placeholder" value="Número da Comandas" />
+                                </h:inputText>
+                            </div>
                         </div>
-                    </div>
-                    <ul class="text-center" style="margin-bottom: 10px;">
-                        <li>
-                            <h3  class="label-campo">Nº de Pessoas na Mesa</h3>
-                        </li>
-                        <li class="text-center">
-                            <h:inputText id="quantidadePessoa" class="numero" required="true" maxlength="2" value="#{abrirComandaBean.quantidadePessoa}" requiredMessage="Número  de pessoas é Obrigatorio!"
-                                         >
-                                <f:passThroughAttribute name="type" value="tel" />
-                                <f:passThroughAttribute name="autofocus" value="true" />
-                                <f:passThroughAttribute name="placeholder" value="Quantidade Pessoas" />
-                            </h:inputText>
-                        </li>
-                    </ul>
-                    <div class="row text-left" >
-                        <div class="col-md-12 text-center">
-                            <label style="color: #fff;font-size: 15pt;">Reserva</label>
+                        <ul class="text-center" style="margin-bottom: 10px;">
+                            <li>
+                                <h3  class="label-campo">Nº de Pessoas na Mesa</h3>
+                            </li>
+                            <li class="text-center">
+                                <h:inputText id="quantidadePessoa" class="numero" required="true" maxlength="2" value="#{abrirComandaBean.quantidadePessoa}" requiredMessage="Número  de pessoas é Obrigatorio!"
+                                             >
+                                    <f:passThroughAttribute name="type" value="tel" />
+                                    <f:passThroughAttribute name="autofocus" value="true" />
+                                    <f:passThroughAttribute name="placeholder" value="Quantidade Pessoas" />
+                                </h:inputText>
+                            </li>
+                        </ul>
+                        <div class="row text-left" >
+                            <div class="col-md-12 text-center">
+                                <label style="color: #fff;font-size: 15pt;">Reserva</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row" >
-                        <div class="col-md-12" align="center">
-                            <h:selectBooleanCheckbox id="check" class="checkbox" value="#{abrirComandaBean.checked}" style="height: 25px;">
-                                <p:ajax event="click" update="mesa" process="@this" listener="#{abrirComandaBean.reserva()}" onsuccess="verificarReserva();"/>
-                            </h:selectBooleanCheckbox>
+                        <div class="row" >
+                            <div class="col-md-12" align="center">
+                                <h:selectBooleanCheckbox id="check" class="checkbox" value="#{abrirComandaBean.checked}" style="height: 25px;">
+                                    <p:ajax event="click" update="mesa" process="@this" listener="#{abrirComandaBean.reserva()}" onsuccess="verificarReserva();"/>
+                                </h:selectBooleanCheckbox>
+                            </div>
                         </div>
-                    </div>
+                        <div class="row" >
+                            <div class="col-md-12" align="center" jsf:id="alerta">
+                                <div class="alert alert-warning alert-dismissible" style="display: #{not abrirComandaBean.existe ? 'none' :'block'}">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong><i class="glyphicon glyphicon-alert"></i></strong> Comanda ja existe em outra mesa.
+                                </div>
+                            </div>
+                        </div>
+                    </h:panelGroup> 
                     <div class="row" style="margin-top: 50px;">
                         <div class="col-md-6" style="margin-bottom: 5px;">
-                            <p:commandLink id="abrirComanda" class="btn btn-success btn-block"
-                                           action="#{abrirComandaBean.verificar()}" update="msg" process="mesa numero quantidadePessoa @this">
+                            <h:commandLink id="abrirComanda" class="btn btn-success btn-block"
+                                           action="#{abrirComandaBean.verificar()}" 
+                                           title="Abri Comanda ( F2 )">
+                                <f:ajax render="msg form:alerta" execute="panel mesa @this"/>
                                 <i class="fa fa-check"></i>
-                            </p:commandLink>
-                            <p:tooltip for="abrirComanda" value="Abri Comanda ( F2 )" showEffect="fade" hideEffect="fade"
-                                       position="bottom"/>
+                                <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                <f:passThroughAttribute name="data-placement" value="bottom"/>
+                            </h:commandLink>
                         </div>
                         <div class="col-md-6">
                             <a id="voltar" class="btn btn-danger btn-block" href="mesas.jsf">

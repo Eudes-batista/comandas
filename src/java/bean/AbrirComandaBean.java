@@ -19,6 +19,7 @@ public class AbrirComandaBean implements Serializable {
     private String comanda;
     private boolean checked;
     private String quantidadePessoa;
+    private boolean existe;
 
     @ManagedProperty(value = "#{controle}")
     private ComandaService controleService;
@@ -31,6 +32,7 @@ public class AbrirComandaBean implements Serializable {
         int verificarComanda = controleService.verificarComanda(mesa, comanda);
         if (verificarComanda != 0) {
             Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
+            existe =true;
             return "";
         }
         String endereco = "produtos.jsf?comanda=" + comanda + "&mesa=" + mesa +"&pessoas="+quantidadePessoa+ "&faces-redirect=true";
