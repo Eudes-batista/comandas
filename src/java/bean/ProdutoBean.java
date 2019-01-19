@@ -369,7 +369,7 @@ public class ProdutoBean implements Serializable {
     }
 
     private boolean verificarSeComandaJaExiste() {
-        if (vendedor == null || "".equals(vendedor)) {
+        if (vendedor == null || "".equals(vendedor) || this.quantidadePessoas == null) {
             return true;
         }
         if (this.mesa == null || this.comanda == null) {
