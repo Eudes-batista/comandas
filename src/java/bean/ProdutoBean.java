@@ -133,7 +133,13 @@ public class ProdutoBean implements Serializable {
         pedido = pedido == null ? controlePedido.gerarNumero() : pedido;
         status = status == null ? "" : status;
         int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(pedido);
-        quantidadePessoas = buscarNumeroDePessoas == 0 ? String.valueOf(Integer.parseInt(quantidadePessoas)) : String.valueOf(buscarNumeroDePessoas);
+        if (buscarNumeroDePessoas == 0) {
+            if (quantidadePessoas != null) {
+                quantidadePessoas = String.valueOf(Integer.parseInt(quantidadePessoas));
+            }
+        } else {
+            quantidadePessoas = String.valueOf(buscarNumeroDePessoas);
+        }
     }
 
     public void listarGrupoAcompanhamentos() {
@@ -177,7 +183,7 @@ public class ProdutoBean implements Serializable {
 
     public void listarProdutosAdicionados() {
         lancamentosAdicionados.clear();
-       lancamentosAdicionadosAuxlizar.clear();
+        lancamentosAdicionadosAuxlizar.clear();
         controleService.ListarLancamentos(comanda, mesa).forEach(l -> {
             lancamentosAdicionados.add(new Lancamento(String.valueOf(l[0]),
                     String.valueOf(l[1]),
@@ -325,8 +331,8 @@ public class ProdutoBean implements Serializable {
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
         }
     }
-    
-     private void salvarEspelho(Lancamento lancamento, Date data) {
+
+    private void salvarEspelho(Lancamento lancamento, Date data) {
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
@@ -366,7 +372,7 @@ public class ProdutoBean implements Serializable {
         if (vendedor == null || "".equals(vendedor)) {
             return true;
         }
-        if(this.mesa == null || this.comanda ==null){
+        if (this.mesa == null || this.comanda == null) {
             this.mensagem = "Erro inclusão do Item, verifique a lista dos itens\n e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
             return true;
@@ -407,9 +413,9 @@ public class ProdutoBean implements Serializable {
             this.motivoCancelamentoBean.listarTodos();
             return;
         }
-        if("T".equals(condicao)){
+        if ("T".equals(condicao)) {
             this.lancamentosTransferencias = this.lancamentosAdicionados;
-             comandaTransferencia = new Comandas();
+            comandaTransferencia = new Comandas();
         }
     }
 
@@ -679,7 +685,7 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        controleService.transferenciaItensParaComanda(comandaTransferencia,lancamentosSelecionadadosTransferencia,lancamentosAdicionadosAuxlizar, usuarioTransferencia.toUpperCase());
+        controleService.transferenciaItensParaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, lancamentosAdicionadosAuxlizar, usuarioTransferencia.toUpperCase());
         if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");
@@ -690,11 +696,11 @@ public class ProdutoBean implements Serializable {
         }
         PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').hide();");
         listarProdutosAdicionados();
-    }        
-    
+    }
+
     public void pegarQuantidadeTransferencia(Lancamento lancamentoTransferencia) {
-        this.lancamento=lancamentoTransferencia;
-    }   
+        this.lancamento = lancamentoTransferencia;
+    }
 
     private void imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) throws FileNotFoundException, DocumentException, IOException, PrinterException {
         PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
