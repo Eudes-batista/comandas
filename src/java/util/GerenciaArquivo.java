@@ -111,7 +111,7 @@ public class GerenciaArquivo {
         int count = 0;
         for (String dado : dados) {
             if (dado.contains("<property name=\"hibernate.connection.url\">")) {
-                String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:"+caminhoDoBancoDeDados+"?cl_ctype=UTF-8"+"</property>";
+                String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:"+caminhoDoBancoDeDados+"</property>";
                 dados.set(count, caminho);
             }
             count++;

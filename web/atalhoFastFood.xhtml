@@ -13,17 +13,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="resources/css/bootstrap.css" /> 
         <link rel="stylesheet" href="resources/css/incluir-mesa.css" /> 
-        <script>
-            document.addEventListener("keydown", function (evt) {
-                if (evt.keyCode === 27) {
-                    window.location.href = "mesas.jsf";
-                }
-            });
-        </script>
     </h:head>    
     <h:body>
-        <h:form>
-            <p:growl autoUpdate="true"/>
+        <h:form id="frmMsg">
+            <p:growl id="msg"/>
         </h:form>
         <div class="container-fluid comanda">
             <div class="row">
@@ -42,7 +35,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao1" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao01}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 1"/>
                                 </h:inputText>
                             </div>
@@ -56,7 +49,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao2" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao02}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 2"/>
                                 </h:inputText>
                             </div>
@@ -70,7 +63,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao3" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao03}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 3"/>
                                 </h:inputText>
                             </div>
@@ -84,7 +77,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao4" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao04}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 4"/>
                                 </h:inputText>
                             </div>
@@ -98,7 +91,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao5" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao05}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 5"/>
                                 </h:inputText>
                             </div>
@@ -112,7 +105,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao6" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao06}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 6"/>
                                 </h:inputText>
                             </div>
@@ -126,7 +119,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao7" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao07}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 7"/>
                                 </h:inputText>
                             </div>
@@ -140,7 +133,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao8" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao08}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 8"/>
                                 </h:inputText>
                             </div>
@@ -154,7 +147,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao9" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao09}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 9"/>
                                 </h:inputText>
                             </div>
@@ -168,7 +161,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao10" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao10}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 10"/>
                                 </h:inputText>
                             </div>
@@ -182,7 +175,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao11" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao11}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 11"/>
                                 </h:inputText>
                             </div>
@@ -196,7 +189,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h:inputText id="descricao12" class="form-control" value="#{atalhoFastFoodBean.atalhoFastFood.descricao12}"
-                                             readonly="true">
+                                             >
                                     <f:passThroughAttribute name="placeholder" value="Descrição 12"/>
                                 </h:inputText>
                             </div>
@@ -204,7 +197,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <p:commandLink actionListener="#{atalhoFastFoodBean.salvar()}"
-                                               process="@form" class="btn btn-success btn-block">
+                                               process="@form" class="btn btn-success btn-block"
+                                               update="frmMsg:msg">
                                     Salvar <i class="glyphicon glyphicon-ok"></i>
                                 </p:commandLink>
                             </div>

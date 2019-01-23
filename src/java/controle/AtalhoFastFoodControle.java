@@ -11,32 +11,18 @@ import util.HibernateUtil;
 
 @ManagedBean(name = "atalhoFastFoodService")
 @ViewScoped
-public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializable {
+public class AtalhoFastFoodControle implements AtalhoFastFoodService, Serializable {
 
     private Session session = null;
 
     @Override
-    public void salvar(AtalhoFastFood atalhoFastFood) throws Exception {
+    public void salvar(AtalhoFastFood atalhoFastFood) {
         session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            if(atalhoFastFood.getCodigo() == null){
-                atalhoFastFood.setCodigo(verificarId());
-                session.save(atalhoFastFood);
-            }else{
-                session.update(atalhoFastFood);
-            }        
-            transaction.commit();
-        } catch (Exception ex) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw ex;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+        if (session != null) {
+            session.getTransaction().begin();
+            session.saveOrUpdate(atalhoFastFood);
+            session.getTransaction().commit();
+            session.close();
         }
     }
 
@@ -69,15 +55,15 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService,Serializabl
         return null;
     }
 
-    
-    private int verificarId() {
+    public int verificarId() {
         session = HibernateUtil.getSessionFactory().openSession();
-        int count=1;
-        if(session != null){
-           Object qtd= session.createSQLQuery("select first 1 CODIGO  from atalho_fastfood order by codigo desc").uniqueResult();
-           if(qtd != null){
-               count =Integer.parseInt(String.valueOf(qtd))+1;
-           }
+        int count = 1;
+        if (session != null) {
+            Object qtd = session.createSQLQuery("select first 1 CODIGO  from atalho_fastfood order by codigo desc").uniqueResult();
+            if (qtd != null) {
+                count = Integer.parseInt(String.valueOf(qtd)) + 1;
+            }
+            session.close();
         }
         return count;
     }
