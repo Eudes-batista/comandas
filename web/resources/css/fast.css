@@ -3,12 +3,12 @@ body{
     background-attachment: fixed;
     background-size: cover;
 }
-@media(max-width:700px){
+/*@media(max-width:700px){
     .rolagem{
         overflow: auto;
         height: 630px;
     }
-}
+}*/
 a,a:hover{
     color: #286090;
     text-decoration: none;
@@ -22,6 +22,13 @@ input{
     font-size: 25pt;
     width: 100%;
     text-transform: uppercase;
+}
+.campo-pesquisa{
+    margin-top: 10px;
+    width: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+    
 }
 .barra,input{
     color: #757575;
@@ -59,44 +66,51 @@ ul li{
     font-weight: bold;    
 }
 .barra-grupo{
-    border-right: 0.2px solid #ddd;
+    border-right: 0.2px solid #bbb;
     margin-left: -20px;
     overflow: auto;
-    max-height: 600px;
+    height: 350px;
 }
 .produto{
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     padding: 5px;
-    border: 1px solid #ddd;
-    background: #f5f5f5;
     border-radius: 3px;
     margin-left: 10px;
     margin-top:  10px;
     color: #6c8aaf;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    /*box-shadow: 1px 1px #ccc;*/
 }
 .barra-botoes{
-    border-top: 0.2px solid #ddd;
+    border-top: 0.2px solid #bbb;
     width: 100%;
-    height: 170px;
     padding-top: 10px;
 }
 .lista-itens{
-    border-left:  0.2px solid #ddd;
-    height: 550px;
+    border-left:  0.2px solid #bbb;
+
 }
-.btn-default{
-    color:#6c8aaf;
+.btn-success{
+    color:#17a541;
+    border: none;
+    background: transparent;
+}
+.btn-danger{
+    color:#d64256;
+    border: none;
+    background: transparent;
 }
 .referencia{
     color: #bbb;
-    font-size: 8pt;
+    font-size: 7pt;
     text-align: center;
 
 }
 .item{
     color: #858585;
-    font-size: 10pt
+    font-size: 8pt
 }
 .li-grupo{
     transition: width 0.2s ease-in;
@@ -104,11 +118,7 @@ ul li{
 .li-grupo:hover{
     width: 80px;
 }
-.campo-pesquisa{
-    margin-top: 435px;
-    width: 283px;
 
-}
 a{
     color: #fff;
 }
