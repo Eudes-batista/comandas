@@ -5,8 +5,10 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:metadata>
+        <f:viewAction action="#{fastFoodBean.init()}"/>
+    </f:metadata>
     <h:head>
         <title>FastFood</title>
         <meta charset="utf-8" />
@@ -17,142 +19,129 @@
         <h:outputStylesheet library="css" name="fast.css" />
         <h:outputScript library="primefaces" name="jquery.js"/>
         <script src="resources/js/bootstrap.min.js"></script>
+        <script>
+            window.onload = function () {
+                limitarCaracteres();
+            };
+            function limitarCaracteres() {
+                var nomeProdutos = document.querySelectorAll(".nome-produto");
+                nomeProdutos.forEach(e => {
+                    var texto = e.textContent;
+                    if (texto.toString().length >= 21)
+                        e.textContent = texto.toString().substring(0, 20);
+                });
+            }
+            function adicionarQuantidade(id) {
+                var valor = parseInt(document.getElementById(id).textContent);
+                valor += 1;
+                if (tratarNumerosNegativos(valor))
+                    document.getElementById(id).textContent = valor;
+            }
+            function removerQuantidade(id) {
+                var valor = parseInt(document.getElementById(id).textContent);
+                valor -= 1;
+                if (tratarNumerosNegativos(valor))
+                    document.getElementById(id).textContent = valor;
+            }
+            function tratarNumerosNegativos(valor) {
+                //<![CDATA[ 
+                if (valor < 1)
+                    return false;
+                return true;
+                //]]> 
+            }
+        </script>
     </h:head>
     <h:body>
-        <h:form>
+        <h:form id="frm">
             <div class="container-fluid">
                 <div class="row">
                     <div class="row campo-pesquisa">
-                        <h:inputText class="form-control" style="font-size: 15pt; color: #858585 !important;">
+                        <h:inputText class="form-control" style="font-size: 15pt; color: #858585 !important;"
+                                     value="#{fastFoodBean.pesquisa}" onkeyup="this.value = this.value.toUpperCase();">
                             <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
                             <f:passThroughAttribute name="autofocus" value="true"/>
+                            <f:ajax event="keyup" render="frm:produto" execute="@this" listener="#{fastFoodBean.pesquisarProduto()}"
+                                    onevent="limitarCaracteres"/>
                         </h:inputText>
                     </div>
                     <div class="col-xs-2 barra-grupo">
                         <ul jsf:id="listaGrupo">
-                            <ui:repeat id="prd" value="#{['CACHAÇA','CERVEJA','VINHO','WISKY','LICOR','CHAMPAGNE','LANCHE','SALADAS','CARNES','PIZZAS','HAMBURGERS','REFRIGERANTES','SORVETES']}" var="g" varStatus="indexpdr">
-                                <li>
+                            <ui:repeat id="prd" value="#{fastFoodBean.grupos}" var="g" varStatus="indexpdr">
+                                <li jsf:id="item">                                    
                                     <p:graphicImage id="img" library="imagens" name="drink.png" width="35" class="li-grupo"/> 
-                                    <p:outputPanel >
-                                        #{g}
+                                    <p:outputPanel id="grupo">
+                                        #{g.t51dsgrp}
                                     </p:outputPanel>
+                                    <f:ajax event="click" render="frm:produto" execute="@this" listener="#{fastFoodBean.pesquisarPorGrupo(g)}" onevent="limitarCaracteres"/>
                                 </li>                                 
                             </ui:repeat>   
                         </ul>          
                     </div>
                     <div class="col-xs-7" style="overflow: auto; height: 350px;">
-                        <c:forEach begin="1" end="10">
-                            <div class="col-xs-2 produto">
-                                <div class="row text-center">
-                                    <!--                                    <div class="col-xs-6 text-center">
-                                                                            <img src="resources/imagens/prato.png" style="width: 20px;"/>
-                                                                        </div>-->
-                                    <div class="col-xs-12 text-center">
-                                        <span style="font-size: 8pt;">HAMBURGER DE SIRI MOLE</span>
+                        <h:panelGroup id="produto">
+                            <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
+                                <div class="col-xs-2 produto">
+                                    <h:panelGroup id="adicaoProduto" style="cursor: pointer;">
+                                        <div class="row text-center">
+                                            <div class="col-xs-12 text-center">
+                                                <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                                            </div>
+                                        </div>
+                                        <f:ajax event="click" render="frm:itens frm:loop:#{status.index}:qtd" execute="@this frm:loop:#{status.index}:qtd" listener="#{fastFoodBean.adicionarItem(produto)}" />
+                                    </h:panelGroup>  
+                                    <div class="row text-center" style="font-size: 6pt;">
+                                        <h:outputText value="#{produto.preco}">
+                                            <f:convertNumber pattern="###,##0.00"/>
+                                        </h:outputText>
+                                    </div>
+                                    <div class="row" style="margin-top: 15px;">
+                                        <div class="col-xs-4 text-left">
+                                            <span class="btn btn-danger fa fa-minus"
+                                                  onclick="removerQuantidade('frm:loop:#{status.index}:qtd')"></span>
+                                        </div>
+                                        <div class="col-xs-3 text-center" style="font-size: 12pt;">
+                                            <h:outputLabel id="qtd" value="#{fastFoodBean.quantidade}" >
+                                                <f:convertNumber />
+                                            </h:outputLabel>
+                                        </div>
+                                        <div class="col-xs-4 text-right" >
+                                            <span class="btn btn-success fa fa-plus" onclick="adicionarQuantidade('frm:loop:#{status.index}:qtd');"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row text-center" style="font-size: 6pt;">
-                                    12,00
-                                </div>
-                                <div class="row" style="margin-top: 15px;">
-                                    <div class="col-xs-4 text-left">
-                                        <span class="btn btn-danger fa fa-minus"></span>
-                                    </div>
-                                    <div class="col-xs-3 text-center" style="font-size: 12pt;">
-                                        <span> 01 </span>
-                                    </div>
-                                    <div class="col-xs-4 text-right" >
-                                        <span class="btn btn-success fa fa-plus"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </c:forEach>
+                            </ui:repeat>
+                        </h:panelGroup>  
                     </div>
                     <div class="col-xs-3 lista-itens" style="overflow: auto; height: 350px;">
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr style="background: #f0fef0;">
-                                    <td>
-                                        <div class="row referencia" >
-                                            <div class="col-xs-5">Ref 7894512534212</div>
-                                            <div class="col-xs-3 text-center">Qt 01</div>
-                                            <div class="col-xs-4 text-right">Val 12,00</div>  
-                                        </div>
-                                        <div class="row item">
-                                            <div class="col-xs-9">HAMBURGER AO MOLHO CATUPIRI</div>
-                                            <div class="col-xs-2">120,00</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-danger fa fa-trash" style="color: #bbb;font-size:11pt;" ></span>
-                                    </td>
-                                </tr>
-                                <tr style="background: #f0fef0;">
-                                    <td>
-                                        <div class="row referencia" >
-                                            <div class="col-xs-5">Ref 7894512534212</div>
-                                            <div class="col-xs-3 text-center">Qt 01</div>
-                                            <div class="col-xs-4 text-right">Val 12,00</div>  
-                                        </div>
-                                        <div class="row item">
-                                            <div class="col-xs-9">HAMBURGER AO MOLHO CATUPIRI</div>
-                                            <div class="col-xs-2">120,00</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-danger fa fa-trash" style="color: #bbb;font-size:11pt;" ></span>
-                                    </td>
-                                </tr>
-                                <tr style="background: #f0fef0;">
-                                    <td>
-                                        <div class="row referencia" >
-                                            <div class="col-xs-5">Ref 7894512534212</div>
-                                            <div class="col-xs-3 text-center">Qt 01</div>
-                                            <div class="col-xs-4 text-right">Val 12,00</div>  
-                                        </div>
-                                        <div class="row item">
-                                            <div class="col-xs-9">HAMBURGER AO MOLHO CATUPIRI</div>
-                                            <div class="col-xs-2">120,00</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-danger fa fa-trash" style="color: #bbb;font-size:11pt;" ></span>
-                                    </td>
-                                </tr>
-                                <tr style="background: #f0fef0;">
-                                    <td>
-                                        <div class="row referencia" >
-                                            <div class="col-xs-5">Ref 7894512534212</div>
-                                            <div class="col-xs-3 text-center">Qt 01</div>
-                                            <div class="col-xs-4 text-right">Val 12,00</div>  
-                                        </div>
-                                        <div class="row item">
-                                            <div class="col-xs-9">HAMBURGER AO MOLHO CATUPIRI</div>
-                                            <div class="col-xs-2">120,00</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-danger fa fa-trash" style="color: #bbb;font-size:11pt;" ></span>
-                                    </td>
-                                </tr>
-                                <tr style="background: #f0fef0;">
-                                    <td>
-                                        <div class="row referencia" >
-                                            <div class="col-xs-5">Ref 7894512534212</div>
-                                            <div class="col-xs-3 text-center">Qt 01</div>
-                                            <div class="col-xs-4 text-right">Val 12,00</div>  
-                                        </div>
-                                        <div class="row item">
-                                            <div class="col-xs-9">HAMBURGER AO MOLHO CATUPIRI</div>
-                                            <div class="col-xs-2">120,00</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-danger fa fa-trash" style="color: #bbb;font-size:11pt;" ></span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h:panelGroup id="itens">
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr style="display: #{not empty fastFoodBean.lancamentos} ? 'none' :'block'"><td>Nenhum registro adicionado.</td></tr>
+                                    <ui:repeat value="#{fastFoodBean.lancamentos}" var="lacamento">
+                                        <tr style="background: #f0fef0;">
+                                            <td>
+                                                <div class="row referencia" >
+                                                    <div class="col-xs-5">Ref #{lacamento.referencia}</div>
+                                                    <div class="col-xs-3 text-center">Qt #{lacamento.quantidade}</div>
+                                                    <div class="col-xs-4 text-right">Val #{lacamento.preco}</div>  
+                                                </div>
+                                                <div class="row item">
+                                                    <div class="col-xs-9">#{lacamento.descricao}</div>
+                                                    <div class="col-xs-2">#{lacamento.precoTotal}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h:commandLink class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}">
+                                                    <i class="fa fa-trash"></i>
+                                                    <f:ajax render="frm:itens" execute="@this" />
+                                                </h:commandLink>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>  
+                                </tbody>
+                            </table>
+                        </h:panelGroup> 
                     </div>
                 </div>
             </div>
@@ -163,24 +152,25 @@
                         <div class="row " >
                             <div class="col-xs-12">
                                 <div class="col-xs-3">
-                                    <h:commandLink class="btn btn-block btn-primary" actionListener="#{fastFoodBean.lancarProduto(fastFoodBean.referencia01)}">
-                                        #{fastFoodBean.referencia01}
+                                    <h:commandLink class="btn btn-block btn-primary" 
+                                                   actionListener="#{fastFoodBean.buscarProduto(refencia)}">
+                                        #{fastFoodBean.atalhoFastFood.descricao01}
                                         <f:ajax execute="@this"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao02}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao03}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao04}
                                     </h:commandLink>
                                 </div>
                             </div>
@@ -189,22 +179,22 @@
                             <div class="col-xs-12">
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao05}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao06}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao07}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao08}
                                     </h:commandLink>
                                 </div>
                             </div>
@@ -213,22 +203,22 @@
                             <div class="col-xs-12">
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary" >
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao09}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao10}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao11}
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary">
-                                        Produto 01
+                                        #{fastFoodBean.atalhoFastFood.descricao12}
                                     </h:commandLink>
                                 </div>
                             </div>
