@@ -61,6 +61,7 @@ public class FastFoodBean implements Serializable {
         Lancamento lancamentoItem = new Lancamento();
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
+        this.quantidade = this.quantidade == 0 ? 1 : this.quantidade;
         lancamentoItem.setQuantidade(this.quantidade);
         lancamentoItem.setPreco(p.getPreco());
         lancamentoItem.setPrecoTotal(p.getPreco() * quantidade);
@@ -68,7 +69,7 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setStatus("");
         this.lancamentos.add(lancamentoItem);
     }
-
+    
     public void removerItem(Lancamento lancamento){
         this.lancamentos.remove(lancamento);
     }
