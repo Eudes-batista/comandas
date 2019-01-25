@@ -237,8 +237,8 @@ public class MesasBean implements Serializable {
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
-        usuarioBean.getUsuario().setUsuario(usuario);
-        usuarioBean.getUsuario().setSenha(senha);
+        usuarioBean.getUsuario().setNOME(usuario);
+        usuarioBean.getUsuario().setSENHA(senha);
         if (usuarioBean.validarGerente()) {
             verificarAcaoUsuario();
             setUsuario("");
@@ -377,7 +377,7 @@ public class MesasBean implements Serializable {
     }
 
     public void validaVendedor() {
-        usuarioBean.getUsuario().setSenha(senha);
+        usuarioBean.getUsuario().setSENHA(senha);
         String permissao = vendedorService.validarVendedor(usuarioBean.gerarSenha());
         if (!"null".equals(permissao)) {
             this.vendedor = permissao;

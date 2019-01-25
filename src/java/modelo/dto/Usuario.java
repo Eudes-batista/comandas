@@ -1,29 +1,31 @@
 package modelo.dto;
 
+import java.io.Serializable;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Usuario{
-    
-    private String Usuario;
-    private String senha;
+public class Usuario implements Serializable {
+
+    private String NOME;
+    private String SENHA;
+    private String GERENTE;
 
     public Usuario() {
     }
 
     public Usuario(String Usuario, String senha) {
-        this.Usuario = Usuario;
-        this.senha = senha;
+        this.NOME = Usuario;
+        this.SENHA = senha;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.Usuario);
-        hash = 53 * hash + Objects.hashCode(this.senha);
+        hash = 53 * hash + Objects.hashCode(this.NOME);
+        hash = 53 * hash + Objects.hashCode(this.SENHA);
         return hash;
     }
 
@@ -39,15 +41,15 @@ public class Usuario{
             return false;
         }
         final Usuario other = (Usuario) obj;
-        if (!Objects.equals(this.Usuario, other.Usuario)) {
+        if (!Objects.equals(this.NOME, other.NOME)) {
             return false;
         }
-        return Objects.equals(this.senha, other.senha);
+        return Objects.equals(this.SENHA, other.SENHA);
     }
 
     @Override
     public String toString() {
-        return "Usuario{" + "Usuario=" + Usuario + ", senha=" + senha + '}';
+        return "Usuario{" + "Usuario=" + NOME + ", senha=" + SENHA + '}';
     }
 
 }

@@ -28,18 +28,18 @@ public class UsuarioBean implements Serializable {
             sb.append((char) i);
         }
         sb.append(" ");
-        for (int i = 1; i <= this.usuario.getSenha().length(); i++) {
-            int cod = sb.indexOf(String.valueOf(this.usuario.getSenha().charAt(i - 1))) + (i + 11);
+        for (int i = 1; i <= this.usuario.getSENHA().length(); i++) {
+            int cod = sb.indexOf(String.valueOf(this.usuario.getSENHA().charAt(i - 1))) + (i + 11);
             senhaCript += (char) cod;
         }
         return senhaCript;
     }
 
     public boolean validarGerente() {
-        if (getUsuario().getUsuario().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
+        if (getUsuario().getNOME().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
             return false;
         }
-        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().getUsuario().toUpperCase(), gerarSenha());
+        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().getNOME().toUpperCase(), gerarSenha());
         if (usuarios.isEmpty()) {
             return false;
         }

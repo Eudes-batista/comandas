@@ -9,6 +9,7 @@ public class Produto implements Serializable {
     private String DESCRICAO;
     private Double PRECO;
     private String GRUPO;
+    private String UNIDADE;
 
     public Produto() {
     }
@@ -83,6 +84,14 @@ public class Produto implements Serializable {
 
     public void setGRUPO(String GRUPO) {
         this.GRUPO = GRUPO;
+    }
+
+    public String getUNIDADE() {
+        return UNIDADE;
+    }
+
+    public void setUNIDADE(String UNIDADE) {
+        this.UNIDADE = UNIDADE;
     }
     
 }
