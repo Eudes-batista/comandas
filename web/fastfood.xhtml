@@ -264,7 +264,7 @@
                     <div class="col-xs-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
                                        actionListener="#{fastFoodBean.finalizar()}"
-                                       process="@this" >
+                                       process="@this" oncomplete="PF('dialogFinalizar').hide();">
                             Finalizar
                         </p:commandLink>
                     </div>
@@ -273,7 +273,7 @@
         </h:form>
         <p:dialog id="dlFinalizar" widgetVar="dialogFinalizar" header="Finalizar" draggable="false" dynamic="true" responsive="true" resizable="false"
                   modal="true" showEffect="fade" position="center">
-            <h:form>
+            <h:form id="frmFinalizar">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
@@ -290,9 +290,13 @@
                         <div class="col-md-12">
                             <div class="ui-g-12 ui-md-4">
                                 <div class="ui-inputgroup">
-                                    <p:commandButton icon="pi pi-check" styleClass="green-button"/> 
-                                    <p:inputText id="pessoas" placeholder="Pessoas" value="#{fastFoodBean.comandas.PESSOAS}" />
-                                    <p:commandButton icon="pi pi-times" styleClass="red-button"/>     
+                                    <span class="btn btn-danger fa fa-minus"
+                                          onclick="removerQuantidade('frmFinalizar:labelPessoas', 'frmFinalizar:pessoas');"/> 
+                                    <h:outputText id="labelPessoas" value="1" style="font-size: 13pt;"/>
+                                    <p:inputText id="pessoas" placeholder="Pessoas" value="#{fastFoodBean.comandas.PESSOAS}" 
+                                                 style="display: none;"/>
+                                    <span class="btn btn-success fa fa-plus"
+                                          onclick="adicionarQuantidade('frmFinalizar:labelPessoas', 'frmFinalizar:pessoas');"/>     
                                 </div>
                             </div>
                         </div>
@@ -348,7 +352,7 @@
                 <p:defaultCommand target="default"/>
             </h:form>
         </p:dialog>
-         <!--FORMULARIO DE AUTORIZAÇÃO-->
+        <!--FORMULARIO DE AUTORIZAÇÃO-->
         <p:dialog header="Autorização" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 
                   closable="false" closeOnEscape="true"
                   showEffect="fade" hideEffect="fade">
@@ -378,6 +382,13 @@
                     }
                 }
             </script>
+        </p:dialog>
+        <!--MODAL DE ENVIO PARA IMPRESSÃO-->
+        <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlImpressao" widgetVar="dialogoImpressao" dynamic="true" 
+                   closable="false" closeOnEscape="true"
+                   showEffect="fade" hideEffect="fade" visible="false">
+            <span style="font-size: 15pt;">#{produtoBean.mensagem}</span>
+            <p:commandLink id="voltar" oncomplete="PF('dialogoImpressao').hide();" process="@this" update="frm:itens" class="btn-modal btn btn-warning btn-block"  style="margin-top: 30px; color: #fff;">OK</p:commandLink>
         </p:dialog>
     </h:body>
 </html>
