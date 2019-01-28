@@ -136,6 +136,8 @@ public class ProdutoBean implements Serializable {
         if (buscarNumeroDePessoas == 0) {
             if (quantidadePessoas != null) {
                 quantidadePessoas = String.valueOf(Integer.parseInt(quantidadePessoas));
+            }else{
+                quantidadePessoas ="1";                
             }
         } else {
             quantidadePessoas = String.valueOf(buscarNumeroDePessoas);

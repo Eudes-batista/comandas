@@ -19,46 +19,12 @@
         <h:outputStylesheet library="css" name="fast.css" />
         <h:outputScript library="primefaces" name="jquery.js"/>
         <script src="resources/js/bootstrap.min.js"></script>
+        <script src="resources/js/fastfood.js"></script>
         <script>
             window.onload = function () {
                 limitarCaracteres();
-            };
-            function limitarCaracteres() {
-                var nomeProdutos = document.querySelectorAll(".nome-produto");
-                nomeProdutos.forEach(e => {
-                    var texto = e.textContent;
-                    if (texto.toString().length >= 21)
-                        e.textContent = texto.toString().substring(0, 20);
-                });
-            }
-            function adicionarQuantidade(id, idInput) {
-                var valor = parseInt(document.getElementById(id).textContent);
-                valor += 1;
-                if (tratarNumerosNegativos(valor))
-                    document.getElementById(id).textContent = valor;
-                document.getElementById(idInput).value = valor;
-            }
-            function removerQuantidade(id, idInput) {
-                var valor = parseInt(document.getElementById(id).textContent);
-                valor -= 1;
-                if (tratarNumerosNegativos(valor)) {
-                    document.getElementById(id).textContent = valor;
-                    document.getElementById(idInput).value = valor;
-                }
-            }
-            function mandarFocu() {
-                var botoes = document.querySelectorAll(".focu");
-                botoes.forEach(b => {
-                    b.focus();
-                });
-            }
-            function tratarNumerosNegativos(valor) {
-                //<![CDATA[ 
-                if (valor < 1)
-                    return false;
-                return true;
-                //]]> 
-            }
+                desabilitarBotoes();
+            };            
         </script>
     </h:head>
     <h:body>
@@ -145,10 +111,22 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <h:commandLink id="apagar" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}">
+                                                <h:commandLink id="apagarG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
+                                                               rendered="#{not empty fastFoodBean.usuario.GERENTE}">
                                                     <i class="fa fa-trash"></i>
                                                     <f:ajax render="frm:itens" execute="@this" />
                                                 </h:commandLink>
+                                                <p:commandLink id="apagarN" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lacamento)}"
+                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and not empty fastFoodBean.comandas.COMANDA}"
+                                                               update="frmDialogo" process="@this"
+                                                               oncomplete="PF('dialogoUsuario').show();">
+                                                    <i class="fa fa-trash"></i>
+                                                </p:commandLink>
+                                                <p:commandLink id="apagarNG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
+                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and empty fastFoodBean.comandas.COMANDA}"
+                                                               update="frm:itens" process="@this">
+                                                    <i class="fa fa-trash"></i>
+                                                </p:commandLink>
                                                 <button style="background: #fff;outline: none;border: none;" class="focu"></button>
                                             </td>
                                         </tr>
@@ -162,7 +140,7 @@
 
             <div class="container-fluid barra-botoes" >
                 <div class="row " >
-                    <div class="col-xs-9" >
+                    <div class="col-xs-9 botoes-rapidos" >
                         <div class="row " >
                             <div class="col-xs-12">
                                 <div class="col-xs-3">
@@ -323,12 +301,13 @@
         <p:dialog id="dlQuantidade" widgetVar="dialogQuantidade" header="Definir Quantidade" draggable="false" dynamic="true" responsive="true" resizable="false"
                   modal="true" showEffect="fade" position="center">
             <p:ajax event="close" process="@this" listener="#{fastFoodBean.novoProduto()}" />
-            <h:form>
+            <h:form id="frmQauntidade">
+                <p:messages id="msgQuantidade" closable="true" showIcon="false" style="color: #fff !important;"/>
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
                             <h:outputLabel value="Quantidade"/>
-                            <h:inputText class="form-control" value="#{fastFoodBean.quantidade}"
+                            <h:inputText id="inputQuantidade" class="form-control" value="#{fastFoodBean.quantidade}"
                                          onkeyup="this.value = this.value.replace(/[^0,-9,]/g, '');"
                                          converter="converterValor">
                                 <f:passThroughAttribute name="placeholder" value="Quantidade"/>
@@ -339,9 +318,9 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink oncomplete="PF('dialogQuantidade').hide();"
-                                           process="@form" update="@form frm:itens"
-                                           actionListener="#{fastFoodBean.definirQuantidade()}">
+                            <p:commandLink process="@form" update="@form frm:itens msgQuantidade"
+                                           actionListener="#{fastFoodBean.definirQuantidade()}"
+                                           oncomplete="selecionarCampo('frmQauntidade:inputQuantidade');">
                                 <i class="fa fa-check"></i>
                                 Quantidade
                             </p:commandLink>
@@ -362,13 +341,17 @@
                     <p:panelGrid id="panelUsuario" columns="1" layout="grid" styleClass="ui-panelgrid-blank">
                         <p:focus for="usuario"/>
                         <p:outputLabel for="usuario" value="Usuario" class="modal-text"/>
-                        <p:inputText id="usuario"  label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" style="text-transform: uppercase;"/>
+                        <p:inputText id="usuario"  label="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" style="text-transform: uppercase;"
+                                     value="#{fastFoodBean.usuarioBean.usuario.NOME}"/>
                         <p:outputLabel for="senha" value="Senha" class="modal-text"/>
-                        <p:password id="senha" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" />
+                        <p:password id="senha" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" 
+                                    value="#{fastFoodBean.usuarioBean.usuario.SENHA}"/>
                     </p:panelGrid>
                 </div>
                 <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-                    <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" value="Confirma" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"/>
+                    <p:commandLink id="sim" class="btn-modal btn btn-success btn-block" 
+                                   value="Confirma" oncomplete="handleLoginRequest(xhr, status, args);" resetValues="true"
+                                   update="frm:itens msgUsuario" process="@this frmDialogo:panelUsuario" actionListener="#{fastFoodBean.validarUsuario()}"/>
                     <a id="nao" class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoUsuario').hide();">
                         Cancelar
                     </a>
@@ -384,12 +367,14 @@
             </script>
         </p:dialog>
         <!--MODAL DE ENVIO PARA IMPRESSÃO-->
-        <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlImpressao" widgetVar="dialogoImpressao" dynamic="true" 
-                   closable="false" closeOnEscape="true"
-                   showEffect="fade" hideEffect="fade" visible="false">
-            <span style="font-size: 15pt;">#{produtoBean.mensagem}</span>
-            <p:commandLink id="voltar" oncomplete="PF('dialogoImpressao').hide();" process="@this" update="frm:itens" class="btn-modal btn btn-warning btn-block"  style="margin-top: 30px; color: #fff;">OK</p:commandLink>
-        </p:dialog>
+        <h:form>
+            <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlImpressao" widgetVar="dialogoImpressao" dynamic="true" 
+                       closable="false" closeOnEscape="true"
+                       showEffect="fade" hideEffect="fade" visible="false">
+                <span style="font-size: 15pt;">#{produtoBean.mensagem}</span>
+                <p:commandLink id="voltar" oncomplete="PF('dialogoImpressao').hide();" process="@this" update="frm:itens" class="btn-modal btn btn-warning btn-block"  style="margin-top: 30px; color: #fff;">OK</p:commandLink>
+            </p:dialog>
+        </h:form>
     </h:body>
 </html>
 

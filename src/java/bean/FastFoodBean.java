@@ -26,6 +26,7 @@ import modelo.dto.Usuario;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import servico.AtalhoFastFoodService;
 import servico.ComandaService;
 import servico.GrupoServico;
@@ -50,12 +51,15 @@ public class FastFoodBean implements Serializable {
     private EspelhoComandaBean espelhoComandaBean;    
     @ManagedProperty(value = "#{produtoBean}")
     private ProdutoBean produtoBean;
+    @ManagedProperty(value = "#{usuarioBean}")
+    private UsuarioBean usuarioBean;
 
     private AtalhoFastFood atalhoFastFood;
     private Usuario usuario;
     private Comandas comandas;
     private ControlePedido controlePedido;
     private Produto produto;
+    private Lancamento lancamento;
 
     private List<Lapt51> grupos;
     private List<Lancamento> lancamentos;
@@ -94,6 +98,7 @@ public class FastFoodBean implements Serializable {
         if (this.produto == null) {
             if (produtoEncontrado.getUNIDADE().contains("KG")) {
                 this.produto = produtoEncontrado;
+                this.quantidade=0;
                 PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
                 return;
             }
@@ -102,14 +107,18 @@ public class FastFoodBean implements Serializable {
     }
 
     public void definirQuantidade() {
+        if(validarQuantidade()) {Messages.addGlobalWarn("Quantidade tem que ser maior que zero."); return;}
         this.adicionarItem(this.produto);
+        PrimeFaces.current().executeScript("PF('dialogQuantidade').hide();");
         this.produto = null;
+        this.quantidade=1;
     }
 
     public void adicionarItem(Produto p) {
         if (p.getUNIDADE().contains("KG")) {
             if (this.produto == null) {
                 this.produto = p;
+                this.quantidade=0;
                 PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
                 return;
             }
@@ -126,13 +135,18 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
     }
+    
+    private boolean validarQuantidade() {
+        return this.quantidade == 0;
+    }
+    
 
     public void removerItem(Lancamento lancamento) {
         this.lancamentos.remove(lancamento);
     }
 
     public double getQuantidade() {
-        return this.quantidade == 0 ? 1 : quantidade;
+        return quantidade;
     }
 
     public void finalizar() {
@@ -142,9 +156,9 @@ public class FastFoodBean implements Serializable {
         }
         this.controlePedido = new ControlePedido(controleService, this.comandas.getCOMANDA());
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
-        lancamentos.forEach((lancamento) -> {
-            salvar(lancamento, controlePedido);
-            lancamentosAdicionados.add(lancamento);
+        lancamentos.forEach((l) -> {
+            salvar(l, controlePedido);
+            lancamentosAdicionados.add(l);
         });             
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
@@ -224,5 +238,24 @@ public class FastFoodBean implements Serializable {
         espelhoComandaBean.setEspelhoComanda(espelhoComanda);
         espelhoComandaBean.salvar();
     }
+    
+    public void setLancamento(Lancamento lancamento) {
+        this.lancamento =lancamento;
+    }
+      
 
+   public void validarUsuario() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        boolean fechar;
+        if (this.usuarioBean.validarGerente()) {
+            removerItem(this.lancamento);
+            this.lancamento=null;
+            fechar = true;
+        } else {
+            fechar = false;
+            Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
+        }
+        context.addCallbackParam("fechar", fechar);
+    }
+    
 }
