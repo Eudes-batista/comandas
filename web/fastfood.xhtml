@@ -31,6 +31,11 @@
         <h:form id="frm">
             <div class="container-fluid">
                 <div class="row">
+                    <p:commandLink actionListener="#{fastFoodBean.listarComandas()}"
+                                   update="dlPesquisaComanda" process="@this"
+                                   oncomplete="PF('dialogoPesquisaComanda').show();">Chamar Comandas</p:commandLink>
+                </div>
+                <div class="row">
                     <div class="row campo-pesquisa">
                         <h:inputText class="form-control" style="font-size: 15pt; color: #858585 !important;"
                                      value="#{fastFoodBean.pesquisa}" onkeyup="this.value = this.value.toUpperCase();">
@@ -375,6 +380,49 @@
                 <p:commandLink id="voltar" oncomplete="PF('dialogoImpressao').hide();" process="@this" update="frm:itens" class="btn-modal btn btn-warning btn-block"  style="margin-top: 30px; color: #fff;">OK</p:commandLink>
             </p:dialog>
         </h:form>
+          <!--FORMULARIO DE PESQUISA DE COMANDAS-->
+        <p:dialog header="Pesquisa de comanda" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlPesquisaComanda" widgetVar="dialogoPesquisaComanda" dynamic="true" 
+                  closable="true" closeOnEscape="true" 
+                  showEffect="fade" hideEffect="fade" position="top">
+            <h:form id="frmPesquisaComanda">
+                <div class="ui-fluid">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h:inputText value="#{fastFoodBean.pesquisa}" class="form-control">
+                                    <f:passThroughAttribute name="placeholder" value="Pesquisa de Comanda"/>
+                                    <f:passThroughAttribute name="type" value="tel"/>
+                                    <f:ajax event="keyup" execute="@this" render="tabelaComanda" listener="#{fastFoodBean.pesquisarComandas()}"/>
+                                </h:inputText>                                
+                            </div>
+                        </div>
+                    </div>
+                    <h3 style="color: #fff;">#{empty fastFoodBean.comandas ? 'Nenhum registro encontrado.' : ''}</h3>
+                    <ul jsf:id="tabelaComanda">
+                        <ui:repeat  value="#{fastFoodBean.comandas}" var="item">   
+                            <li>    
+                                <div jsf:id="listaComanda" class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
+                                    <p:commandLink id="linkComanda"  disabled="#{item.STATUS eq 'P'}" actionListener="#{fastFoodBean.abrirComanda(item)}"
+                                                   update="frm:itens" process="@this">
+                                        <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
+                                        <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.TOTAL}">
+                                            <f:convertNumber for="label" pattern="#,##0.00"/>
+                                        </h:outputLabel>
+                                        <f:param name="mesa" value="#{item.MESA}"/>
+                                        <f:param name="comanda" value="#{item.COMANDA}"/>
+                                        <f:param name="pedido" value="#{item.PEDIDO}"/>
+                                        <h5 style="color: #fff; font-weight: bold;">M #{item.MESA}</h5>
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="#{item.STATUS eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
+                                    </p:commandLink>
+                                </div>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                </div>
+            </h:form>
+        </p:dialog> 
     </h:body>
 </html>
 

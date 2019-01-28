@@ -52,13 +52,6 @@ ul li{
 .ui-dialog{
     font-family: tahoma !important;
 }
-.ui-confirm-dialog{
-    background: linear-gradient(135deg,#094b66 20%, #d7eef7 80%,#fffd );
-    padding: 20px;
-    font-size: 30pt;
-    text-align: center;
-    width: 100% !important;
-}
 .row{
     margin-bottom: 5px;
 }

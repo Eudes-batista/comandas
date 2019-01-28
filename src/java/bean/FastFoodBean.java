@@ -64,6 +64,7 @@ public class FastFoodBean implements Serializable {
     private List<Lapt51> grupos;
     private List<Lancamento> lancamentos;
     private List<Produto> produtos;
+    private List<Comandas> listaComandas;
 
     private String pesquisa;
     private double quantidade;
@@ -256,6 +257,21 @@ public class FastFoodBean implements Serializable {
             Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
         }
         context.addCallbackParam("fechar", fechar);
+    }
+    
+    public void listarComandas() {
+        this.listaComandas = this.controleService.listarComandas();
+    }
+    
+    public void pesquisarComandas() {
+        this.listaComandas = this.controleService.pesquisarComandaPorCodigo(pesquisa);
+    }
+    
+    public void abrirComanda(Comandas comanda) {
+        this.produtoBean.setComanda(comanda.getCOMANDA());
+        this.produtoBean.setMesa(comanda.getMESA());
+        this.produtoBean.listarProdutosAdicionados();
+        this.lancamentos=this.produtoBean.getLancamentosAdicionados();
     }
     
 }
