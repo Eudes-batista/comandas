@@ -5,10 +5,10 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <f:metadata>
-        <f:viewAction action="#{auditoriaBean.listarComandas()}"/>
+        <f:viewAction action="#{pesquisaMesasBean.init()}"/>
     </f:metadata>
     <h:head>
-        <title>Auditoria</title>
+        <title>Pesquisa de Mesas</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="shortcut icon" href="resources/imagens/food.png" type="image/x-icon" />
@@ -25,31 +25,48 @@
         <h:form id="frmAuditoria">
             <p:growl id="msgAuditoria"/>
             <div class="container-fluid">
-                <div class="row barra">
-                    <div class="col-md-9">
-                        <h2>Auditoria</h2>
-                    </div> 
-                    <div class="col-md-2 text-right" style="margin-top: 15px;">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">
-                                <i class="fa fa-search"></i>
-                            </span>
-                            <h:inputText class="form-control" value="#{auditoriaBean.pesquisa}" >
-                                <f:passThroughAttribute name="type" value="tel"/>
-                                <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
-                                <f:passThroughAttribute name="aria-label" value="Username"/>
-                                <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
-                                <f:passThroughAttribute name="autofocus" value="true"/>
-                                <f:ajax event="keyup" render="tabela" execute="@this" listener="#{auditoriaBean.pesquisarComanda()}"/>
+                <h:panelGroup id="panelFiltro">
+                    <div class="row barra">
+                        <div class="col-md-3">
+                            <h2>Historio de Mesas</h2>
+                        </div> 
+                        <div class="col-md-1" style="margin-top: 15px;"><h:outputLabel value="Data Inicial"/></div>
+                        <div class="col-md-2" style="margin-top: 15px;">
+                            <h:inputText class="form-control" value="#{pesquisaMesasBean.dataInicial}" converter="converterData">
+                                <f:passThroughAttribute name="type" value="date"/>
+                                <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
                             </h:inputText>
                         </div>
+                        <div class="col-md-1" style="margin-top: 15px;"><h:outputLabel value="Data Final"/></div>
+                        <div class="col-md-2" style="margin-top: 15px;">
+                            <h:inputText class="form-control" value="#{pesquisaMesasBean.dataFinal}" converter="converterData">
+                                <f:passThroughAttribute name="type" value="date"/>
+                                <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
+                            </h:inputText>
+                        </div>
+                        <div class="col-md-2 text-right" style="margin-top: 15px;">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1">
+                                    <i class="fa fa-search"></i>
+                                </span>
+                                <h:inputText class="form-control" value="#{pesquisaMesasBean.pesquisa}" >
+                                    <f:passThroughAttribute name="type" value="tel"/>
+                                    <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
+                                    <f:passThroughAttribute name="aria-label" value="Username"/>
+                                    <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
+                                    <f:passThroughAttribute name="autofocus" value="true"/>
+                                    <f:ajax event="keyup" render="tabela" execute="@this" listener="#{pesquisaMesasBean.pesquisarComanda()}"/>
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="col-md-1 text-right">
+                            <p:commandLink value="Pesquisar" class="btn btn-info btn-modal btn-block"
+                                           style="margin-top: 15px;text-decoration: none;" update="tabela" process="panelFiltro" actionListener="#{pesquisaMesasBean.listarComandas()}"/>
+                        </div>                 
                     </div>
-                    <div class="col-md-1 text-right">
-                        <a href="auditoria.jsf" class="btn btn-info btn-modal" style="margin-top: 15px;">Atualizar</a>
-                    </div>                 
-                </div>
+                </h:panelGroup> 
             </div>
-            <p:dataTable id="tabela" value="#{auditoriaBean.comandas}" var="comanda" emptyMessage="Não há comandas."
+            <p:dataTable id="tabela" value="#{pesquisaMesasBean.comandas}" var="comanda" emptyMessage="Não há comandas."
                          tableStyleClass="tabela-auditoria" rowIndexVar="index" reflow="true" >
                 <p:column headerText="Mesa" priority="1" width="45" >
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.MESA}</span>
@@ -80,7 +97,7 @@
                 <p:column width="120">
                     <p:commandButton value="SEM 10%" actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
                                      process="@this" update="frmAuditoria:msgAuditoria frmAuditoria:tabela"
-                                     action="#{auditoriaBean.listarComandas()}"
+                                     action="#{pesquisaMesasBean.listarComandas()}"
                                      disabled="#{comanda.STATUS ne 'P'}"
                                      onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                         <p:confirm header="Confirmação" message="Tem certeza que deseja retirar os 10%?" icon="fa fa-exclamation-triangle" />

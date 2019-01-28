@@ -1,6 +1,7 @@
 package modelo;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 public class Comandas implements Serializable {
@@ -15,6 +16,7 @@ public class Comandas implements Serializable {
     private String VENDEDOR;
     private String DESCRICAO;
     private Double PORCENTAGEM;
+    private Date DATA_PRECONTA;
 
     public Comandas() {
     }
@@ -154,6 +156,14 @@ public class Comandas implements Serializable {
 
     public void setPORCENTAGEM(Double PORCENTAGEM) {
         this.PORCENTAGEM = PORCENTAGEM;
+    }
+
+    public Date getDATA_PRECONTA() {
+        return DATA_PRECONTA;
+    }
+
+    public void setDATA_PRECONTA(Date DATA_PRECONTA) {
+        this.DATA_PRECONTA = DATA_PRECONTA;
     }
 
 }
