@@ -115,3 +115,32 @@ ul li{
 a{
     color: #fff;
 }
+.mesa,.mesa-vermelha,.mesa-modal{
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    text-transform: uppercase;
+}
+.mesa{
+    background-color:#68b6c9;
+}
+.mesa-vermelha{
+    background-color:#ee929d;
+}
+.modal-text{
+    font-size: 12pt !important;
+}
+.ui-dialog ul{
+    list-style: none;
+    margin-left: -30px;
+}
+.ui-dialog ul li{
+    display: inline-block;
+    margin-right: 8px;
+}
+.ui-dialog{
+    font-family: tahoma !important;
+}

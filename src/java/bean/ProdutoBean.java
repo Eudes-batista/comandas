@@ -644,7 +644,7 @@ public class ProdutoBean implements Serializable {
 
     private ItemCanceladoGarcom preencherInformacoesCancelamento() {
         ItemCanceladoGarcom canceladoGarcom = new ItemCanceladoGarcom();
-        canceladoGarcom.setCANCELAMENTO(espelhoComandaBean.espelhoComanda.getQuantidadeCancelada());
+        canceladoGarcom.setCANCELAMENTO(this.quantidade);
         int codigoMotivoCancelamento = espelhoComandaBean.espelhoComanda.getCodigoMotivoCancelamento();
         canceladoGarcom.setMOTIVO(this.motivoCancelamentoBean.buscarPorCodigo(codigoMotivoCancelamento).getNome());
         canceladoGarcom.setOBSERVACAO(this.espelhoComandaBean.espelhoComanda.getObservacaoMotivo());

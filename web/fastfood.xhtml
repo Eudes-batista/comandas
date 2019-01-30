@@ -24,7 +24,7 @@
             window.onload = function () {
                 limitarCaracteres();
                 desabilitarBotoes();
-            };            
+            };
         </script>
     </h:head>
     <h:body>
@@ -122,13 +122,13 @@
                                                     <f:ajax render="frm:itens" execute="@this" />
                                                 </h:commandLink>
                                                 <p:commandLink id="apagarN" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lacamento)}"
-                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and not empty fastFoodBean.comandas.COMANDA}"
+                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '1'}"
                                                                update="frmDialogo" process="@this"
                                                                oncomplete="PF('dialogoUsuario').show();">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <p:commandLink id="apagarNG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
-                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and empty fastFoodBean.comandas.COMANDA}"
+                                                               rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '0'}"
                                                                update="frm:itens" process="@this">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
@@ -247,7 +247,7 @@
                     <div class="col-xs-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
                                        actionListener="#{fastFoodBean.finalizar()}"
-                                       process="@this" oncomplete="PF('dialogFinalizar').hide();">
+                                       process="@this" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                             Finalizar
                         </p:commandLink>
                     </div>
@@ -261,7 +261,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <h:outputLabel value="Comanda"/>
-                            <h:inputText class="form-control" required="true"
+                            <h:inputText id="numeroComanda" class="form-control" required="true"
                                          requiredMessage="Comanda obrigatoria!"
                                          onkeyup="apenasNumeros(this)"
                                          value="#{fastFoodBean.comandas.COMANDA}">
@@ -286,8 +286,9 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink class="btn btn-success btn-block"
-                                           actionListener="#{fastFoodBean.finalizar()}">
+                            <p:commandLink class="btn btn-success btn-block" process="frmFinalizar"
+                                           actionListener="#{fastFoodBean.finalizar()}"
+                                           onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                 <i class="fa fa-check"></i>
                                 Confirma
                             </p:commandLink>
@@ -372,17 +373,17 @@
             </script>
         </p:dialog>
         <!--MODAL DE ENVIO PARA IMPRESSÃO-->
-        <h:form>
+        <h:form id="frmDialogMensagem">
             <p:dialog  styleClass="mensagem-impressao" resizable="false" focus="voltar" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%"  id="dlImpressao" widgetVar="dialogoImpressao" dynamic="true" 
                        closable="false" closeOnEscape="true"
                        showEffect="fade" hideEffect="fade" visible="false">
-                <span style="font-size: 15pt;">#{produtoBean.mensagem}</span>
+                <span style="font-size: 15pt;text-align: center;">#{produtoBean.mensagem}</span>
                 <p:commandLink id="voltar" oncomplete="PF('dialogoImpressao').hide();" process="@this" update="frm:itens" class="btn-modal btn btn-warning btn-block"  style="margin-top: 30px; color: #fff;">OK</p:commandLink>
             </p:dialog>
         </h:form>
-          <!--FORMULARIO DE PESQUISA DE COMANDAS-->
+        <!--FORMULARIO DE PESQUISA DE COMANDAS-->
         <p:dialog header="Pesquisa de comanda" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlPesquisaComanda" widgetVar="dialogoPesquisaComanda" dynamic="true" 
-                  closable="true" closeOnEscape="true" 
+                  closable="true" closeOnEscape="true"  
                   showEffect="fade" hideEffect="fade" position="top">
             <h:form id="frmPesquisaComanda">
                 <div class="ui-fluid">
@@ -397,13 +398,14 @@
                             </div>
                         </div>
                     </div>
-                    <h3 style="color: #fff;">#{empty fastFoodBean.comandas ? 'Nenhum registro encontrado.' : ''}</h3>
+                    <h3 style="text-align: center;">#{empty fastFoodBean.listaComandas ? 'Nenhum registro encontrado.' : ''}</h3>
                     <ul jsf:id="tabelaComanda">
-                        <ui:repeat  value="#{fastFoodBean.comandas}" var="item">   
+                        <ui:repeat  value="#{fastFoodBean.listaComandas}" var="item">   
                             <li>    
                                 <div jsf:id="listaComanda" class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
-                                    <p:commandLink id="linkComanda"  disabled="#{item.STATUS eq 'P'}" actionListener="#{fastFoodBean.abrirComanda(item)}"
-                                                   update="frm:itens" process="@this">
+                                    <p:commandLink id="linkComanda" 
+                                                   process="@this" update="frm:itens" actionListener="#{fastFoodBean.abrirComanda(item)}"
+                                                   oncomplete="PF('dialogoPesquisaComanda').hide();">
                                         <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
                                         <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.TOTAL}">
                                             <f:convertNumber for="label" pattern="#,##0.00"/>
@@ -423,6 +425,10 @@
                 </div>
             </h:form>
         </p:dialog> 
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
+                  responsive="true" showEffect="fade" hideEffect="fade">
+            <h3 style="text-align: center;">Aguarde...</h3>
+        </p:dialog>
     </h:body>
 </html>
 

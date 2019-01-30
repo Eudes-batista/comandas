@@ -40,7 +40,7 @@
                             <h:outputLabel for="usuario" value="Usuario" />
                             <h:inputText id="usuario" class="form-control" required="true"
                                          requiredMessage="Usuario Obrigatorio!"
-                                         value="#{loginBean.usuario.NOME}" onkeyup="this.value=this.value.toUpperCase();">
+                                         value="#{loginBean.usuario.NOME}" onkeyup="this.value = this.value.toUpperCase();">
                                 <f:passThroughAttribute name="placeholder" value="Usuario obrigatorio!"/>
                             </h:inputText>
                         </div>
@@ -56,16 +56,22 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <h:commandLink class="btn btn-success"
-                                           actionListener="#{loginBean.logar()}">
+                            <p:commandLink class="btn btn-success"
+                                           actionListener="#{loginBean.logar()}"
+                                           update="msgUsuario" process="@form" 
+                                           onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                           >
                                 <i class="glyphicon glyphicon-check"></i> Logar
-                                <f:ajax render="msgUsuario" execute="@form" />
-                            </h:commandLink>
+                            </p:commandLink>
                         </div>
                     </div>
                 </div>
             </div>
         </h:form>
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
+                  responsive="true" showEffect="fade" hideEffect="fade">
+            <h3 style="text-align: center;">Aguarde...</h3>
+        </p:dialog>
     </h:body>
 </html>
 

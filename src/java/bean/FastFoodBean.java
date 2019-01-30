@@ -3,8 +3,6 @@ package bean;
 import controle.ControlePedido;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,7 +46,7 @@ public class FastFoodBean implements Serializable {
     @ManagedProperty(value = "#{controle}")
     private ComandaService controleService;
     @ManagedProperty(value = "#{espelhoComandaBean}")
-    private EspelhoComandaBean espelhoComandaBean;    
+    private EspelhoComandaBean espelhoComandaBean;
     @ManagedProperty(value = "#{produtoBean}")
     private ProdutoBean produtoBean;
     @ManagedProperty(value = "#{usuarioBean}")
@@ -99,7 +97,7 @@ public class FastFoodBean implements Serializable {
         if (this.produto == null) {
             if (produtoEncontrado.getUNIDADE().contains("KG")) {
                 this.produto = produtoEncontrado;
-                this.quantidade=0;
+                this.quantidade = 0;
                 PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
                 return;
             }
@@ -108,18 +106,21 @@ public class FastFoodBean implements Serializable {
     }
 
     public void definirQuantidade() {
-        if(validarQuantidade()) {Messages.addGlobalWarn("Quantidade tem que ser maior que zero."); return;}
+        if (validarQuantidade()) {
+            Messages.addGlobalWarn("Quantidade tem que ser maior que zero.");
+            return;
+        }
         this.adicionarItem(this.produto);
         PrimeFaces.current().executeScript("PF('dialogQuantidade').hide();");
         this.produto = null;
-        this.quantidade=1;
+        this.quantidade = 1;
     }
 
     public void adicionarItem(Produto p) {
         if (p.getUNIDADE().contains("KG")) {
             if (this.produto == null) {
                 this.produto = p;
-                this.quantidade=0;
+                this.quantidade = 0;
                 PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
                 return;
             }
@@ -136,11 +137,10 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
     }
-    
+
     private boolean validarQuantidade() {
         return this.quantidade == 0;
     }
-    
 
     public void removerItem(Lancamento lancamento) {
         this.lancamentos.remove(lancamento);
@@ -152,20 +152,27 @@ public class FastFoodBean implements Serializable {
 
     public void finalizar() {
         if (this.comandas.getCOMANDA() == null) {
-            PrimeFaces.current().executeScript("PF('dialogFinalizar').show();");
+            if(!this.lancamentos.isEmpty())
+                PrimeFaces.current().executeScript("PF('dialogFinalizar').show();");
             return;
         }
         this.controlePedido = new ControlePedido(controleService, this.comandas.getCOMANDA());
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
-        lancamentos.forEach((l) -> {
-            salvar(l, controlePedido);
-            lancamentosAdicionados.add(l);
-        });             
+        String pedido =controlePedido.gerarNumero();
+        this.produtoBean.setPedido(pedido);
+        lancamentos.stream().filter(la -> la.getImprimir().equals("0")).forEach((l) -> {
+            salvar(l, pedido);
+            if(lancamentosAdicionados.size() != lancamentos.size())
+                lancamentosAdicionados.add(l);
+        });
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
         this.produtoBean.imprimirTodos();
+        PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+        this.comandas = null;
+        this.lancamentos = null;
         this.comandas = new Comandas();
-        this.lancamentos= new ArrayList<>();
+        this.lancamentos = new ArrayList<>();
         novoProduto();
         PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
     }
@@ -174,14 +181,13 @@ public class FastFoodBean implements Serializable {
         this.produto = null;
     }
 
-    private void salvar(Lancamento lancamento, ControlePedido controlePedido) {
+    private void salvar(Lancamento lancamento,String pedido) {
         Sosa98 sosa98 = new Sosa98();
         Sosa98Id sosa98Id = new Sosa98Id();
         Date data = new Date();
         sosa98.setId(sosa98Id);
         String item = this.controleService.gerarSequencia(this.comandas.getCOMANDA());
-        String numero = this.controleService.gerarNumero() + item;
-        String pedido = controlePedido.gerarNumero();
+        String numero = this.controleService.gerarNumero() + item;        
         lancamento.setComanda(this.comandas.getCOMANDA());
         lancamento.setMesa(this.comandas.getCOMANDA());
         lancamento.setItem(item);
@@ -217,7 +223,7 @@ public class FastFoodBean implements Serializable {
         espelhoComanda.setData(data);
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
-        espelhoComanda.setPessoasMesa(this.comandas.getPESSOAS());
+        espelhoComanda.setPessoasMesa(this.comandas.getPESSOAS().isEmpty() ? "1" :this.comandas.getPESSOAS());
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
         espelhoComanda.setImpressao(lancamento.getImprimir());
@@ -225,12 +231,7 @@ public class FastFoodBean implements Serializable {
         espelhoComanda.setObservacao(lancamento.getObservacao());
         espelhoComanda.setStatusItem("N");
         espelhoComanda.setValorItem(lancamento.getPreco());
-        try {
-            String dataPreconta = espelhoComandaBean.buscarDataPreconta(lancamento.getPedido());
-            Date dataPrecontaBanco = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataPreconta);
-            espelhoComanda.setDataPreconta(dataPrecontaBanco);
-        } catch (ParseException ex) {
-        }
+        espelhoComanda.setDataPreconta(new Date());
         if (!new GerenciaArquivo().bucarInformacoes().getConfiguracao().getCobraDezPorcento().isEmpty()) {
             espelhoComanda.setPorcentagem(10d);
             double valorComDezPOrcento = lancamento.getPrecoTotal() * 0.10;
@@ -239,18 +240,17 @@ public class FastFoodBean implements Serializable {
         espelhoComandaBean.setEspelhoComanda(espelhoComanda);
         espelhoComandaBean.salvar();
     }
-    
-    public void setLancamento(Lancamento lancamento) {
-        this.lancamento =lancamento;
-    }
-      
 
-   public void validarUsuario() {
+    public void setLancamento(Lancamento lancamento) {
+        this.lancamento = lancamento;
+    }
+
+    public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
         if (this.usuarioBean.validarGerente()) {
             removerItem(this.lancamento);
-            this.lancamento=null;
+            this.lancamento = null;
             fechar = true;
         } else {
             fechar = false;
@@ -258,20 +258,21 @@ public class FastFoodBean implements Serializable {
         }
         context.addCallbackParam("fechar", fechar);
     }
-    
+
     public void listarComandas() {
         this.listaComandas = this.controleService.listarComandas();
     }
-    
+
     public void pesquisarComandas() {
         this.listaComandas = this.controleService.pesquisarComandaPorCodigo(pesquisa);
     }
-    
+
     public void abrirComanda(Comandas comanda) {
         this.produtoBean.setComanda(comanda.getCOMANDA());
         this.produtoBean.setMesa(comanda.getMESA());
         this.produtoBean.listarProdutosAdicionados();
-        this.lancamentos=this.produtoBean.getLancamentosAdicionados();
+        this.lancamentos = this.produtoBean.getLancamentosAdicionados();
+        this.comandas = comanda;
     }
-    
+
 }
