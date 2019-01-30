@@ -17,6 +17,7 @@ public class FiltroItemVendido {
     private String dataFinal;
     private String garcom;
     private String produto;
+    private String produtoFinal;
     private Lapt51 grupo;
     private boolean cancelado;
 
