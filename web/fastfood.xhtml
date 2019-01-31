@@ -29,11 +29,48 @@
     </h:head>
     <h:body>
         <h:form id="frm">
+            <p:commandLink id="comandas" style="display: none;" actionListener="#{fastFoodBean.listarComandas()}"
+                           update="dlPesquisaComanda" process="@this"
+                           oncomplete="PF('dialogoPesquisaComanda').show();"
+                           onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+            <p:commandButton id="sair" style="display: none;" actionListener="#{fastFoodBean.sair()}"/>
             <div class="container-fluid">
                 <div class="row">
-                    <p:commandLink actionListener="#{fastFoodBean.listarComandas()}"
-                                   update="dlPesquisaComanda" process="@this"
-                                   oncomplete="PF('dialogoPesquisaComanda').show();">Chamar Comandas</p:commandLink>
+                    <nav class="navbar navbar-inverse">
+                        <div class="container-fluid">
+                            <!-- Brand and toggle get grouped for better mobile display -->
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                                    <span class="sr-only"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand">#{fastFoodBean.usuario.NOME}</a>
+                            </div>
+                            <!-- Collect the nav links, forms, and other content for toggling -->
+                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                <ul class="nav navbar-nav">
+                                    <li>
+                                        <a onclick="document.getElementById('frm:comandas').click();" style="cursor: pointer;">Comandas</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="document.getElementById('frm:sair').click();" style="cursor: pointer;">Sair</a>
+                                    </li>
+                                </ul>
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li>
+                                        <h:panelGroup id="total">
+                                            <h4 style="color:#fff !important;">Total</h4> 
+                                            <h:outputText value="#{fastFoodBean.total}" style="font-size: 15pt;color:#fff !important;">
+                                                <f:convertNumber pattern="###,##0.00"/>    
+                                            </h:outputText>
+                                        </h:panelGroup>
+                                    </li>
+                                </ul>
+                            </div><!-- /.navbar-collapse -->
+                        </div><!-- /.container-fluid -->
+                    </nav>
                 </div>
                 <div class="row">
                     <div class="row campo-pesquisa">
@@ -68,7 +105,7 @@
                                                 <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
                                             </div>
                                         </div>
-                                        <f:ajax event="click" render="frm:itens" execute="@this frm:loop:#{status.index}:qtdInput" listener="#{fastFoodBean.adicionarItem(produto)}" 
+                                        <f:ajax event="click" render="frm:itens frm:total" execute="@this frm:loop:#{status.index}:qtdInput" listener="#{fastFoodBean.adicionarItem(produto)}" 
                                                 onevent="mandarFocu"/>
                                         <div class="row text-center" style="font-size: 6pt;">
                                             <h:outputText value="#{produto.preco}">
@@ -117,19 +154,20 @@
                                             </td>
                                             <td>
                                                 <h:commandLink id="apagarG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
-                                                               rendered="#{not empty fastFoodBean.usuario.GERENTE}">
+                                                               rendered="#{not empty fastFoodBean.usuario.GERENTE}"
+                                                               >
                                                     <i class="fa fa-trash"></i>
-                                                    <f:ajax render="frm:itens" execute="@this" />
+                                                    <f:ajax render="frm:itens frm:total" execute="@this" />
                                                 </h:commandLink>
                                                 <p:commandLink id="apagarN" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lacamento)}"
                                                                rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '1'}"
-                                                               update="frmDialogo" process="@this"
+                                                               update="frmDialogo frm:total" process="@this"
                                                                oncomplete="PF('dialogoUsuario').show();">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <p:commandLink id="apagarNG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
                                                                rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '0'}"
-                                                               update="frm:itens" process="@this">
+                                                               update="frm:itens frm:total" process="@this">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <button style="background: #fff;outline: none;border: none;" class="focu"></button>
@@ -152,7 +190,7 @@
                                     <h:commandLink class="btn btn-block btn-primary" 
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}">
                                         #{fastFoodBean.atalhoFastFood.descricao01}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
@@ -160,21 +198,21 @@
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia02)}"
                                                    >
                                         #{fastFoodBean.atalhoFastFood.descricao02}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}">
                                         #{fastFoodBean.atalhoFastFood.descricao03}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}">
                                         #{fastFoodBean.atalhoFastFood.descricao04}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                             </div>
@@ -185,28 +223,28 @@
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}">
                                         #{fastFoodBean.atalhoFastFood.descricao05}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}">
                                         #{fastFoodBean.atalhoFastFood.descricao06}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}">
                                         #{fastFoodBean.atalhoFastFood.descricao07}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}">
                                         #{fastFoodBean.atalhoFastFood.descricao08}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                             </div>
@@ -217,28 +255,28 @@
                                     <h:commandLink class="btn btn-block btn-primary" 
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}">
                                         #{fastFoodBean.atalhoFastFood.descricao09}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}">
                                         #{fastFoodBean.atalhoFastFood.descricao10}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}">
                                         #{fastFoodBean.atalhoFastFood.descricao11}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                                 <div class="col-xs-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}">
                                         #{fastFoodBean.atalhoFastFood.descricao12}
-                                        <f:ajax execute="@this" render="frm:itens" onevent="mandarFocu"/>
+                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
                             </div>
@@ -287,7 +325,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <p:commandLink class="btn btn-success btn-block" process="frmFinalizar"
-                                           actionListener="#{fastFoodBean.finalizar()}"
+                                           actionListener="#{fastFoodBean.finalizar()}" update="frm:total"
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                 <i class="fa fa-check"></i>
                                 Confirma
@@ -324,7 +362,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink process="@form" update="@form frm:itens msgQuantidade"
+                            <p:commandLink process="@form" update="@form frm:itens frm:total msgQuantidade"
                                            actionListener="#{fastFoodBean.definirQuantidade()}"
                                            oncomplete="selecionarCampo('frmQauntidade:inputQuantidade');">
                                 <i class="fa fa-check"></i>
@@ -404,7 +442,7 @@
                             <li>    
                                 <div jsf:id="listaComanda" class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
                                     <p:commandLink id="linkComanda" 
-                                                   process="@this" update="frm:itens" actionListener="#{fastFoodBean.abrirComanda(item)}"
+                                                   process="@this" update="frm:itens frm:total" actionListener="#{fastFoodBean.abrirComanda(item)}"
                                                    oncomplete="PF('dialogoPesquisaComanda').hide();">
                                         <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
                                         <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.TOTAL}">

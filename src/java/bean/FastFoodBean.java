@@ -66,6 +66,7 @@ public class FastFoodBean implements Serializable {
 
     private String pesquisa;
     private double quantidade;
+    private double total;
 
     public void init() {
         this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
@@ -136,6 +137,7 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setStatus("P");
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
+        this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
 
     private boolean validarQuantidade() {
@@ -144,6 +146,7 @@ public class FastFoodBean implements Serializable {
 
     public void removerItem(Lancamento lancamento) {
         this.lancamentos.remove(lancamento);
+        this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
 
     public double getQuantidade() {
@@ -173,6 +176,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos = null;
         this.comandas = new Comandas();
         this.lancamentos = new ArrayList<>();
+        this.total=0;
         novoProduto();
         PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
     }
@@ -273,6 +277,17 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.listarProdutosAdicionados();
         this.lancamentos = this.produtoBean.getLancamentosAdicionados();
         this.comandas = comanda;
+        this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
+    
+    public void sair() {
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        try {
+            Faces.redirect("login.jsf");
+        } catch (IOException ex) {
+            Messages.addGlobalWarn("Erro ao abrir tela de login.");
+        }
+    }
+    
 
 }
