@@ -68,6 +68,7 @@ public class RelatorioItemVendidoBean implements Serializable {
 
     public void selecionarProduto(Produto produto) {
         filtroItemVendido.setProduto(produto.getReferencia());
+        filtroItemVendido.setProdutoFinal(produto.getReferencia());
     }
 
     private void listarVendedores() {

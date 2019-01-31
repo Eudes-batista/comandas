@@ -84,7 +84,7 @@
                     <div class="row espaco">
                         <div class="col-md-3">
                             <label >Garçom</label>
-                            <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
+w                            <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
                                              class="form-control">
                                 <f:selectItem noSelectionOption="true" itemLabel="Selecione um Garçom" />
                                 <f:selectItems value="#{relatorioItemVendidoBean.vendedores}" var="garcom" itemLabel="#{garcom.nome}" itemValue="#{garcom.nome}"/>
@@ -98,7 +98,7 @@
                                 <f:selectItems value="#{relatorioItemVendidoBean.grupos}" var="grupo" itemLabel="#{grupo.t51dsgrp}" itemValue="#{grupo}"/>
                             </h:selectOneMenu>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label >Produto</label>
                             <div class="input-group">
                                 <input jsf:id="referencia" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.produto}" type="text" class="form-control" placeholder="Refencia do Produto" 
@@ -111,6 +111,20 @@
                                     </p:commandLink>
                                 </span>
                             </div>     
+                        </div>
+                        <div class="col-md-3">
+                            <label >Produto</label>
+                            <div class="input-group">
+                                <input jsf:id="referenciaFinal" jsf:value="#{relatorioItemVendidoBean.filtroItemVendido.produtoFinal}" type="text" class="form-control" placeholder="Refencia do Produto Final" 
+                                       aria-label="referenciaFinal" aria-describedby="basic-addon1"/>
+                                <span class="input-group-addon" id="basic-addon1">
+                                    <p:commandLink actionListener="#{relatorioItemVendidoBean.listarProdutos()}" update="frmProduto:linha">
+                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                        <f:passThroughAttribute name="data-target" value="#myModal" />
+                                        <i class="fa fa-search"></i>
+                                    </p:commandLink>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -301,7 +315,7 @@
                                                 <td>
                                                     <button jsf:id="confirma"  data-dismiss="modal" class="btn btn-link">
                                                         <i class="fa fa-check"></i>
-                                                        <f:ajax event="click" listener="#{relatorioItemVendidoBean.selecionarProduto(produto)}" render="filtro:referencia" execute="@this" />
+                                                        <f:ajax event="click" listener="#{relatorioItemVendidoBean.selecionarProduto(produto)}" render="filtro:referencia filtro:referenciaFinal" execute="@this" />
                                                     </button>
                                                 </td>
                                                 <td>#{produto.referencia}</td>
