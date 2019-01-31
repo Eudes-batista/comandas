@@ -10,7 +10,7 @@
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.show_sql">false</property>
     <property name="hibernate.format_sql">false</property>
-    <property name="hibernate.hbm2ddl.auto">none</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.connection.lc_ctype">WIN1252</property>
     <mapping resource="modelo/Sosa98.hbm.xml"/>
     <mapping resource="modelo/Lapt51.hbm.xml"/>
