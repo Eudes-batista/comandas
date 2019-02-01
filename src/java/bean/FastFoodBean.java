@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import modelo.AtalhoFastFood;
 import modelo.Comandas;
+import modelo.Configuracao;
 import modelo.EspelhoComanda;
 import modelo.Lancamento;
 import modelo.Lapt51;
@@ -50,7 +51,9 @@ public class FastFoodBean implements Serializable {
     @ManagedProperty(value = "#{produtoBean}")
     private ProdutoBean produtoBean;
     @ManagedProperty(value = "#{usuarioBean}")
-    private UsuarioBean usuarioBean;
+    private UsuarioBean usuarioBean;    
+    @ManagedProperty(value = "#{mesasBean}")
+    private MesasBean mesasBean;
 
     private AtalhoFastFood atalhoFastFood;
     private Usuario usuario;
@@ -170,8 +173,7 @@ public class FastFoodBean implements Serializable {
         });
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
-        this.produtoBean.imprimirTodos();
-        PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+        realizarImpressao();    
         this.comandas = null;
         this.lancamentos = null;
         this.comandas = new Comandas();
@@ -179,6 +181,20 @@ public class FastFoodBean implements Serializable {
         this.total=0;
         novoProduto();
         PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
+    }
+
+    private void realizarImpressao() {
+        Configuracao configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
+        if(configuracao.getCondicaoParaImpressao().equals("PP")){
+            this.produtoBean.imprimirTodos();
+            PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+            this.imprimirPrecontaMesa();
+        }else if (configuracao.getCondicaoParaImpressao().equals("P")){
+            this.produtoBean.imprimirTodos();
+            PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+        }else{
+            this.imprimirPrecontaMesa();
+        }
     }
 
     public void novoProduto() {
@@ -289,5 +305,11 @@ public class FastFoodBean implements Serializable {
         }
     }
     
+    public void imprimirPrecontaMesa() {
+        mesasBean.setPesquisa(this.comandas.getCOMANDA());
+        mesasBean.pesquisarMesas();
+        mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
+        listarComandas();
+    }
 
 }

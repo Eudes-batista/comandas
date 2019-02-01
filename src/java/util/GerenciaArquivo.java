@@ -44,6 +44,7 @@ public class GerenciaArquivo {
                 getConfiguracao().setTipoImpressao(lines.get(2));
                 getConfiguracao().setImpressora(lines.get(3));
                 getConfiguracao().setCobraDezPorcento(lines.get(4));
+                getConfiguracao().setCondicaoParaImpressao(lines.get(5));
             }
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao consultar no arquivo " + ex.getMessage());
@@ -60,11 +61,11 @@ public class GerenciaArquivo {
                 pw.println(configuracao.getTipoImpressao());
                 pw.println(configuracao.getImpressora() == null ? "" : configuracao.getImpressora());
                 pw.println(configuracao.getCobraDezPorcento() == null ? "" : configuracao.getCobraDezPorcento());
+                pw.println(configuracao.getCondicaoParaImpressao() == null ? "" : configuracao.getCondicaoParaImpressao());
+                pw.flush();
                 salvarAsConfiguracoesDoBancoDeDados(configuracao.getCaminho());
                 Messages.addGlobalInfo("salvo com sucesso!!");
-            } catch (IOException ex) {
-                Messages.addGlobalError("Erro ao escrever arquivo configBanco.txt " + ex.getMessage());
-            } catch (URISyntaxException ex) {
+            } catch (IOException | URISyntaxException ex) {
                 Messages.addGlobalError("Erro ao escrever arquivo configBanco.txt " + ex.getMessage());
             }
         }
@@ -111,7 +112,7 @@ public class GerenciaArquivo {
         int count = 0;
         for (String dado : dados) {
             if (dado.contains("<property name=\"hibernate.connection.url\">")) {
-                String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:"+caminhoDoBancoDeDados+"</property>";
+                String caminho = "    <property name=\"hibernate.connection.url\">jdbc:firebirdsql:" + caminhoDoBancoDeDados + "</property>";
                 dados.set(count, caminho);
             }
             count++;
@@ -121,12 +122,10 @@ public class GerenciaArquivo {
 
     public void salvarAsConfiguracoesDoBancoDeDados(String caminhoDoBancoDeDados) throws URISyntaxException, IOException {
         List<String> configuracoesAlteradas = mudarCaminhoDoBancoDeDados(caminhoDoBancoDeDados);
-        PrintWriter pw = new PrintWriter(new File(buscarCaminho()));
-        for (String configuracoesAlterada : configuracoesAlteradas) {
-            pw.println(configuracoesAlterada);
+        try (PrintWriter pw = new PrintWriter(new File(buscarCaminho()))) {
+            configuracoesAlteradas.forEach(configuracoesAlterada ->pw.println(configuracoesAlterada));
+            pw.flush();
         }
-        pw.flush();
-        pw.close();
     }
 
 }

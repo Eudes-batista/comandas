@@ -41,6 +41,12 @@
                             <f:selectItem itemLabel="Sim" itemValue="SIM"/>
                             <f:selectItem itemLabel="Não" itemValue=""/>
                         </p:selectOneMenu>
+                        <p:outputLabel value="Tipo de Finalização" for="tipoFinalizacao"/>
+                        <p:selectOneMenu id="tipoFinalizacao" value="#{bancoConecta.configuracao.condicaoParaImpressao}" placeholder="Obrigatorio">
+                            <f:selectItem itemLabel="Pedido/Preconta" itemValue="PP"/>
+                            <f:selectItem itemLabel="Pedido" itemValue="P"/>
+                            <f:selectItem itemLabel="Preconta" itemValue="PC"/>
+                        </p:selectOneMenu>
                     </p:panelGrid>
                     <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-2">
                         <p:commandButton value="Salvar" update="msg" process="panel @this" icon="ui-icon-check" actionListener="#{bancoConecta.salvar()}"/>
