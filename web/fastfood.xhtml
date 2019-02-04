@@ -284,7 +284,7 @@
                     </div>
                     <div class="col-xs-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
-                                       actionListener="#{fastFoodBean.finalizar()}"
+                                       actionListener="#{fastFoodBean.finalizar()}" update="frm:total"
                                        process="@this" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                             Finalizar
                         </p:commandLink>
@@ -457,6 +457,19 @@
                                         <f:passThroughAttribute name="title" value="#{item.STATUS eq 'P' ? 'Comanda em preconta' : 'Em consumo'}"/>
                                     </p:commandLink>
                                 </div>
+                                <div style="margin-top: 5px;margin-left: -5px;">
+                                    <ul>
+                                        <li>
+                                            <p:commandLink id="imprimirComanda" class="btn btn-primary btn-block" disabled="#{item.MESA eq 'RSVA' }" 
+                                                           process="@this" style="border: 0.2px solid #bbb;color: #fff;"
+                                                           onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                           actionListener="#{fastFoodBean.imprimirPrecontaMesa(item)}"
+                                                           title="Imprimir Preconta">
+                                                <i class="fa fa-print"></i>
+                                            </p:commandLink>
+                                        </li>
+                                    </ul>   
+                                </div>  
                             </li>
                         </ui:repeat>
                     </ul>

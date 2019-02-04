@@ -18,6 +18,7 @@ import modelo.Configuracao;
 import modelo.EspelhoComanda;
 import modelo.Lancamento;
 import modelo.Lapt51;
+import modelo.Mesa;
 import modelo.Produto;
 import modelo.Sosa98;
 import modelo.Sosa98Id;
@@ -188,10 +189,12 @@ public class FastFoodBean implements Serializable {
         if(configuracao.getCondicaoParaImpressao().equals("PP")){
             this.produtoBean.imprimirTodos();
             PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+            PrimeFaces.current().ajax().update("frm:total");
             this.imprimirPrecontaMesa();
         }else if (configuracao.getCondicaoParaImpressao().equals("P")){
             this.produtoBean.imprimirTodos();
             PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+            PrimeFaces.current().ajax().update("frm:total");
         }else{
             this.imprimirPrecontaMesa();
         }
@@ -309,6 +312,16 @@ public class FastFoodBean implements Serializable {
         mesasBean.setPesquisa(this.comandas.getCOMANDA());
         mesasBean.pesquisarMesas();
         mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
+        listarComandas();
+    }
+    public void imprimirPrecontaMesa(Comandas comandas) {
+        mesasBean.setPesquisa(comandas.getCOMANDA());
+        mesasBean.setMesa(new Mesa());
+        mesasBean.getMesa().setMESA(comandas.getCOMANDA());
+        mesasBean.getMesa().setCOMANDA(comandas.getCOMANDA());
+        mesasBean.getMesa().setPAGANTES(comandas.getPAGANTES());
+        mesasBean.pesquisarMesas();
+        mesasBean.imprimirPreconta(comandas.getCOMANDA());
         listarComandas();
     }
 
