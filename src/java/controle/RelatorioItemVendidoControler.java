@@ -43,7 +43,7 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append("on(T51CDGRP=PRCGRUPO)")
                     .append("where    ")
                     .append("     DATA_PRECONTA BETWEEN '").append(filtroItemVendido.getDataInicial()).append(" 00:00:00' AND '").append(filtroItemVendido.getDataFinal()).append(" 23:59:59' ")
-                    .append("     AND ( (REFERENCIA >= '").append(filtroItemVendido.getProduto()).append("' AND REFERENCIA <= '").append(filtroItemVendido.getProdutoFinal()).append("' AND ")
+                    .append("     AND ( (REFERENCIA >= '").append(filtroItemVendido.getProduto()).append("' AND REFERENCIA <= '").append(filtroItemVendido.getProdutoFinal()).append("' OR ")
                     .append(" REFERENCIA like '%").append(filtroItemVendido.getProduto()).append("%') ")
                     .append(" AND PRCGRUPO like '%").append(grupo).append("%' AND  ")
                     .append(" VENDEDOR like '%").append(filtroItemVendido.getGarcom()).append("%' )")

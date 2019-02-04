@@ -36,7 +36,7 @@ public class EspelhoComandaBean implements Serializable {
     }
 
     public void atualizarPorcemtagemEvalorPorcentagemItens(Comandas comandas) {
-        if(this.valor ==0){
+        if (this.valor == 0) {
             this.valor = comandas.getTOTAL();
         }
         if (this.valor < comandas.getTOTAL()) {
@@ -85,8 +85,12 @@ public class EspelhoComandaBean implements Serializable {
         espelhoComandaService.atualizarStatusItens(cancelamento);
     }
 
-    public String buscarDataPreconta(String pedido){
+    public String buscarDataPreconta(String pedido) {
         return espelhoComandaService.buscarDataPreconta(pedido);
+    }
+
+    public void atualizarUsuarioPreconta(String pedido, String usuario) {
+        this.espelhoComandaService.atualizarResponsavelPreconta(pedido, usuario);
     }
 
 }

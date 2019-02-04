@@ -324,7 +324,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <p:commandLink class="btn btn-success btn-block" process="frmFinalizar"
-                                           actionListener="#{fastFoodBean.finalizar()}" update="frm:total"
+                                           actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total"
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                 <i class="fa fa-check"></i>
                                 Confirma
