@@ -205,6 +205,7 @@ public class FastFoodBean implements Serializable {
                 break;
             default:
                 this.imprimirPrecontaMesa();
+                this.controleService.atualizarStatusImpressao(comandas.getCOMANDA());
                 this.espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.comandas.getPEDIDO());
                 break;
         }
@@ -334,6 +335,7 @@ public class FastFoodBean implements Serializable {
         mesasBean.getMesa().setPAGANTES(comandas.getPAGANTES());
         mesasBean.pesquisarMesas();
         mesasBean.imprimirPreconta(comandas.getCOMANDA());
+        this.espelhoComandaBean.atualizarUsuarioPreconta(this.comandas.getPEDIDO(), this.usuario.getNOME());
         listarComandas();
     }
 
