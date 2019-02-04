@@ -150,6 +150,7 @@ public class FastFoodBean implements Serializable {
 
     public void removerItem(Lancamento lancamento) {
         this.lancamentos.remove(lancamento);
+        this.excluir(lancamento);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
 
@@ -186,17 +187,21 @@ public class FastFoodBean implements Serializable {
 
     private void realizarImpressao() {
         Configuracao configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
-        if(configuracao.getCondicaoParaImpressao().equals("PP")){
-            this.produtoBean.imprimirTodos();
-            PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
-            PrimeFaces.current().ajax().update("frm:total");
-            this.imprimirPrecontaMesa();
-        }else if (configuracao.getCondicaoParaImpressao().equals("P")){
-            this.produtoBean.imprimirTodos();
-            PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
-            PrimeFaces.current().ajax().update("frm:total");
-        }else{
-            this.imprimirPrecontaMesa();
+        switch (configuracao.getCondicaoParaImpressao()) {
+            case "PP":
+                this.produtoBean.imprimirTodos();
+                PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+                PrimeFaces.current().ajax().update("frm:total");
+                this.imprimirPrecontaMesa();
+                break;
+            case "P":
+                this.produtoBean.imprimirTodos();
+                PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
+                PrimeFaces.current().ajax().update("frm:total");
+                break;
+            default:
+                this.imprimirPrecontaMesa();
+                break;
         }
     }
 
@@ -325,4 +330,12 @@ public class FastFoodBean implements Serializable {
         listarComandas();
     }
 
+    private void excluir(Lancamento lancamento) {
+        this.controleService.excluir(lancamento.getNumero());
+        if("1".equals(lancamento.getImprimir())){
+            this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
+        }
+    }
+    
+    
 }

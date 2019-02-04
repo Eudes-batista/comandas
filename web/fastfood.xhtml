@@ -17,7 +17,6 @@
         <meta name="mobile-web-app-capable" content="yes" />
         <h:outputStylesheet library="css" name="bootstrap.css" />
         <h:outputStylesheet library="css" name="fast.css" />
-        <h:outputScript library="primefaces" name="jquery.js"/>
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/fastfood.js"></script>
         <script>
@@ -284,7 +283,7 @@
                     </div>
                     <div class="col-xs-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
-                                       actionListener="#{fastFoodBean.finalizar()}" update="frm:total"
+                                       actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total"
                                        process="@this" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                             Finalizar
                         </p:commandLink>
