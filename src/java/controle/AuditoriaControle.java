@@ -50,7 +50,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
 
     private Map<String, Comandas> separarPedidos(List<Comandas> lista) {
         Map<String, Comandas> mapAuditoria = new HashMap<>();
-        for (Comandas comandas : lista) {
+        lista.forEach((comandas) -> {
             String chave = comandas.getCOMANDA();
             Comandas comanda = mapAuditoria.get(chave);
             double total = 0;
@@ -65,7 +65,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
             }
             comanda.setTOTAL(total);
             mapAuditoria.put(chave, comanda);
-        }
+        });
         return mapAuditoria;
     }
 

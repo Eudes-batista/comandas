@@ -91,10 +91,9 @@ public class MesaControle implements MesaService, Serializable {
         String status = tipo.equals("FECHAR") ? "P" :"";
         String data = status.equals("") ? null : "DATA_PRECONTA";
         String pessoasPagantes = status.equals("") ? null : "PESSOAS_PAGANTES";
-        String porcentagem = status.equals("") ? "0" : "PORCENTAGEM";
-        String valorPorcentagem = status.equals("") ? "0" : "VALOR_PORCENTAGEM";
+        String porcentagem = status.equals("") ? "10" : "PORCENTAGEM";
         executarSql("update sosa98 set testatus='"+status+"' where tecdmesa='" + mesa.getMESA()+ "'");
-        executarSql("update espelho_comanda set PESSOAS_PAGANTES="+pessoasPagantes+",DATA_PRECONTA="+data+",status='"+status+"',PORCENTAGEM="+porcentagem+",VALOR_PORCENTAGEM="+valorPorcentagem+" where pedido in("+mesa.getPEDIDO()+")");
+        executarSql("update espelho_comanda set PESSOAS_PAGANTES="+pessoasPagantes+",DATA_PRECONTA="+data+",status='"+status+"',PORCENTAGEM="+porcentagem+" where pedido in("+mesa.getPEDIDO()+")");
     }
 
     private void executarSql(String sql) {
