@@ -59,7 +59,6 @@ public class FastFoodBean implements Serializable {
     private AtalhoFastFood atalhoFastFood;
     private Usuario usuario;
     private Comandas comandas;
-    private ControlePedido controlePedido;
     private Produto produto;
     private Lancamento lancamento;
     private Configuracao configuracao;
@@ -72,6 +71,8 @@ public class FastFoodBean implements Serializable {
     private String pesquisa;
     private double quantidade;
     private double total;
+    private boolean comandaReaberta;
+    private boolean incluio = false;
 
     public void init() {
         this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
@@ -88,7 +89,7 @@ public class FastFoodBean implements Serializable {
         this.produtos = produtoServico.lsitarProdutosFastFood();
         this.lancamentos = new ArrayList<>();
         this.comandas = new Comandas();
-        this.configuracao=new GerenciaArquivo().bucarInformacoes().getConfiguracao();
+        this.configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
     }
 
     public void pesquisarProduto() {
@@ -144,6 +145,7 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
+        this.incluio =true;
     }
 
     private boolean validarQuantidade() {
@@ -154,6 +156,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos.remove(lancamento);
         this.excluir(lancamento);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
+        this.incluio=false;
     }
 
     public double getQuantidade() {
@@ -167,11 +170,8 @@ public class FastFoodBean implements Serializable {
             }
             return;
         }
-        this.controlePedido = new ControlePedido(controleService, this.comandas.getCOMANDA());
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
-        String pedido = controlePedido.gerarNumero();
-        this.produtoBean.setPedido(pedido);
-        this.comandas.setPEDIDO(pedido);
+        String pedido = gerarPedido();
         lancamentos.stream().filter(la -> la.getImprimir().equals("0")).forEach((l) -> {
             salvar(l, pedido);
             if (lancamentosAdicionados.size() != lancamentos.size()) {
@@ -180,14 +180,35 @@ public class FastFoodBean implements Serializable {
         });
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
-        realizarImpressao();
+        if (!this.comandaReaberta) {
+            realizarImpressao();
+        }
+        if(this.incluio)
+            atualiazarStatusComanda();
+        limparVariaveis();
+        PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
+    }
+
+    private String gerarPedido() {
+        String pedido = this.comandas.getPEDIDO();
+        if (pedido == null) {
+            ControlePedido controlePedido = new ControlePedido(controleService, this.comandas.getCOMANDA());
+            pedido = controlePedido.gerarNumero();
+            this.produtoBean.setPedido(pedido);
+            this.comandas.setPEDIDO(pedido);
+        }
+        return pedido;
+    }
+
+    private void limparVariaveis() {
         this.comandas = null;
         this.lancamentos = null;
         this.comandas = new Comandas();
         this.lancamentos = new ArrayList<>();
         this.total = 0;
+        this.comandaReaberta = false;
+        this.incluio=false;
         novoProduto();
-        PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
     }
 
     private void realizarImpressao() {
@@ -205,8 +226,6 @@ public class FastFoodBean implements Serializable {
                 break;
             default:
                 this.imprimirPrecontaMesa();
-                this.controleService.atualizarStatusImpressao(comandas.getCOMANDA());
-                this.espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.comandas.getPEDIDO());
                 break;
         }
     }
@@ -308,6 +327,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos = this.produtoBean.getLancamentosAdicionados();
         this.comandas = comanda;
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
+        this.comandaReaberta = true;
     }
 
     public void sair() {
@@ -323,8 +343,13 @@ public class FastFoodBean implements Serializable {
         mesasBean.setPesquisa(this.comandas.getCOMANDA());
         mesasBean.pesquisarMesas();
         mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
-        this.espelhoComandaBean.atualizarUsuarioPreconta(this.comandas.getPEDIDO(), this.usuario.getNOME());
         listarComandas();
+    }
+
+    private void atualiazarStatusComanda() {
+        this.controleService.atualizarStatusImpressao(comandas.getCOMANDA());
+        this.espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.comandas.getPEDIDO());
+        this.espelhoComandaBean.atualizarUsuarioPreconta(this.comandas.getPEDIDO(), this.usuario.getNOME());
     }
 
     public void imprimirPrecontaMesa(Comandas comandas) {
