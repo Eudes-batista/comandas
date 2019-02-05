@@ -32,14 +32,14 @@
                         </div> 
                         <div class="col-md-1" style="margin-top: 15px;"><h:outputLabel value="Data Inicial"/></div>
                         <div class="col-md-2" style="margin-top: 15px;">
-                            <h:inputText class="form-control" value="#{pesquisaMesasBean.dataInicial}" converter="converterData">
+                            <h:inputText id="dataIncial" class="form-control" value="#{pesquisaMesasBean.dataInicial}" converter="converterData">
                                 <f:passThroughAttribute name="type" value="date"/>
                                 <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
                             </h:inputText>
                         </div>
                         <div class="col-md-1" style="margin-top: 15px;"><h:outputLabel value="Data Final"/></div>
                         <div class="col-md-2" style="margin-top: 15px;">
-                            <h:inputText class="form-control" value="#{pesquisaMesasBean.dataFinal}" converter="converterData">
+                            <h:inputText id="dataFinal" class="form-control" value="#{pesquisaMesasBean.dataFinal}" converter="converterData">
                                 <f:passThroughAttribute name="type" value="date"/>
                                 <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
                             </h:inputText>
@@ -55,7 +55,7 @@
                                     <f:passThroughAttribute name="aria-label" value="Username"/>
                                     <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
                                     <f:passThroughAttribute name="autofocus" value="true"/>
-                                    <f:ajax event="keyup" render="tabela" execute="@this" listener="#{pesquisaMesasBean.pesquisarComanda()}"/>
+                                    <f:ajax event="keyup" render="tabela" execute="@this frmAuditoria:dataIncial frmAuditoria:dataFinal " listener="#{pesquisaMesasBean.pesquisarComanda()}"/>
                                 </h:inputText>
                             </div>
                         </div>
@@ -127,6 +127,10 @@
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
                         </div> 
                     </p:overlayPanel>
+                </p:column>
+                <p:column width="80">
+                    <p:commandButton value="Preconta" actionListener="#{pesquisaMesasBean.imprimirPrecontaMesa(comanda)}" process="@this"
+                                     update="tabela"/>
                 </p:column>
             </p:dataTable>
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

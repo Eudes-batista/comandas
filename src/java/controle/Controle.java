@@ -341,7 +341,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void atualizarStatusPreconta(Comandas comanda) {
         executarSql("update sosa98 set testatus='P' where tecomand='" + comanda.getCOMANDA() + "'");
-        executarSql("update espelho_comanda set data_preconta='" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "' where pedido='" + comanda.getPEDIDO() + "'");
+        executarSql("update espelho_comanda set data_preconta='" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "',status='P' where pedido='" + comanda.getPEDIDO() + "'");
     }
 
     private void executarSql(String sql) {

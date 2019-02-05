@@ -19,6 +19,8 @@ public class PesquisaMesasBean implements Serializable {
 
     @ManagedProperty(value = "#{pesquisaMesasService}")
     private PesquisaMesasService pesquisaMesasService;
+    @ManagedProperty(value = "#{mesasBean}")
+    private MesasBean mesasBean;
 
     private String pesquisa;
     private String dataInicial;
@@ -32,8 +34,7 @@ public class PesquisaMesasBean implements Serializable {
         dataFinal = localDate.toString();
         listarComandas();
     }
-    
-    
+
     public void listarComandas() {
         this.comandas = pesquisaMesasService.listarComandas(dataInicial, dataFinal);
         comandas.sort((c1, c2) -> c1.getCOMANDA().compareTo(c2.getCOMANDA()));
@@ -42,5 +43,12 @@ public class PesquisaMesasBean implements Serializable {
     public void pesquisarComanda() {
         this.comandas = pesquisaMesasService.pesquisarComandaPorCodigo(pesquisa, dataInicial, dataFinal);
         comandas.sort((c1, c2) -> c1.getCOMANDA().compareTo(c2.getCOMANDA()));
+    }
+
+    public void imprimirPrecontaMesa(Comandas comandas) {
+        mesasBean.setPesquisa(comandas.getMESA());
+        mesasBean.pesquisarMesas();
+        mesasBean.imprimirPreconta(comandas.getMESA());
+        listarComandas();
     }
 }
