@@ -449,7 +449,7 @@ public class Controle implements ComandaService, Serializable {
                 numeros = numeros.replaceFirst(numeroEcontrado, "");
             }
         }
-        return numeros.replaceFirst(",","");
+        return numeros.replaceFirst(",", "");
     }
 
     private void transferenciaParcialDeItens(Comandas comanda, Lancamento lancamento, Lancamento lancamentoOrigem, String usuarioTransferencia, String pedido, String pessoas) {
@@ -546,16 +546,6 @@ public class Controle implements ComandaService, Serializable {
         executarSql("update espelho_comanda set quantidade=" + quantidade + " where numero='" + numero + "'");
     }
 
-    private List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido) {
-        session = HibernateUtil.getSessionFactory().openSession();
-        if (session != null) {
-            return session.createSQLQuery("select ITEM,PEDIDO from sosa98 inner join item_acompanhamento on(pedido=tepedido) where tepedido='" + pedido + "' group by ITEM,PEDIDO")
-                    .setResultTransformer(Transformers.aliasToBean(ItemAcompanhamentoTransferencia.class))
-                    .list();
-        }
-        return null;
-    }
-
     private void atualizarSeguenciaItemComanda(ItemAcompanhamentoTransferencia acompanhamentoTransferencia, String pedido) {
         int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
         String novaSeguenciaDoItem = String.valueOf(ultimoItemComandaDestino + 1);
@@ -624,10 +614,29 @@ public class Controle implements ComandaService, Serializable {
      */
     @Override
     public String gerarNumero() {
+        String chave = gerarChave();
+        while (verrificarSequenciaChavePrimaria(chave)) {
+            chave = gerarChave();
+        }
+        return chave;
+    }
+
+    private String gerarChave() {
         LocalDate data = LocalDate.now();
         LocalTime hora = LocalTime.now();
-        String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
-        return numero.length() > 6 ? numero.substring(0, 6) : numero;
+        String chave = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
+        chave = chave.length() > 6 ? chave.substring(0, 6) : chave;
+        return chave;
+    }
+
+    private boolean verrificarSequenciaChavePrimaria(String numero) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object seguencias = session.createSQLQuery("select tenumero from sosa98 where tenumero='" + numero + "'")
+                    .uniqueResult();
+            return seguencias != null;
+        }
+        return false;
     }
 
 }
