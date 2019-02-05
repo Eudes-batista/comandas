@@ -22,6 +22,7 @@ import modelo.Empresa;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
 import modelo.dto.Cancelamento;
+import modelo.dto.Usuario;
 import org.ini4j.Ini;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -34,7 +35,7 @@ import servico.EmpresaService;
 import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
 import servico.MesaService;
-import servico.UsuarioService;
+import servico.VendedorService;
 import util.GerenciaArquivo;
 
 @ManagedBean(name = "comandasBean")
@@ -49,14 +50,16 @@ public class ComandasBean implements Serializable {
     private MesaService mesaService;
     @ManagedProperty(value = "#{mesasBean}")
     private MesasBean mesasBean;
-    @ManagedProperty(value = "#{usuarioService}")
-    private UsuarioService usuarioService;
+    @ManagedProperty(value = "#{usuarioBean}")
+    private UsuarioBean usuarioBean;
     @ManagedProperty(value = "#{empresaService}")
     private EmpresaService empresaService;
     @ManagedProperty(value = "#{itemAcompanhamentoService}")
     private ItemAcompanhamentoService itemAcompanhamentoService;
     @ManagedProperty(value = "#{espelhoComandaService}")
     private EspelhoComandaService espelhoComandaService;
+    @ManagedProperty(value = "#{vendedorService}")
+    private VendedorService vendedorService;
 
     private List<Comandas> comandas = new ArrayList<>();
     private List<Lancamento> lancamentos = new ArrayList<>();
@@ -75,6 +78,7 @@ public class ComandasBean implements Serializable {
     private String pesquisa;
     private String tipoTransferencia;
     private String tipo;
+    private Comandas comandaSelecionada;
 
     public void init() {
         listarComandas();
@@ -122,6 +126,10 @@ public class ComandasBean implements Serializable {
         if (somarTotal != null) {
             totalMesa = Double.parseDouble(String.valueOf(somarTotal));
         }
+    }
+
+    public void selecionarComanda(Comandas comanda) {
+        this.comandaSelecionada = comanda;
     }
 
     public void imprimirPreconta(String comanda) {
@@ -182,36 +190,11 @@ public class ComandasBean implements Serializable {
         this.tipo = "EXCLUIR";
     }
 
-    private String gerarSenha() {
-        StringBuilder sb = new StringBuilder();
-        this.senha = getSenha();
-        String senhaCript = "";
-        for (int i = 1; i < 300; i++) {
-            sb.append((char) i);
-        }
-        sb.append(" ");
-        for (int i = 1; i <= this.senha.length(); i++) {
-            int cod = sb.indexOf(String.valueOf(this.senha.charAt(i - 1))) + (i + 11);
-            senhaCript += (char) cod;
-        }
-        return senhaCript;
-    }
-
-    private boolean validarGerente() {
-        if (getUsuario().toUpperCase().isEmpty() && gerarSenha().isEmpty()) {
-            return false;
-        }
-        List<Object[]> usuarios = usuarioService.pequisarUsuarios(getUsuario().toUpperCase(), gerarSenha());
-        if (usuarios.isEmpty()) {
-            return false;
-        }
-        return String.valueOf(usuarios.get(0)[2]).equals("T");
-    }
-
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
-        if (validarGerente()) {
+        usuarioBean.setUsuario(new Usuario(usuario, senha));
+        if (usuarioBean.validarGerente()) {
             if ("EXCLUIR".equals(this.tipo)) {
                 controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
                 comandas.remove(this.comanda);
@@ -296,5 +279,17 @@ public class ComandasBean implements Serializable {
     public void setComandaOrigem(String comanda) {
         this.comandaOrigem = comanda;
         this.tipo = "TRANFERENCIA";
+    }
+
+    public void validaVendedor() {
+        usuarioBean.setUsuario(new Usuario(usuario, senha));
+        String permissao = vendedorService.validarVendedor(usuarioBean.gerarSenha());
+        if (!"null".equals(permissao)) {
+            imprimirPreconta(this.comandaSelecionada.getCOMANDA());
+            espelhoComandaService.atualizarResponsavelPreconta(this.comandaSelecionada.getPEDIDO(), permissao.toUpperCase());
+            PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
+        } else {
+            Messages.addGlobalWarn("Senha incorreta.");
+        }
     }
 }

@@ -116,9 +116,10 @@
                                         </h:link>
                                         <ul style="margin-top: 5px;">
                                             <li>
-                                                <p:commandLink class="btn-modal btn btn-warning btn-block fa fa-print" actionListener="#{comandasBean.imprimirPreconta(item.COMANDA)}"
-                                                               process="@this" update="frm:tabelaComanda" disabled="#{comandasBean.codigoMesa eq 'RSVA'}">
-                                                    <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />
+                                                <p:commandLink class="btn-modal btn btn-warning btn-block fa fa-print" actionListener="#{comandasBean.selecionarComanda(item)}"
+                                                               process="@this" disabled="#{comandasBean.codigoMesa eq 'RSVA'}"
+                                                               oncomplete="PF('dialogoVendedor').show();">
+<!--                                                    <p:confirm header="Confirmação" message="Deseja mesmo Imprimir a Preconta?" />-->
                                                 </p:commandLink>
                                             </li>
                                             <li>
@@ -269,6 +270,31 @@
                     Voltar
                 </a>
             </h:form>      
+        </p:dialog>
+        <!--MODAL DE SENHA DO VENDEDOR-->
+        <p:dialog header="Vendedor" styleClass="mesa-modal" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlVendedor" widgetVar="dialogoVendedor" dynamic="true" 
+                  closable="false" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade" visible="false">
+            <h:form id="frmVendedor">
+                <p:messages id="msgVendedor" closable="true" showIcon="false"/>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p:password id="confirmaSenha" class="form-control" placeholder="Senha" value="#{comandasBean.senha}" required="true" requiredMessage="Senha Obrigatoria."/>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12">
+                            <p:commandLink id="ok" class="btn-modal btn btn-success btn-block" style="margin-bottom: 5px;color: #fff;" 
+                                           update="msgVendedor frm:tabelaComanda" process="confirmaSenha @this" actionListener="#{comandasBean.validaVendedor()}">
+                                OK
+                            </p:commandLink>
+                            <a class="btn-modal btn btn-warning btn-block" onclick="PF('dialogoVendedor').hide();" style="color: #fff;">Voltar</a>
+                            <p:defaultCommand target="ok" />
+                        </div>
+                    </div>
+                </div>
+            </h:form>
         </p:dialog>
         <!--MENSAGEM DE IMPRESSAO-->
         <h:form>
