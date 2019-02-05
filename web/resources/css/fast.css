@@ -3,12 +3,18 @@ body{
     background-attachment: fixed;
     background-size: cover;
 }
-/*@media(max-width:700px){
-    .rolagem{
-        overflow: auto;
-        height: 630px;
+@media(max-width:767px){
+    ul li{
+        display: inline;
+        float: left;
     }
-}*/
+    .barra-grupo{
+        height: 200px !important;
+        overflow-y: auto;
+        overflow-x: hidden;
+        
+    }
+}
 a,a:hover{
     color: #286090;
     text-decoration: none;
@@ -28,7 +34,7 @@ input{
     width: auto;
     margin-left: 10px;
     margin-right: 10px;
-    
+
 }
 .barra,input{
     color: #757575;
@@ -48,6 +54,7 @@ ul{
 }
 ul li{
     margin-bottom: 15px;
+    font-size: 10px;
 }
 .ui-dialog{
     font-family: tahoma !important;
@@ -65,13 +72,14 @@ ul li{
     height: 350px;
 }
 .produto{
-    width: 100px;
+    width: 150px;
     height: 100px;
     padding: 5px;
     border-radius: 3px;
     margin-left: 10px;
     margin-top:  10px;
-    color: #6c8aaf;
+    color: #fff;
+    background: #68b6c9;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     /*box-shadow: 1px 1px #ccc;*/
@@ -86,14 +94,14 @@ ul li{
 
 }
 .btn-success{
-    color:#17a541;
+    color:#68b6c9;
     border: none;
-    background: transparent;
+    background: rgba(250,250,250,.6);
 }
 .btn-danger{
-    color:#d64256;
+    color:#68b6c9;
     border: none;
-    background: transparent;
+    background: rgba(250,250,250,.6);
 }
 .referencia{
     color: #bbb;

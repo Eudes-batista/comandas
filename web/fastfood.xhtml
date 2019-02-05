@@ -81,7 +81,7 @@
                                     onevent="limitarCaracteres"/>
                         </h:inputText>
                     </div>
-                    <div class="col-xs-2 barra-grupo">
+                    <div class="col-md-2 barra-grupo">
                         <ul jsf:id="listaGrupo">
                             <ui:repeat id="prd" value="#{fastFoodBean.grupos}" var="g" varStatus="indexpdr">
                                 <li jsf:id="item">                                    
@@ -106,7 +106,7 @@
                                         </div>
                                         <f:ajax event="click" render="frm:itens frm:total" execute="@this frm:loop:#{status.index}:qtdInput" listener="#{fastFoodBean.adicionarItem(produto)}" 
                                                 onevent="mandarFocu"/>
-                                        <div class="row text-center" style="font-size: 6pt;">
+                                        <div class="row text-center" style="font-size: 8pt;">
                                             <h:outputText value="#{produto.preco}">
                                                 <f:convertNumber pattern="###,##0.00"/>
                                             </h:outputText>
@@ -182,17 +182,17 @@
 
             <div class="container-fluid barra-botoes" >
                 <div class="row " >
-                    <div class="col-xs-9 botoes-rapidos" >
+                    <div class="col-md-9 botoes-rapidos" >
                         <div class="row " >
-                            <div class="col-xs-12">
-                                <div class="col-xs-3">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary" 
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}">
                                         #{fastFoodBean.atalhoFastFood.descricao01}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia02)}"
                                                    >
@@ -200,14 +200,14 @@
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}">
                                         #{fastFoodBean.atalhoFastFood.descricao03}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}">
                                         #{fastFoodBean.atalhoFastFood.descricao04}
@@ -217,29 +217,29 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <div class="col-xs-3">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}">
                                         #{fastFoodBean.atalhoFastFood.descricao05}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}">
                                         #{fastFoodBean.atalhoFastFood.descricao06}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}">
                                         #{fastFoodBean.atalhoFastFood.descricao07}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}">
                                         #{fastFoodBean.atalhoFastFood.descricao08}
@@ -249,29 +249,29 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-xs-12">
-                                <div class="col-xs-3">
+                            <div class="col-md-12">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary" 
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}">
                                         #{fastFoodBean.atalhoFastFood.descricao09}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}">
                                         #{fastFoodBean.atalhoFastFood.descricao10}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}">
                                         #{fastFoodBean.atalhoFastFood.descricao11}
                                         <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
                                     </h:commandLink>
                                 </div>
-                                <div class="col-xs-3">
+                                <div class="col-md-3">
                                     <h:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}">
                                         #{fastFoodBean.atalhoFastFood.descricao12}
@@ -281,7 +281,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-3" >
+                    <div class="col-md-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
                                        actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total"
                                        process="@this" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
