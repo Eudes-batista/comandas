@@ -146,6 +146,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos.add(lancamentoItem);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
         this.incluio =true;
+        this.quantidade=1;
     }
 
     private boolean validarQuantidade() {
