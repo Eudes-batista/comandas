@@ -113,12 +113,12 @@ ul li{
     color: #858585;
     font-size: 8pt
 }
-.li-grupo{
+/*.li-grupo{
     transition: width 0.2s ease-in;
 }
 .li-grupo:hover{
     width: 80px;
-}
+}*/
 
 a{
     color: #fff;

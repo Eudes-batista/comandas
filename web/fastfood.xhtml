@@ -86,7 +86,7 @@
                             <ui:repeat id="prd" value="#{fastFoodBean.grupos}" var="g" varStatus="indexpdr">
                                 <li jsf:id="item">
                                     <p:commandLink update="frm:produto" process="@this" actionListener="#{fastFoodBean.pesquisarPorGrupo(g)}" oncomplete="limitarCaracteres()"
-                                                   partialSubmit="true">
+                                                   partialSubmit="true" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                         <p:graphicImage id="img" library="imagens" name="drink.png" width="35" class="li-grupo"/> 
                                         <p:outputPanel id="grupo">
                                             #{g.t51dsgrp}
