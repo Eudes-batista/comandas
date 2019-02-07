@@ -84,12 +84,14 @@
                     <div class="col-md-2 barra-grupo">
                         <ul jsf:id="listaGrupo">
                             <ui:repeat id="prd" value="#{fastFoodBean.grupos}" var="g" varStatus="indexpdr">
-                                <li jsf:id="item">                                    
-                                    <p:graphicImage id="img" library="imagens" name="drink.png" width="35" class="li-grupo"/> 
-                                    <p:outputPanel id="grupo">
-                                        #{g.t51dsgrp}
-                                    </p:outputPanel>
-                                    <f:ajax event="click" render="frm:produto" execute="@this" listener="#{fastFoodBean.pesquisarPorGrupo(g)}" onevent="limitarCaracteres"/>
+                                <li jsf:id="item">
+                                    <p:commandLink update="frm:produto" process="@this" actionListener="#{fastFoodBean.pesquisarPorGrupo(g)}" oncomplete="limitarCaracteres()"
+                                                   partialSubmit="true">
+                                        <p:graphicImage id="img" library="imagens" name="drink.png" width="35" class="li-grupo"/> 
+                                        <p:outputPanel id="grupo">
+                                            #{g.t51dsgrp}
+                                        </p:outputPanel>
+                                    </p:commandLink> 
                                 </li>                                 
                             </ui:repeat>   
                         </ul>          
