@@ -100,20 +100,23 @@
                         <h:panelGroup id="produto">
                             <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
                                 <div class="col-xs-2 produto">
-                                    <h:panelGroup id="adicaoProduto" style="cursor: pointer;">
-                                        <div class="row text-center">
-                                            <div class="col-xs-12 text-center">
-                                                <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                                    <!--<h:panelGroup id="adicaoProduto" style="cursor: pointer;">-->
+                                        <p:commandLink update="frm:itens frm:total" process="@this frm:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
+                                                       style="color: #fff;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
+                                            <div class="row text-center">
+                                                <div class="col-xs-12 text-center">
+                                                    <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <f:ajax event="click" render="frm:itens frm:total" execute="@this frm:loop:#{status.index}:qtdInput" listener="#{fastFoodBean.adicionarItem(produto)}" 
-                                                onevent="mandarFocu"/>
-                                        <div class="row text-center" style="font-size: 8pt;">
-                                            <h:outputText value="#{produto.preco}">
-                                                <f:convertNumber pattern="###,##0.00"/>
-                                            </h:outputText>
-                                        </div>
-                                    </h:panelGroup>  
+                                            <f:ajax event="click"  
+                                                    onevent="mandarFocu"/>
+                                            <div class="row text-center" style="font-size: 8pt;">
+                                                <h:outputText value="#{produto.preco}">
+                                                    <f:convertNumber pattern="###,##0.00"/>
+                                                </h:outputText>
+                                            </div>
+                                        </p:commandLink>  
+                                    <!--</h:panelGroup>-->  
                                     <div class="row" style="margin-top: 15px;">
                                         <div class="col-xs-4 text-left">
                                             <span class="btn btn-danger fa fa-minus"
