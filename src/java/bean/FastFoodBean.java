@@ -145,8 +145,8 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
-        this.incluio =true;
-        this.quantidade=1;
+        this.incluio = true;
+        this.quantidade = 1;
     }
 
     private boolean validarQuantidade() {
@@ -157,7 +157,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos.remove(lancamento);
         this.excluir(lancamento);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
-        this.incluio=false;
+        this.incluio = false;
     }
 
     public double getQuantidade() {
@@ -165,11 +165,19 @@ public class FastFoodBean implements Serializable {
     }
 
     public void finalizar() {
-        if (this.comandas.getCOMANDA() == null) {
-            if (!this.lancamentos.isEmpty()) {
-                PrimeFaces.current().executeScript("PF('dialogFinalizar').show();");
+        if (this.configuracao.getGerarComandaAutomatico().equalsIgnoreCase("nao")) {
+            if (this.comandas.getCOMANDA() == null) {
+                if (!this.lancamentos.isEmpty()) {
+                    PrimeFaces.current().executeScript("PF('dialogFinalizar').show();");
+                }
+                return;
             }
-            return;
+            if (verificarSeExisteComanda()) {
+                Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
+                return;
+            }
+        } else {
+            this.comandas.setCOMANDA(this.controleService.gerarNumeroComanda());
         }
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
         String pedido = gerarPedido();
@@ -184,10 +192,16 @@ public class FastFoodBean implements Serializable {
         if (!this.comandaReaberta) {
             realizarImpressao();
         }
-        if(this.incluio)
+        if (this.incluio) {
             atualiazarStatusComanda();
+        }
         limparVariaveis();
         PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
+    }
+
+    private boolean verificarSeExisteComanda() {
+        int verificarComanda = controleService.verificarComanda(this.comandas.getCOMANDA(), this.comandas.getCOMANDA());
+        return verificarComanda != 0;
     }
 
     private String gerarPedido() {
@@ -208,7 +222,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos = new ArrayList<>();
         this.total = 0;
         this.comandaReaberta = false;
-        this.incluio=false;
+        this.incluio = false;
         novoProduto();
     }
 
@@ -265,6 +279,7 @@ public class FastFoodBean implements Serializable {
             sosa98 = null;
         } catch (Exception ex) {
             Messages.addGlobalError("Erro ao salvar");
+            System.out.println("ex = " + ex.getMessage());
         }
     }
 
@@ -277,6 +292,9 @@ public class FastFoodBean implements Serializable {
         espelhoComanda.setData(data);
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
+        if(this.comandas.getPESSOAS() == null){
+            this.comandas.setPESSOAS("");
+        }
         espelhoComanda.setPessoasMesa(this.comandas.getPESSOAS().isEmpty() ? "1" : this.comandas.getPESSOAS());
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());

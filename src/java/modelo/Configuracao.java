@@ -22,5 +22,6 @@ public class Configuracao implements Serializable {
     private String tipoImpressao;
     private String cobraDezPorcento;
     private String condicaoParaImpressao;
+    private String gerarComandaAutomatico;
     
 }

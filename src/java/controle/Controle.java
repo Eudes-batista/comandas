@@ -638,5 +638,19 @@ public class Controle implements ComandaService, Serializable {
         }
         return false;
     }
-
+    
+    @Override
+    public String gerarNumeroComanda() {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object seguencias = session.createSQLQuery("select max(cast(comanda as integer)) from espelho_comanda")
+                    .uniqueResult();
+            seguencias = seguencias == null ? "0000" : seguencias;
+            seguencias = String.format("%04d", (Integer.parseInt(String.valueOf(seguencias))+1));
+            return String.valueOf(seguencias);
+        }
+        return "0001";
+    }
+    
+    
 }

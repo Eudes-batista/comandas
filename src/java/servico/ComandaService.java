@@ -64,4 +64,6 @@ public interface ComandaService {
     
     public String gerarNumero();
     
+    public String gerarNumeroComanda();
+    
 }
