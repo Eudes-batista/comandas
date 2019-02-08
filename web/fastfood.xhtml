@@ -158,9 +158,9 @@
                                             <td>
                                                 <p:commandLink id="apagarG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
                                                                rendered="#{not empty fastFoodBean.usuario.GERENTE}"
-                                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
+                                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                               update="frm:itens frm:total" process="@this">
                                                     <i class="fa fa-trash"></i>
-                                                    <f:ajax render="frm:itens frm:total" execute="@this" />
                                                 </p:commandLink>
                                                 <p:commandLink id="apagarN" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lacamento)}"
                                                                rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '1'}"
