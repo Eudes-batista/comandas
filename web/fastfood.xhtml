@@ -156,21 +156,23 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <h:commandLink id="apagarG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
+                                                <p:commandLink id="apagarG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
                                                                rendered="#{not empty fastFoodBean.usuario.GERENTE}"
-                                                               >
+                                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                                     <i class="fa fa-trash"></i>
                                                     <f:ajax render="frm:itens frm:total" execute="@this" />
-                                                </h:commandLink>
+                                                </p:commandLink>
                                                 <p:commandLink id="apagarN" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lacamento)}"
                                                                rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '1'}"
                                                                update="frmDialogo frm:total" process="@this"
+                                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
                                                                oncomplete="PF('dialogoUsuario').show();">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <p:commandLink id="apagarNG" class="btn btn-danger" style="color: #bbb;font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lacamento)}"
                                                                rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '0'}"
-                                                               update="frm:itens frm:total" process="@this">
+                                                               update="frm:itens frm:total" process="@this"
+                                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <button style="background: #fff;outline: none;border: none;" class="focu"></button>
@@ -190,97 +192,108 @@
                         <div class="row " >
                             <div class="col-md-12">
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary" 
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}">
+                                    <p:commandLink class="btn btn-block btn-primary" 
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao01}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
+                                    <p:commandLink class="btn btn-block btn-primary"
                                                    actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia02)}"
-                                                   >
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao02}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao03}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao04}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao05}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao06}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao07}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao08}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary" 
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}">
+                                    <p:commandLink class="btn btn-block btn-primary" 
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao09}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao10}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao11}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                                 <div class="col-md-3">
-                                    <h:commandLink class="btn btn-block btn-primary"
-                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}">
+                                    <p:commandLink class="btn btn-block btn-primary"
+                                                   actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}"
+                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                   process="@this" update="frm:itens frm:total" oncomplete="mandarFocu()">
                                         #{fastFoodBean.atalhoFastFood.descricao12}
-                                        <f:ajax execute="@this" render="frm:itens frm:total" onevent="mandarFocu"/>
-                                    </h:commandLink>
+                                    </p:commandLink>
                                 </div>
                             </div>
                         </div>
