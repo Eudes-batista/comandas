@@ -43,5 +43,6 @@ function tratarNumerosNegativos(valor) {
 }
 function selecionarCampo(id){
     document.getElementById(id).select();
+    document.getElementById(id).focus();
 }
 

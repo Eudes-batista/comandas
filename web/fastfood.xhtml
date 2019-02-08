@@ -73,7 +73,7 @@
                 </div>
                 <div class="row">
                     <div class="row campo-pesquisa">
-                        <h:inputText class="form-control" style="font-size: 15pt; color: #858585 !important;"
+                        <h:inputText id="pesquisa" class="form-control" style="font-size: 15pt; color: #858585 !important;"
                                      value="#{fastFoodBean.pesquisa}" onkeyup="this.value = this.value.toUpperCase();">
                             <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
                             <f:passThroughAttribute name="autofocus" value="true"/>
@@ -100,9 +100,9 @@
                         <h:panelGroup id="produto">
                             <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
                                 <div class="col-xs-2 produto">
-                                    <!--<h:panelGroup id="adicaoProduto" style="cursor: pointer;">-->
                                         <p:commandLink update="frm:itens frm:total" process="@this frm:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
-                                                       style="color: #fff;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
+                                                       style="color: #fff;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                                       oncomplete="selecionarCampo('frm:pesquisa')">
                                             <div class="row text-center">
                                                 <div class="col-xs-12 text-center">
                                                     <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
@@ -116,7 +116,6 @@
                                                 </h:outputText>
                                             </div>
                                         </p:commandLink>  
-                                    <!--</h:panelGroup>-->  
                                     <div class="row" style="margin-top: 15px;">
                                         <div class="col-xs-4 text-left">
                                             <span class="btn btn-danger fa fa-minus"
