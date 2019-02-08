@@ -102,14 +102,12 @@
                                 <div class="col-xs-2 produto">
                                         <p:commandLink update="frm:itens frm:total" process="@this frm:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
                                                        style="color: #fff;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                                       oncomplete="selecionarCampo('frm:pesquisa')">
+                                                       oncomplete="selecionarCampo('frm:pesquisa');mandarFocu();">
                                             <div class="row text-center">
                                                 <div class="col-xs-12 text-center">
                                                     <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
                                                 </div>
                                             </div>
-                                            <f:ajax event="click"  
-                                                    onevent="mandarFocu"/>
                                             <div class="row text-center" style="font-size: 8pt;">
                                                 <h:outputText value="#{produto.preco}">
                                                     <f:convertNumber pattern="###,##0.00"/>
