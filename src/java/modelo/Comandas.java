@@ -9,6 +9,7 @@ public class Comandas implements Serializable {
     private String COMANDA;
     private String MESA;
     private Double TOTAL;
+    private Double TOTAL_COM_DEZ_PORCENTO;    
     private String STATUS;
     private String PESSOAS;
     private String PEDIDO;
@@ -51,6 +52,7 @@ public class Comandas implements Serializable {
         this.DESCRICAO = DESCRICAO;
     }
 
+    
     public String getCOMANDA() {
         return COMANDA;
     }
@@ -164,6 +166,14 @@ public class Comandas implements Serializable {
 
     public void setDATA_PRECONTA(Date DATA_PRECONTA) {
         this.DATA_PRECONTA = DATA_PRECONTA;
+    }
+
+    public Double getTOTAL_COM_DEZ_PORCENTO() {
+        return TOTAL_COM_DEZ_PORCENTO;
+    }
+
+    public void setTOTAL_COM_DEZ_PORCENTO(Double TOTAL_COM_DEZ_PORCENTO) {
+        this.TOTAL_COM_DEZ_PORCENTO = TOTAL_COM_DEZ_PORCENTO;
     }
 
 }

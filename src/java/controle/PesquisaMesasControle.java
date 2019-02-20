@@ -2,7 +2,6 @@ package controle;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.bean.ManagedBean;
@@ -15,6 +14,7 @@ import org.hibernate.transform.Transformers;
 import servico.PesquisaMesasService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
+import util.JuntaComandas;
 
 @ManagedBean(name = "pesquisaMesasService")
 @ViewScoped
@@ -39,7 +39,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<Date, Comandas> separarPedidos = separarPedidos(lista);
+        Map<Date, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorDataPreconta(lista);
         lista.clear();
         for (Map.Entry<Date, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();
@@ -49,26 +49,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         return lista;
     }
 
-    private Map<Date, Comandas> separarPedidos(List<Comandas> lista) {
-        Map<Date, Comandas> mapAuditoria = new HashMap<>();
-        for (Comandas comandas : lista) {
-            Date chave = comandas.getDATA_PRECONTA();
-            Comandas comanda = mapAuditoria.get(chave);
-            double total = 0;
-            if (comanda == null) {
-                comanda = comandas;
-                total = comanda.getTOTAL();
-            } else {
-                total += comanda.getTOTAL()+comandas.getTOTAL();
-            }
-            if (!comandas.getDESCRICAO().contains("COUVERT")) {
-                comanda.setDESCRICAO("");
-            }
-            comanda.setTOTAL(total);
-            mapAuditoria.put(chave, comanda);
-        }
-        return mapAuditoria;
-    }
+    
 
     @Override
     public List<Comandas> pesquisarComandaPorCodigo(String codigo,String dataInicial,String dataFinal) {
@@ -87,7 +68,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<Date, Comandas> separarPedidos = separarPedidos(lista);
+        Map<Date, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorDataPreconta(lista);
         lista.clear();
         for (Map.Entry<Date, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();

@@ -72,7 +72,7 @@
                     </h:outputLabel> 
                 </p:column>
                 <p:column headerText="T.+10%" >
-                    <h:outputLabel value="#{comanda.DESCRICAO eq '' ? comanda.TOTAL * 1.1 : comanda.TOTAL}"
+                    <h:outputLabel value="#{comanda.TOTAL_COM_DEZ_PORCENTO}"
                                    style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 

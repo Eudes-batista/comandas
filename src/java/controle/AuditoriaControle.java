@@ -1,7 +1,6 @@
 package controle;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.faces.bean.ManagedBean;
@@ -14,6 +13,7 @@ import org.hibernate.transform.Transformers;
 import servico.AuditoriaService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
+import util.JuntaComandas;
 
 @ManagedBean(name = "auditoriaService")
 @ViewScoped
@@ -38,7 +38,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<String, Comandas> separarPedidos = separarPedidos(lista);
+        Map<String, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorComanda(lista);
         lista.clear();
         for (Map.Entry<String, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();
@@ -46,27 +46,6 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
         }
         session.close();
         return lista;
-    }
-
-    private Map<String, Comandas> separarPedidos(List<Comandas> lista) {
-        Map<String, Comandas> mapAuditoria = new HashMap<>();
-        lista.forEach((comandas) -> {
-            String chave = comandas.getCOMANDA();
-            Comandas comanda = mapAuditoria.get(chave);
-            double total = 0;
-            if (comanda == null) {
-                comanda = comandas;
-                total = comanda.getTOTAL();
-            } else {
-                total += comanda.getTOTAL()+comandas.getTOTAL();
-            }
-            if (!comandas.getDESCRICAO().contains("COUVERT")) {
-                comanda.setDESCRICAO("");
-            }
-            comanda.setTOTAL(total);
-            mapAuditoria.put(chave, comanda);
-        });
-        return mapAuditoria;
     }
 
     @Override
@@ -86,7 +65,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<String, Comandas> separarPedidos = separarPedidos(lista);
+        Map<String, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorComanda(lista);
         lista.clear();
         for (Map.Entry<String, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();
