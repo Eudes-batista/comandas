@@ -47,7 +47,6 @@ public class JuntaComandas {
             }
         }
         comandaAdicionada.setTOTAL(total);
-        comandaAdicionada.setTOTAL(total);
         totalSemOValorDoCouvert = total - valorCouvert;
         totalSemOValorDoCouvert = totalSemOValorDoCouvert * 1.1;
         comandaAdicionada.setTOTAL_COM_DEZ_PORCENTO(totalSemOValorDoCouvert + valorCouvert);
