@@ -172,12 +172,14 @@ public class FastFoodBean implements Serializable {
                 }
                 return;
             }
+        } else {
+            if(this.comandas.getCOMANDA() == null)
+                this.comandas.setCOMANDA(this.controleService.gerarNumeroComanda());
+        }
+        if (this.incluio) {
             if (verificarSeExisteComanda()) {
                 Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
-                return;
             }
-        } else {
-            this.comandas.setCOMANDA(this.controleService.gerarNumeroComanda());
         }
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
         String pedido = gerarPedido();
@@ -292,7 +294,7 @@ public class FastFoodBean implements Serializable {
         espelhoComanda.setData(data);
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
-        if(this.comandas.getPESSOAS() == null){
+        if (this.comandas.getPESSOAS() == null) {
             this.comandas.setPESSOAS("");
         }
         espelhoComanda.setPessoasMesa(this.comandas.getPESSOAS().isEmpty() ? "1" : this.comandas.getPESSOAS());
