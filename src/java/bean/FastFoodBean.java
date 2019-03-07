@@ -173,10 +173,11 @@ public class FastFoodBean implements Serializable {
                 return;
             }
         } else {
-            if(this.comandas.getCOMANDA() == null)
+            if (this.comandas.getCOMANDA() == null) {
                 this.comandas.setCOMANDA(this.controleService.gerarNumeroComanda());
+            }
         }
-        if (this.incluio) {
+        if (!this.comandaReaberta) {
             if (verificarSeExisteComanda()) {
                 Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
             }
