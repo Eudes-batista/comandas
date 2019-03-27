@@ -136,8 +136,8 @@ public class ProdutoBean implements Serializable {
         if (buscarNumeroDePessoas == 0) {
             if (quantidadePessoas != null) {
                 quantidadePessoas = String.valueOf(Integer.parseInt(quantidadePessoas));
-            }else{
-                quantidadePessoas ="1";                
+            } else {
+                quantidadePessoas = "1";
             }
         } else {
             quantidadePessoas = String.valueOf(buscarNumeroDePessoas);
@@ -667,6 +667,7 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
         this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
         this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
+        this.espelhoComandaBean.espelhoComanda.setDataCancelamento(new Date());
         this.espelhoComandaBean.alterar();
         this.itemAcompanhamentoService.atualizarStatusAcompanhamento(lancamento, "C");
     }

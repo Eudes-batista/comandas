@@ -42,6 +42,10 @@ public class EspelhoComanda implements Serializable {
     @Column(name = "data", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date data;
+    
+    @Column(name = "data_cancelamento", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCancelamento;
 
     @Column(name = "vendedor", length = 12, nullable = false)
     private String vendedor;

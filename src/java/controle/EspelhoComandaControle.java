@@ -2,6 +2,8 @@ package controle;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -138,8 +140,9 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void atualizarStatusItens(Cancelamento cancelamento) {
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='"+cancelamento.getStatus()+"',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento="+cancelamento.getMotivo()+" where pedido in(" + cancelamento.getPedidos() + ") and MOTIVO_CANCELAMENTO is null ");
-        executarSql("update item_acompanhamento set status='"+cancelamento.getStatus()+"' where pedido in("+cancelamento.getPedidos()+") and status = 'N' ");
+        String dataCancelamento = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='" + cancelamento.getStatus() + "',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento=" + cancelamento.getMotivo() + ",data_cancelamento='" + dataCancelamento + "' where pedido in(" + cancelamento.getPedidos() + ") and MOTIVO_CANCELAMENTO is null ");
+        executarSql("update item_acompanhamento set status='" + cancelamento.getStatus() + "' where pedido in(" + cancelamento.getPedidos() + ") and status = 'N' ");
     }
 
     @Override
@@ -162,7 +165,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             Object object = session.createSQLQuery("select DATA_PRECONTA as preconta from espelho_comanda where pedido='" + pedido + "' group by DATA_PRECONTA ").uniqueResult();
-            String dataPreconta =object != null ? String.valueOf(object) :null;
+            String dataPreconta = object != null ? String.valueOf(object) : null;
             session.close();
             return dataPreconta;
         }
