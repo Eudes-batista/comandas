@@ -71,10 +71,10 @@
                 <p:column headerText="Mesa" priority="1" width="45" >
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.MESA}</span>
                 </p:column>
-                <p:column headerText="Comanda">
+                <p:column headerText="Comanda" sortBy="#{comanda.COMANDA}">
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.COMANDA}</span>
                 </p:column>
-                <p:column headerText="Pedido" >
+                <p:column headerText="Pedido" sortBy="#{comanda.PEDIDO}">
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.PEDIDO}</span>
                 </p:column>
                 <p:column headerText="Pessoas" >
@@ -83,7 +83,7 @@
                 <p:column headerText="Status" sortBy="#{comanda.STATUS}">
                     <span style="color: #{comanda.STATUS eq 'P' ? 'red' : '#000'}">#{comanda.STATUS eq 'P' ? 'Preconta' : 'Em Consumo'}</span>
                 </p:column>
-                <p:column headerText="Total">
+                <p:column headerText="Total" sortBy="#{comanda.TOTAL}">
                     <h:outputLabel value="#{comanda.TOTAL}" class="total" style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
                         <f:convertNumber pattern="###,##0.00"/>
                     </h:outputLabel> 
