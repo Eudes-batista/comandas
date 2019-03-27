@@ -29,6 +29,7 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append("select ")
                     .append(" ''||NUMERO as NUMERO")
                     .append(",PEDIDO as PEDIDO")
+                    .append(",DATA_CANCELAMENTO as DATA_CANCELAMENTO")
                     .append(",VENDEDOR as GARCOM")
                     .append(",SUM(QUANTIDADE_CANCELADA) as TOTAL")
                     .append(",QUANTIDADE_CANCELADA as CANCELAMENTO")
@@ -49,7 +50,7 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append(" AND '").append(filtroItemCancelado.getDataFinal()).append(" 23:59:59'")
                     .append(" AND (STATUS_ITEM ='C' OR STATUS_ITEM='M' OR STATUS_ITEM='D')")
                     .append(" group by")
-                    .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO");
+                    .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO,DATA_CANCELAMENTO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemCanceladoGarcom.class));
             return setResultTransformer.list();

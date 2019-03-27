@@ -1,6 +1,7 @@
 package modelo.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class ItemCanceladoGarcom implements Serializable{
     private String  PRODUZIDO;
     private String  RESPONSAVEL;  
     private String  DESTINO;  
+    private Date  DATA_CANCELAMENTO;  
 
     public ItemCanceladoGarcom() {
     }

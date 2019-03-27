@@ -61,6 +61,7 @@
                                     <th>Pedido</th>
                                     <th>Item</th>
                                     <th>Qtd.Cancelamento</th>
+                                    <th>Data</th>
                                     <th>Motivo</th>
                                     <th>Situação</th>
                                     <th>Responsavel</th>
@@ -75,6 +76,11 @@
                                         <td>#{item.PEDIDO}</td>
                                         <td>#{item.ITEM}</td>
                                         <td>#{item.CANCELAMENTO}</td>
+                                        <td>
+                                            <h:outputText value="#{item.DATA_CANCELAMENTO}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                            </h:outputText>
+                                        </td>
                                         <td>#{item.MOTIVO}</td>
                                         <td>#{item.PRODUZIDO eq '1' ? 'Foi produzido' :'Não foi produzido'}</td>
                                         <td>#{item.RESPONSAVEL}</td>
@@ -82,7 +88,7 @@
                                         <td>#{item.GARCOM}</td>
                                         <td>
                                             <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button" jsf:disabled="#{item.PRODUZIDO ne '1'}"
-                                                     title="Informar uma Observação">
+                                                    title="Informar uma Observação">
                                                 Destinos
                                                 <f:ajax event="click" render="frmDestino" execute="@this" listener="#{ItemCanceladoGarcomBean.selecionarItemCancelado(item)}"/>
                                             </button>

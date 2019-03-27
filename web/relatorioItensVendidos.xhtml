@@ -84,8 +84,8 @@
                     <div class="row espaco">
                         <div class="col-md-3">
                             <label >Garçom</label>
-w                            <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
-                                             class="form-control">
+                            w                            <h:selectOneMenu id="garcom" value="#{relatorioItemVendidoBean.filtroItemVendido.garcom}"
+                                                                          class="form-control">
                                 <f:selectItem noSelectionOption="true" itemLabel="Selecione um Garçom" />
                                 <f:selectItems value="#{relatorioItemVendidoBean.vendedores}" var="garcom" itemLabel="#{garcom.nome}" itemValue="#{garcom.nome}"/>
                             </h:selectOneMenu>
@@ -234,6 +234,7 @@ w                            <h:selectOneMenu id="garcom" value="#{relatorioItem
                                             <th>Pedido</th>
                                             <th>Item</th>
                                             <th>Cancelamentos</th>
+                                            <th>Data</th>
                                             <th>Total</th>
                                             <th>Motivo</th>
                                             <th>Situação</th>
@@ -249,6 +250,11 @@ w                            <h:selectOneMenu id="garcom" value="#{relatorioItem
                                                 <td>#{item.PEDIDO}</td>
                                                 <td>#{item.ITEM}</td>
                                                 <td>#{item.CANCELAMENTO}</td>
+                                                <td>
+                                                    <h:outputText value="#{item.DATA_CANCELAMENTO}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                                    </h:outputText>
+                                                </td>
                                                 <td>
                                                     <h:outputText value="#{item.TOTAL}">
                                                         <f:convertNumber pattern="###,##0.00"/>
