@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Comandas;
+import modelo.dto.ItemPedido;
 import servico.PesquisaMesasService;
 
 @ManagedBean(name = "pesquisaMesasBean")
@@ -25,8 +26,10 @@ public class PesquisaMesasBean implements Serializable {
     private String pesquisa;
     private String dataInicial;
     private String dataFinal;
+    private String pedido;
 
     private List<Comandas> comandas;
+    private List<ItemPedido> itensPedido;
 
     public void init() {
         LocalDate localDate = LocalDate.now();
@@ -43,6 +46,11 @@ public class PesquisaMesasBean implements Serializable {
     public void pesquisarComanda() {
         this.comandas = pesquisaMesasService.pesquisarComandaPorCodigo(pesquisa, dataInicial, dataFinal);
         comandas.sort((c1, c2) -> c1.getCOMANDA().compareTo(c2.getCOMANDA()));
+    }
+
+    public void listarItemPorPedido(String pedido) {
+        this.pedido = pedido;
+        this.itensPedido = this.pesquisaMesasService.listarItemPorPedido(pedido);
     }
 
     public void imprimirPrecontaMesa(Comandas comandas) {

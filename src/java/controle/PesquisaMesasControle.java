@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.Comandas;
+import modelo.dto.ItemPedido;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -25,7 +26,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
     private final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
 
     @Override
-    public List<Comandas> listarComandas(String dataInicial,String dataFinal) {
+    public List<Comandas> listarComandas(String dataInicial, String dataFinal) {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
@@ -49,10 +50,8 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         return lista;
     }
 
-    
-
     @Override
-    public List<Comandas> pesquisarComandaPorCodigo(String codigo,String dataInicial,String dataFinal) {
+    public List<Comandas> pesquisarComandaPorCodigo(String codigo, String dataInicial, String dataFinal) {
         session = HibernateUtil.getSessionFactory().openSession();
         sb = new StringBuilder();
         sb.append("select ")
@@ -76,6 +75,38 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         }
         session.close();
         return lista;
+    }
+
+    @Override
+    public List<ItemPedido> listarItemPorPedido(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            sb = new StringBuilder();
+            sb.append("select ")
+                    .append(" PEDIDO as PEDIDO")
+                    .append(",MESA as MESA")
+                    .append(",COMANDA as COMANDA")
+                    .append(",DATA as DATA")
+                    .append(",REFERENCIA as REFERENCIA")
+                    .append(",PRDESCRI as DESCRICAO")
+                    .append(",iif(FOI_PRODUZIDO is null,'NAO','SIM') as FOI_PRODUZIDO")
+                    .append(",iif(IMPRESSAO ='1','SIM','NAO') as IMPRESSAO")
+                    .append(",iif(STATUS_ITEM ='N','NORNAL','CANCELADO') as STATUS_ITEM")
+                    .append(",QUANTIDADE as QUANTIDADE")
+                    .append(",VALOR_ITEM as VALOR_ITEM")
+                    .append(",(QUANTIDADE*VALOR_ITEM) as TOTAL")
+                    .append(",VENDEDOR as GARCOM")
+                    .append(",DATA_CANCELAMENTO as DATA_CANCELAMENTO")
+                    .append(" from")
+                    .append("  espelho_comanda")
+                    .append(" left outer join")
+                    .append("  SCEA01 on(PRREFERE=REFERENCIA)")
+                    .append(" where ")
+                    .append("  PEDIDO='").append(pedido).append("'");
+            SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
+            return sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemPedido.class)).list();
+        }
+        return null;
     }
 
 }

@@ -75,7 +75,10 @@
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.COMANDA}</span>
                 </p:column>
                 <p:column headerText="Pedido" sortBy="#{comanda.PEDIDO}">
-                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.PEDIDO}</span>
+                    <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
+                        <p:commandLink actionListener="#{pesquisaMesasBean.listarItemPorPedido(comanda.PEDIDO)}"
+                                       process="@this" oncomplete="PF('dialogoInformacoesPedido').show();">#{comanda.PEDIDO}</p:commandLink>
+                    </span>
                 </p:column>
                 <p:column headerText="Pessoas" >
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">#{comanda.PESSOAS}</span>
@@ -143,6 +146,55 @@
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"
                   responsive="true">
             <h3>Realizando a operação aguarde...</h3>
+        </p:dialog>
+        <p:dialog header="Pedido #{pesquisaMesasBean.pedido}" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlInformacoesPedido" widgetVar="dialogoInformacoesPedido" dynamic="true" 
+                  closable="true" closeOnEscape="true"
+                  showEffect="fade" hideEffect="fade">
+            <h:form id="frmItemPedido">
+                <p:dataTable value="#{pesquisaMesasBean.itensPedido}" var="item" reflow="true"
+                             scrollable="true" scrollHeight="300" >
+                    <p:column headerText="Referencia" sortBy="#{item.REFERENCIA}">
+                        #{item.REFERENCIA}
+                    </p:column>
+                    <p:column headerText="Descrição" sortBy="#{item.DESCRICAO}">
+                        #{item.DESCRICAO}
+                    </p:column>
+                    <p:column headerText="Quantidade" sortBy="#{item.QUANTIDADE}">
+                        <h:outputText value="#{item.QUANTIDADE}">
+                            <f:convertNumber />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Preço" sortBy="#{item.VALOR_ITEM}">
+                        <h:outputText value="#{item.VALOR_ITEM}">
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Total" sortBy="#{item.TOTAL}">
+                        <h:outputText value="#{item.TOTAL}">
+                            <f:convertNumber pattern="###,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Data Lançamento" sortBy="#{item.DATA}">
+                        <h:outputText value="#{item.DATA}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Garçom" sortBy="#{item.GARCOM}">
+                        #{item.GARCOM}
+                    </p:column>
+                    <p:column headerText="Impresso" sortBy="#{item.IMPRESSAO}">
+                        #{item.IMPRESSAO}
+                    </p:column>
+                    <p:column headerText="Foi Produzido" sortBy="#{item.FOI_PRODUZIDO}">
+                        #{item.FOI_PRODUZIDO}
+                    </p:column>
+                    <p:column headerText="Data Cancelamento" sortBy="#{item.DATA_CANCELAMENTO}">
+                        <h:outputText value="#{item.DATA_CANCELAMENTO}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </h:form>          
         </p:dialog>
     </h:body>
 </html>
