@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewAction action="#{pesquisaMesasBean.init()}"/>
     </f:metadata>
@@ -76,8 +77,8 @@
                 </p:column>
                 <p:column headerText="Pedido" sortBy="#{comanda.PEDIDO}">
                     <span style="color: #{comanda.PORCENTAGEM lt 10 ?'blue' : '#858585'};">
-                        <p:commandLink actionListener="#{pesquisaMesasBean.listarItemPorPedido(comanda.PEDIDO)}"
-                                       process="@this" oncomplete="PF('dialogoInformacoesPedido').show();">#{comanda.PEDIDO}</p:commandLink>
+                        <p:commandLink style="text-decoration: underline;" actionListener="#{pesquisaMesasBean.listarItemPorPedido(comanda.PEDIDO)}"
+                                       process="@this" update="dlInformacoesPedido" oncomplete="PF('dialogoInformacoesPedido').show();">#{comanda.PEDIDO}</p:commandLink>
                     </span>
                 </p:column>
                 <p:column headerText="Pessoas" >
@@ -147,53 +148,44 @@
                   responsive="true">
             <h3>Realizando a operação aguarde...</h3>
         </p:dialog>
-        <p:dialog header="Pedido #{pesquisaMesasBean.pedido}" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlInformacoesPedido" widgetVar="dialogoInformacoesPedido" dynamic="true" 
+        <p:dialog header="Pedido - #{pesquisaMesasBean.pedido}" resizable="false" styleClass="mesa-modal" modal="true" responsive="true" fitViewport="true" draggable="false" width="100%" id="dlInformacoesPedido" widgetVar="dialogoInformacoesPedido" dynamic="true" 
                   closable="true" closeOnEscape="true"
-                  showEffect="fade" hideEffect="fade">
+                  showEffect="fade" hideEffect="fade" position="top">
             <h:form id="frmItemPedido">
-                <p:dataTable value="#{pesquisaMesasBean.itensPedido}" var="item" reflow="true"
-                             scrollable="true" scrollHeight="300" >
-                    <p:column headerText="Referencia" sortBy="#{item.REFERENCIA}">
-                        #{item.REFERENCIA}
-                    </p:column>
-                    <p:column headerText="Descrição" sortBy="#{item.DESCRICAO}">
-                        #{item.DESCRICAO}
-                    </p:column>
-                    <p:column headerText="Quantidade" sortBy="#{item.QUANTIDADE}">
-                        <h:outputText value="#{item.QUANTIDADE}">
-                            <f:convertNumber />
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Preço" sortBy="#{item.VALOR_ITEM}">
-                        <h:outputText value="#{item.VALOR_ITEM}">
-                            <f:convertNumber pattern="###,##0.00"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Total" sortBy="#{item.TOTAL}">
-                        <h:outputText value="#{item.TOTAL}">
-                            <f:convertNumber pattern="###,##0.00"/>
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Data Lançamento" sortBy="#{item.DATA}">
-                        <h:outputText value="#{item.DATA}">
-                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                        </h:outputText>
-                    </p:column>
-                    <p:column headerText="Garçom" sortBy="#{item.GARCOM}">
-                        #{item.GARCOM}
-                    </p:column>
-                    <p:column headerText="Impresso" sortBy="#{item.IMPRESSAO}">
-                        #{item.IMPRESSAO}
-                    </p:column>
-                    <p:column headerText="Foi Produzido" sortBy="#{item.FOI_PRODUZIDO}">
-                        #{item.FOI_PRODUZIDO}
-                    </p:column>
-                    <p:column headerText="Data Cancelamento" sortBy="#{item.DATA_CANCELAMENTO}">
-                        <h:outputText value="#{item.DATA_CANCELAMENTO}">
-                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                        </h:outputText>
-                    </p:column>
-                </p:dataTable>
+                <ui:repeat value="#{pesquisaMesasBean.itensPedido}" var="item">
+                    <p:panel header="#{item.REFERENCIA} - #{item.DESCRICAO}">
+                        <p:panelGrid layout="grid" columns="6" styleClass="ui-panelgrid-blank">
+                            <h:outputText value="Quantidade:" />
+                            <h:outputText value="#{item.QUANTIDADE}">
+                                <f:convertNumber />
+                            </h:outputText>
+                            <h:outputText value="Preço:" />
+                            <h:outputText value="#{item.VALOR_ITEM}">
+                                <f:convertNumber pattern="###,##0.00"/>
+                            </h:outputText>
+                            <h:outputText value="Total:" />
+                            <h:outputText value="#{item.TOTAL}">
+                                <f:convertNumber pattern="###,##0.00"/>
+                            </h:outputText>
+                            <h:outputText value="Data Lançamento:" />
+                            <h:outputText value="#{item.DATA}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                            </h:outputText>
+                            <h:outputText value="Garçom:" />
+                            <h:outputText value="#{item.GARCOM}" />
+                            <h:outputText value="Impresso:" />
+                            <h:outputText value="#{item.IMPRESSAO}" />
+                            <h:outputText value="Produzido:" />
+                            <h:outputText value="#{item.FOI_PRODUZIDO}" />
+                            <h:outputText value="Data Cancelamento:" />
+                            <h:outputText value="#{item.DATA_CANCELAMENTO}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                            </h:outputText>
+                            <h:outputText value="Status" />
+                            <h:outputText value="#{item.STATUS_ITEM}" />
+                        </p:panelGrid>
+                    </p:panel>
+                </ui:repeat>
             </h:form>          
         </p:dialog>
     </h:body>
