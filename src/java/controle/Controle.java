@@ -382,14 +382,14 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferenciaItensParaComanda(Comandas comanda, List<Lancamento> lancamentosTransferencia, List<Lancamento> lancamentosOrigem, String usuarioTransferencia) {
         List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
-        String pedido, status, pessoas, numeros = lancamentosTransferencia.stream().map(Lancamento::getNumero).collect(Collectors.joining(",")), numero = "";
+        String pedido, statusComandaPreconta, quantidadePessoas, numeros = lancamentosTransferencia.stream().map(Lancamento::getNumero).collect(Collectors.joining(",")), numero = "";
         if (comandas.isEmpty()) {
             pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
-            status = "";
-            pessoas = "1";
+            statusComandaPreconta = "";
+            quantidadePessoas = "1";
+            List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias;
             for (Lancamento lancamento : lancamentosTransferencia) {
                 Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
-                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias;
                 if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
                     itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
                     if (!itemAcompanhamentoTransferencias.isEmpty()) {
@@ -399,40 +399,40 @@ public class Controle implements ComandaService, Serializable {
                     if (!numero.isEmpty()) {
                         numeros = gerarNumeroDeAtualizacao(numeros, numero);
                     }
-                    executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                    executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
                     return;
                 }
                 numero += "," + lancamento.getNumero();
-                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, pessoas);
+                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, quantidadePessoas);
             }
-        } else {
-            pedido = String.valueOf(comandas.get(0).getPEDIDO());
-            status = comandas.get(0).getSTATUS();
-            pessoas = String.valueOf(buscarNumeroDePessoas(pedido));
-            for (Lancamento lancamento : lancamentosTransferencia) {
-                Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
-                if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
-                    List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
-                    if (itemAcompanhamentoTransferencias.isEmpty()) {
-                        int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
-                        int seguencia = ultimoItemComandaDestino + 1;
-                        executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentosTransferencia.get(0).getPedido() + "' and tenumseq='" + lancamentosTransferencia.get(0).getItem() + "'");
-                        executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentosTransferencia.get(0).getPedido() + "' and numero_item='" + lancamentosTransferencia.get(0).getItem() + "'");
-                    } else {
-                        ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                        atualizarSeguenciaItemComanda(item, pedido);
-                    }
-                    if (!numero.isEmpty()) {
-                        numeros = gerarNumeroDeAtualizacao(numeros, numero);
-                    }
-                    executarSql("update          sosa98 set testatus='" + status + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + pessoas + "',status='" + status + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
-                    return;
+            return;
+        }
+        pedido = String.valueOf(comandas.get(0).getPEDIDO());
+        statusComandaPreconta = comandas.get(0).getSTATUS();
+        quantidadePessoas = String.valueOf(buscarNumeroDePessoas(pedido));
+        for (Lancamento lancamento : lancamentosTransferencia) {
+            Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
+            if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
+                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+                if (itemAcompanhamentoTransferencias.isEmpty()) {
+                    int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+                    int seguencia = ultimoItemComandaDestino + 1;
+                    executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentosTransferencia.get(0).getPedido() + "' and tenumseq='" + lancamentosTransferencia.get(0).getItem() + "'");
+                    executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentosTransferencia.get(0).getPedido() + "' and numero_item='" + lancamentosTransferencia.get(0).getItem() + "'");
+                } else {
+                    ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                    atualizarSeguenciaItemComanda(item, pedido);
                 }
-                numero += "," + lancamento.getNumero();
-                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, pessoas);
+                if (!numero.isEmpty()) {
+                    numeros = gerarNumeroDeAtualizacao(numeros, numero);
+                }
+                executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
+                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                return;
             }
+            numero += "," + lancamento.getNumero();
+            transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, quantidadePessoas);
         }
     }
 
@@ -441,11 +441,11 @@ public class Controle implements ComandaService, Serializable {
         numero = numero.replaceFirst(",", "");
         for (String numeroCorrente : splitNumeros) {
             if (numero.contains(numeroCorrente)) {
-                int index = numeros.indexOf(numeroCorrente);
-                int tamanho = numeroCorrente.length();
-                int indexFinal = tamanho + index;
-                index = index - 1 == -1 ? 0 : index - 1;
-                String numeroEcontrado = numeros.substring(index, indexFinal);
+                int indexChaveEncontrada = numeros.indexOf(numeroCorrente);
+                int tamanhoChave = numeroCorrente.length();
+                int indexFinal = tamanhoChave + indexChaveEncontrada;
+                indexChaveEncontrada = indexChaveEncontrada - 1 == -1 ? 0 : indexChaveEncontrada - 1;
+                String numeroEcontrado = numeros.substring(indexChaveEncontrada, indexFinal);
                 numeros = numeros.replaceFirst(numeroEcontrado, "");
             }
         }
@@ -638,7 +638,7 @@ public class Controle implements ComandaService, Serializable {
         }
         return false;
     }
-    
+
     @Override
     public String gerarNumeroComanda() {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -646,11 +646,10 @@ public class Controle implements ComandaService, Serializable {
             Object seguencias = session.createSQLQuery("select max(cast(comanda as integer)) from espelho_comanda")
                     .uniqueResult();
             seguencias = seguencias == null ? "0000" : seguencias;
-            seguencias = String.format("%04d", (Integer.parseInt(String.valueOf(seguencias))+1));
+            seguencias = String.format("%04d", (Integer.parseInt(String.valueOf(seguencias)) + 1));
             return String.valueOf(seguencias);
         }
         return "0001";
     }
-    
-    
+
 }
