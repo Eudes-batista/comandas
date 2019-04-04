@@ -317,14 +317,14 @@ public class MesasBean implements Serializable {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
         }
-        Mesa mesaDes = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
-        if ((mesaDes != null && !mesaDes.getSTATUS().equals("V")) || mesaDes == null) {
-            Mesa m = this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem)));
+        Mesa mesaDestinoEncontrada = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
+        if ((mesaDestinoEncontrada != null && !mesaDestinoEncontrada.getSTATUS().equals("V")) || mesaDestinoEncontrada == null) {
+            Mesa mesaOrigemEncontrada = this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem)));
             if (transferirComanda) {
-                m.setCOMANDA(m.getMESA());
+                mesaOrigemEncontrada.setCOMANDA(mesaOrigemEncontrada.getMESA());
             }
-            controle.transferirMesa(m, mesaDestino.toUpperCase());
-            espelhoComandaService.atualizarResponsavelTransferencia(m.getPEDIDO(), usuarioTransferencia.toUpperCase());
+            controle.transferirMesa(mesaOrigemEncontrada, mesaDestino.toUpperCase());
+            espelhoComandaService.atualizarResponsavelTransferencia(mesaOrigemEncontrada.getPEDIDO(), usuarioTransferencia.toUpperCase());
             listarMesas();
             PrimeFaces.current().ajax().update("frm:tabelaMesa");
             PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
