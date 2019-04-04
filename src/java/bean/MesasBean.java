@@ -203,7 +203,7 @@ public class MesasBean implements Serializable {
         if ("normal".equals(tipo)) {
             fecharMesa(this.mesa);
         }
-    }    
+    }
 
     private PdfService selecionarTipoImpressao(String tipo, Empresa empresa, Map<String, List<Object[]>> mapComanda) {
         PdfService pdfService;
@@ -224,8 +224,9 @@ public class MesasBean implements Serializable {
     private Mesa inserirPessoasNaMesa(String mesa) {
         int indexMesa = this.mesas.indexOf(new Mesa(mesa));
         Mesa mesaAxu = this.mesas.get(indexMesa);
-        if(this.mesa != null)
+        if (this.mesa != null) {
             mesaAxu.setPAGANTES(this.mesa.getPAGANTES());
+        }
         return mesaAxu;
     }
 
@@ -234,6 +235,7 @@ public class MesasBean implements Serializable {
         this.condicao = condicao;
         this.mostrareabrimesa = false;
     }
+
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
@@ -318,8 +320,9 @@ public class MesasBean implements Serializable {
         Mesa mesaDes = mesas.stream().filter(m -> m.getMESA().equals(mesaDestino)).findFirst().orElse(null);
         if ((mesaDes != null && !mesaDes.getSTATUS().equals("V")) || mesaDes == null) {
             Mesa m = this.getMesas().get(this.getMesas().indexOf(new Mesa(mesaOrigem)));
-            if(transferirComanda)
+            if (transferirComanda) {
                 m.setCOMANDA(m.getMESA());
+            }
             controle.transferirMesa(m, mesaDestino.toUpperCase());
             espelhoComandaService.atualizarResponsavelTransferencia(m.getPEDIDO(), usuarioTransferencia.toUpperCase());
             listarMesas();
@@ -422,7 +425,7 @@ public class MesasBean implements Serializable {
         if (this.reabrimesa) {
             mesa.setSTATUS("");
             controle.atualizarStatusPreconta(mesa, "REABRIR");
-            PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");            
+            PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");
         }
     }
 
@@ -430,9 +433,9 @@ public class MesasBean implements Serializable {
         this.mesa = null;
         this.mesa = new Mesa();
     }
-    
-    public void selecionarComandaParaPreconta(String mesa){
+
+    public void selecionarComandaParaPreconta(String mesa) {
         Mesa mesaParaPreconta = inserirPessoasNaMesa(mesa);
-        this.mesa= mesaParaPreconta;
+        this.mesa = mesaParaPreconta;
     }
 }
