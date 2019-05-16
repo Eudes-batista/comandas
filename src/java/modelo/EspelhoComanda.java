@@ -55,6 +55,9 @@ public class EspelhoComanda implements Serializable {
 
     @Column(name = "mesa", length = 4, nullable = false)
     private String mesa;
+    
+    @Column(name = "mesa_origem", length = 4, nullable = true)
+    private String mesaOrigem;
 
     @Column(name = "status", length = 1, nullable = true)
     private String status;

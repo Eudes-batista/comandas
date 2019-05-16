@@ -31,7 +31,8 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     + "   RESPONSAVEL_PRECONTA,\n"
                     + "   MESA, \n"
                     + "   COMANDA, \n"
-                    + "   DATA_PRECONTA\n"
+                    + "   DATA_PRECONTA,\n"
+                    + "   MESA_ORIGEM\n"
                     + "from \n"
                     + "   espelho_comanda \n"
                     + "where \n"
@@ -47,12 +48,12 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     + "   RESPONSAVEL_PARCIAL,\n"
                     + "   RESPONSAVEL_PRECONTA,   \n"
                     + "   MESA,\n"
-                    + "   COMANDA, DATA_PRECONTA;";
+                    + "   COMANDA, DATA_PRECONTA,MESA_ORIGEM;";
             return session.createSQLQuery(sql).setResultTransformer(Transformers.aliasToBean(RelatorioPreconta.class)).list();
         }
         return null;
     }
-    
+
     @Override
     public List<ItemVendido> listarItensVendidos(FiltroRelatorioPreconta filtroRelatorioPreconta) {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -78,7 +79,9 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     .append("   QUANTIDADE DESC");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemVendido.class));
-            return query.list();
+            List<ItemVendido> itemVendidos = query.list();
+            session.close();
+            return itemVendidos;
         }
         return null;
     }

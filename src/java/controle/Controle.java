@@ -286,7 +286,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferirComandaParaMesa(String mesa, Comandas comanda) {
         executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getCOMANDA() + "'");
-        executarSql("update espelho_comanda set mesa='" + mesa + "' where pedido='" + comanda.getPEDIDO() + "'");
+        executarSql("update espelho_comanda set mesa='" + mesa + "',mesa_origem='"+comanda.getMESA()+"' where pedido='" + comanda.getPEDIDO() + "'");
     }
 
     @Override
@@ -296,7 +296,7 @@ public class Controle implements ComandaService, Serializable {
         int somaQuantidadePessoasMesa;
         if (comanda.isEmpty()) {
             sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
+            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "',mesa_origem='"+comandaOrigem.getMESA()+"' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
             executarSql(sqlSoa98);
             executarSql(sqlEspelhoComanda);
             return;
@@ -322,7 +322,7 @@ public class Controle implements ComandaService, Serializable {
             }
         }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "',mesa_origem='"+comandaOrigem.getMESA()+"' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
     }
@@ -400,7 +400,7 @@ public class Controle implements ComandaService, Serializable {
                         numeros = gerarNumeroDeAtualizacao(numeros, numero);
                     }
                     executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='"+lancamentoOrigem.getMesa()+"' where   numero in(" + numeros + ")");
                     return;
                 }
                 numero += "," + lancamento.getNumero();
@@ -428,7 +428,7 @@ public class Controle implements ComandaService, Serializable {
                     numeros = gerarNumeroDeAtualizacao(numeros, numero);
                 }
                 executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "' where   numero in(" + numeros + ")");
+                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='"+lancamentoOrigem.getMesa()+"' where   numero in(" + numeros + ")");
                 return;
             }
             numero += "," + lancamento.getNumero();

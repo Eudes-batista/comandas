@@ -16,6 +16,7 @@ public class RelatorioPreconta implements Serializable {
     private String MESA;
     private String COMANDA;
     private Date DATA_PRECONTA;
+     private String MESA_ORIGEM;
 
     public RelatorioPreconta() {
     }

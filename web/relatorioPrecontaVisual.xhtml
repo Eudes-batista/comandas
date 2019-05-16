@@ -66,6 +66,7 @@
                                     <th>RESPONSAVEL TRANSFERENCIA</th>
                                     <th>RESPONSAVEL PRECONTA</th>
                                     <th>RESPONSAVEL PARCIAL</th>
+                                    <th>Mesa Origem</th>
                                     <th>Mesa</th>
                                     <th>Comanda</th>
                                     <th>Data Preconta</th>
@@ -79,6 +80,7 @@
                                         <td>#{relatorioPreconta.RESPONSAVEL_TRANSFERENCIA}</td>
                                         <td >#{relatorioPreconta.RESPONSAVEL_PRECONTA}</td>
                                         <td >#{relatorioPreconta.RESPONSAVEL_PARCIAL}</td>
+                                        <td >#{relatorioPreconta.MESA_ORIGEM}</td>
                                         <td >#{relatorioPreconta.MESA}</td>
                                         <td >#{relatorioPreconta.COMANDA}</td>
                                         <td >
@@ -87,7 +89,8 @@
                                             </h:outputText>
                                         </td>
                                         <td>
-                                            <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button" >
+                                            <button jsf:id="abrirModal" class="btn btn-link" data-toggle="modal" data-target="#myModal" type="button" 
+                                                    jsf:disabled="#{empty relatorioPreconta.DATA_PRECONTA}">
                                                 Itens
                                                 <f:ajax event="click" render="frmItens" execute="@this" listener="#{relatorioPrecontaBean.listarItens(relatorioPreconta.PEDIDO)}"/>
                                             </button>

@@ -328,9 +328,9 @@ public class MesasBean implements Serializable {
             listarMesas();
             PrimeFaces.current().ajax().update("frm:tabelaMesa");
             PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
-        } else {
-            Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
+            return;
         }
+        Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
     }
 
     private boolean verificarMesaDestinoIgualMesaOrigem() {
