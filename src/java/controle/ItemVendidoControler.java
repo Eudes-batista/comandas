@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import modelo.dto.FiltroItemVendido;
 import modelo.dto.FiltroVendaDetalhe;
+import modelo.dto.ItemPedido;
 import modelo.dto.ItemVendido;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -47,7 +49,49 @@ public class ItemVendidoControler implements ItemVendidoService, Serializable {
                     .append("   QUANTIDADE DESC");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemVendido.class));
-            return query.list();
+            List<ItemVendido> itemVendidos = query.list();
+            session.close();
+            return itemVendidos;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ItemPedido> buscarItensVendidos(FiltroItemVendido filtroItemVendido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("SELECT ")
+                    .append(" MESA")
+                    .append(",COMANDA")
+                    .append(",PEDIDO")
+                    .append(",DATA")
+                    .append(",DATA_PRECONTA")
+                    .append(",REFERENCIA")
+                    .append(",PRDESCRI as DESCRICAO")
+                    .append(",QUANTIDADE")
+                    .append(",VALOR_ITEM")
+                    .append(",STATUS_ITEM")
+                    .append(",VENDEDOR as GARCOM")
+                    .append(",NOME as MOTIVO")
+                    .append(",DATA_CANCELAMENTO")
+                    .append(" from")
+                    .append("  espelho_comanda")
+                    .append(" inner join")
+                    .append("  scea01 on(prrefere=referencia)")
+                    .append(" left outer join ")
+                    .append("   MOTIVO_CANCELAMENTO on(codigo=MOTIVO_CANCELAMENTO) ")
+                    .append(" where ")
+                    .append("   DATA between '").append(filtroItemVendido.getDataInicial()).append(" 00:00:00' and '").append(filtroItemVendido.getDataFinal()).append(" 23:59:59'  ")
+                    .append(" and (REFERENCIA = '").append(filtroItemVendido.getProduto()).append("'").append(" or PRDESCRI like '%").append(filtroItemVendido.getProduto()).append("%')  ")
+                    .append(" order by  ")
+                    .append("   PRDESCRI  ")
+                    ;
+            SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
+            Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemPedido.class));
+            List<ItemPedido> itemPedido = query.list();
+            session.close();
+            return itemPedido;
         }
         return null;
     }

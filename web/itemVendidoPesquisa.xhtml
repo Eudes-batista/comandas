@@ -6,7 +6,7 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
-        <f:viewAction action="#{itemVendidoBean.init()}" />
+        <f:viewAction action="#{itemVendidoBuscaBean.init()}" />
     </f:metadata>
     <h:head>
         <title>Itens Vendidos</title>
@@ -20,15 +20,15 @@
         <div class="container-fluid">
             <!--BARRA CABECALHO-->
             <div class="row barra">
-                <div class="col-md-4">
-                    <h3 style="color: #fff">Itens Vendidos</h3>
+                <div class="col-md-2">
+                    <h3 style="color: #fff">Pesquisar Item</h3>
                 </div>
                 <div class="col-md-1" style="font-size: 13pt;margin-top: 15px; text-align: right;color: #fff;">
                     <h5>Data Inicial</h5>
                 </div>
                 <h:form id="filtro">
                     <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;">
-                        <h:inputText class="form-control" value="#{itemVendidoBean.filtroVendaDetalhe.dataInicial}" converter="converterData">
+                        <h:inputText class="form-control" value="#{itemVendidoBuscaBean.filtroItemVendido.dataInicial}" converter="converterData">
                             <f:passThroughAttribute name="type" value="date"/>
                             <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
                         </h:inputText>
@@ -37,14 +37,19 @@
                         <h5>Data Final</h5>
                     </div>
                     <div class="col-md-2" style="font-size: 13pt;margin-top: 15px;margin-bottom: 10px;">
-                        <h:inputText class="form-control" value="#{itemVendidoBean.filtroVendaDetalhe.dataFinal}" converter="converterData">
+                        <h:inputText class="form-control" value="#{itemVendidoBuscaBean.filtroItemVendido.dataFinal}" converter="converterData">
                             <f:passThroughAttribute name="type" value="date"/>
                             <f:passThroughAttribute name="placeholder" value="Data Inicial"/>
                         </h:inputText>
                     </div>
+                    <div class="col-md-1" style="font-size: 13pt;margin-top: 15px;margin-bottom: 10px;">
+                        <h:inputText class="form-control" value="#{itemVendidoBuscaBean.filtroItemVendido.produto}" >
+                            <f:passThroughAttribute name="placeholder" value="Produto"/>
+                        </h:inputText>
+                    </div>
                     <div class="col-md-2">
                         <p:commandLink value="Pesquisar" class="btn btn-info btn-modal btn-block"
-                                       style="margin-top: 15px;text-decoration: none;" update="frmItemVendido" process="filtro" actionListener="#{itemVendidoBean.listarItensVendidos()}"/>
+                                       style="margin-top: 15px;text-decoration: none;" update="frmItemVendido" process="filtro" actionListener="#{itemVendidoBuscaBean.listarTodos()}"/>
                     </div>
                 </h:form>  
             </div>
@@ -54,16 +59,27 @@
                         <table class="table table-hover table-striped">
                             <thead>
                                 <tr>
+                                    <th>Mesa</th>
+                                    <th>Comanda</th>
+                                    <th>Pedido</th>
                                     <th>Referencia</th>
-                                    <th>Descrição</th>
+                                    <th>Descricao</th>
                                     <th>Quantidade</th>
-                                    <th>Valor</th>
-                                    <th>Total</th>
+                                    <th>Valor Item</th>
+                                    <th>Status</th>
+                                    <th>Garçom</th>
+                                    <th>Data</th>
+                                    <th>Data Preconta</th>
+                                    <th>Motivo</th>
+                                    <th>D.Cancelamento</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <ui:repeat value="#{itemVendidoBean.itemVendidos}" var="itemVendido">
+                                <ui:repeat value="#{itemVendidoBuscaBean.itemVendidos}" var="itemVendido">
                                     <tr>
+                                        <td>#{itemVendido.MESA}</td>
+                                        <td>#{itemVendido.COMANDA}</td>
+                                        <td>#{itemVendido.PEDIDO}</td>
                                         <td>#{itemVendido.REFERENCIA}</td>
                                         <td>#{itemVendido.DESCRICAO}</td>
                                         <td>
@@ -72,29 +88,37 @@
                                             </h:outputText>
                                         </td>
                                         <td>
-                                            <h:outputText value="#{itemVendido.VALOR}">
+                                            <h:outputText value="#{itemVendido.VALOR_ITEM}">
                                                 <f:convertNumber pattern="###,##0.00"/>
                                             </h:outputText>
                                         </td>
                                         <td>
-                                            <h:outputText value="#{itemVendido.TOTAL}">
-                                                <f:convertNumber pattern="###,##0.00"/>
+                                            #{itemVendido.STATUS_ITEM eq 'N' ? 'NORMAL' : 'CANCELADO'}
+                                        </td>
+                                        <td>#{itemVendido.GARCOM}</td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.DATA}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                             </h:outputText>
                                         </td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.DATA_PRECONTA}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.DATA_CANCELAMENTO}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+                                        <td>#{itemVendido.MOTIVO}</td>
                                     </tr>
                                 </ui:repeat>  
                             </tbody>
                         </table>
                     </div>
                     <div align="left">
-                        <div class="row">
-                            <div class="col-md-1">
-                                <a href="itensCanceladosPorGarcom.jsf" class="btn btn-link">Itens Cancelados</a>
-                            </div>
-                            <div class="col-md-2">
-                                <a href="itemVendidoPesquisa.jsf" class="btn btn-link">Pesquisar Itens</a>
-                            </div>
-                        </div>
+                        <a href="itensVendidos.jsf" class="btn btn-link">Voltar</a>
                     </div>   
                 </h:form>
             </div>

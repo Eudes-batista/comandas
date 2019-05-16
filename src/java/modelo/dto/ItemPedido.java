@@ -16,7 +16,8 @@ public class ItemPedido implements Serializable {
     private String PEDIDO;
     private String MESA;
     private String COMANDA;
-    private Date DATA;
+    private Date   DATA;
+    private Date   DATA_PRECONTA;
     private String REFERENCIA;
     private String DESCRICAO;
     private String FOI_PRODUZIDO;
@@ -26,5 +27,6 @@ public class ItemPedido implements Serializable {
     private Double VALOR_ITEM;
     private Double TOTAL;
     private String GARCOM;
-    private Date DATA_CANCELAMENTO;
+    private String MOTIVO;
+    private Date DATA_CANCELAMENTO;  
 }
