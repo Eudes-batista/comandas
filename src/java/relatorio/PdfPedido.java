@@ -78,7 +78,7 @@ public class PdfPedido implements PdfService {
         PdfPCell tituloComanda = controlePdf.criarCelula("Comanda", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
         PdfPCell tituloHora = controlePdf.criarCelula("Hora", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
 
-        PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("HH:mm:ss").format(new Date()), ControlePdf.FONT_PB, 1, Element.ALIGN_CENTER);
+        PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(new Date()), ControlePdf.FONT_PPB, 1, Element.ALIGN_CENTER);
 
         PdfPCell numeroMesa = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getMesa() : lancamento.getMesa(), ControlePdf.FONT_MB, 1, Element.ALIGN_LEFT);
 
@@ -205,7 +205,7 @@ public class PdfPedido implements PdfService {
         PdfPCell garcom = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getVendedor() : lancamento.getVendedor(), ControlePdf.FONT_PPB, 1, Element.ALIGN_LEFT);
         PdfPCell titulopedido = controlePdf.criarCelula("Pedido ", ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
         PdfPCell pedido = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getPedido() : lancamento.getPedido(), ControlePdf.FONT_PP, 1, Element.ALIGN_RIGHT);
-        PdfPCell div = controlePdf.criarCelula(separador, ControlePdf.FONT_PPB, 2, Element.ALIGN_CENTER);
+        PdfPCell div = controlePdf.criarCelula(separador, ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
 
