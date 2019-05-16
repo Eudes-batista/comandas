@@ -72,19 +72,16 @@ public class PdfPedido implements PdfService {
         PdfPTable tabelaTitulo = new PdfPTable(3);
         PdfPTable tabelaValores = new PdfPTable(3);
 
-//        ***********TITULO MESA/COMANDA*************
+//        ***********TITULOS MESA/COMANDA*************
         PdfPCell reimpressao = controlePdf.criarCelula("***** REIMPRESSÃO *****", ControlePdf.FONT_MB, 1, Element.ALIGN_CENTER);
         PdfPCell tituloMesa = controlePdf.criarCelula("Mesa", ControlePdf.FONT_PP, 1, Element.ALIGN_LEFT);
         PdfPCell tituloComanda = controlePdf.criarCelula("Comanda", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
         PdfPCell tituloHora = controlePdf.criarCelula("Hora", ControlePdf.FONT_PP, 1, Element.ALIGN_CENTER);
 
-//        ***********HORA*************
         PdfPCell hora = controlePdf.criarCelula(new SimpleDateFormat("HH:mm:ss").format(new Date()), ControlePdf.FONT_PB, 1, Element.ALIGN_CENTER);
 
-//        ***********NÚMERO MESA*************
         PdfPCell numeroMesa = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getMesa() : lancamento.getMesa(), ControlePdf.FONT_MB, 1, Element.ALIGN_LEFT);
 
-//        ***********NÚMERO COMANDA************
         PdfPCell numeroComanda = controlePdf.criarCelula(lancamentos != null ? lancamentos.get(0).getComanda() : lancamento.getComanda(), ControlePdf.FONT_MB, 1, Element.ALIGN_CENTER);
 
         Paragraph divider1 = new Paragraph(-1f, "______________________________");

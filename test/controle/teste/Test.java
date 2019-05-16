@@ -1,17 +1,24 @@
 package controle.teste;
 
-import controle.PesquisaMesasControle;
-import java.util.List;
-import modelo.dto.ItemPedido;
+import javax.print.DocFlavor;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintServiceAttributeSet;
 
 public class Test {
 
     public static void main(String[] args) {
        
-        PesquisaMesasControle pesquisaMesasControle = new PesquisaMesasControle();
+        try {
+            DocFlavor docFlavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
+            PrintService[] ps = PrintServiceLookup.lookupPrintServices(docFlavor, new HashPrintServiceAttributeSet());
+            for (PrintService printService : ps) {
+                System.out.println(printService.getName());
+            }
+        } catch (Exception e) {
+            System.out.println("e = " + e);
+        }
         
-        List<ItemPedido> itensPedido = pesquisaMesasControle.listarItemPorPedido("154192");
-        itensPedido.forEach(System.out::println);
     }
 
 }
