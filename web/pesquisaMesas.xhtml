@@ -152,40 +152,42 @@
                   closable="true" closeOnEscape="true"
                   showEffect="fade" hideEffect="fade" position="top">
             <h:form id="frmItemPedido">
-                <ui:repeat value="#{pesquisaMesasBean.itensPedido}" var="item">
-                    <p:panel header="#{item.REFERENCIA} - #{item.DESCRICAO}">
-                        <p:panelGrid layout="grid" columns="6" styleClass="ui-panelgrid-blank">
-                            <h:outputText value="Quantidade:" />
-                            <h:outputText value="#{item.QUANTIDADE}">
-                                <f:convertNumber />
-                            </h:outputText>
-                            <h:outputText value="Preço:" />
-                            <h:outputText value="#{item.VALOR_ITEM}">
-                                <f:convertNumber pattern="###,##0.00"/>
-                            </h:outputText>
-                            <h:outputText value="Total:" />
-                            <h:outputText value="#{item.TOTAL}">
-                                <f:convertNumber pattern="###,##0.00"/>
-                            </h:outputText>
-                            <h:outputText value="Data Lançamento:" />
-                            <h:outputText value="#{item.DATA}">
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                            </h:outputText>
-                            <h:outputText value="Garçom:" />
-                            <h:outputText value="#{item.GARCOM}" />
-                            <h:outputText value="Impresso:" />
-                            <h:outputText value="#{item.IMPRESSAO}" />
-                            <h:outputText value="Produzido:" />
-                            <h:outputText value="#{item.FOI_PRODUZIDO}" />
-                            <h:outputText value="Data Cancelamento:" />
-                            <h:outputText value="#{item.DATA_CANCELAMENTO}">
-                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
-                            </h:outputText>
-                            <h:outputText value="Status" />
-                            <h:outputText value="#{item.STATUS_ITEM}" />
-                        </p:panelGrid>
-                    </p:panel>
-                </ui:repeat>
+                <div style="overflow: auto;height: 400px;">
+                    <ui:repeat value="#{pesquisaMesasBean.itensPedido}" var="item">
+                        <p:panel header="#{item.REFERENCIA} - #{item.DESCRICAO}">
+                            <p:panelGrid layout="grid" columns="6" styleClass="ui-panelgrid-blank">
+                                <h:outputText value="Quantidade:" />
+                                <h:outputText value="#{item.QUANTIDADE}">
+                                    <f:convertNumber />
+                                </h:outputText>
+                                <h:outputText value="Preço:" />
+                                <h:outputText value="#{item.VALOR_ITEM}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="Total:" />
+                                <h:outputText value="#{item.TOTAL}">
+                                    <f:convertNumber pattern="###,##0.00"/>
+                                </h:outputText>
+                                <h:outputText value="Data Lançamento:" />
+                                <h:outputText value="#{item.DATA}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                </h:outputText>
+                                <h:outputText value="Garçom:" />
+                                <h:outputText value="#{item.GARCOM}" />
+                                <h:outputText value="Impresso:" />
+                                <h:outputText value="#{item.IMPRESSAO}" />
+                                <h:outputText value="Produzido:" />
+                                <h:outputText value="#{item.FOI_PRODUZIDO}" />
+                                <h:outputText value="Data Cancelamento:" />
+                                <h:outputText value="#{item.DATA_CANCELAMENTO}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                                </h:outputText>
+                                <h:outputText value="Status" />
+                                <h:outputText value="#{item.STATUS_ITEM}" />
+                            </p:panelGrid>
+                        </p:panel>
+                    </ui:repeat>
+                </div>  
             </h:form>          
         </p:dialog>
     </h:body>
