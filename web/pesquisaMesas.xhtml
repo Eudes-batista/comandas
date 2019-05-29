@@ -100,8 +100,8 @@
                 </p:column>
                 <p:column width="120">
                     <p:commandButton value="SEM 10%" actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
-                                     process="@this" update="frmAuditoria:msgAuditoria frmAuditoria:tabela"
                                      action="#{pesquisaMesasBean.listarComandas()}"
+                                     process="@this" update="frmAuditoria:msgAuditoria frmAuditoria:tabela"
                                      disabled="#{comanda.STATUS ne 'P'}"
                                      onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                         <p:confirm header="Confirmação" message="Tem certeza que deseja retirar os 10%?" icon="fa fa-exclamation-triangle" />
