@@ -38,7 +38,7 @@ public class GerenciaArquivo {
     public GerenciaArquivo bucarInformacoes() {
         try {
             List<String> lines = Files.lines(Paths.get(carregarCaimnho())).collect(Collectors.toList());
-            if (!lines.isEmpty()) {
+            if (!lines.isEmpty() && !"".equals(lines.get(0))) {
                 getConfiguracao().setCaminho(lines.get(0));
                 getConfiguracao().setEmpresa(lines.get(1));
                 getConfiguracao().setTipoImpressao(lines.get(2));
