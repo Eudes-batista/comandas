@@ -106,7 +106,6 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" AND VENDEDOR ='").append(filtroVendaDetalhe.getCargom()).append("'")
                     .append(" group by")
                     .append("    PEDIDO,REFERENCIA,PRDESCRI,QUANTIDADE,VALOR_ITEM,PORCENTAGEM,VALOR_PORCENTAGEM,DATA");
-            System.out.println("sql = " + sql.toString());
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
             List<VendaDetalhe> vendaDetalhes = setResultTransformer.list();
