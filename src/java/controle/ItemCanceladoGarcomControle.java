@@ -53,7 +53,9 @@ public class ItemCanceladoGarcomControle implements ItemCanceladoGarcomService, 
                     .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO,DATA_CANCELAMENTO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemCanceladoGarcom.class));
-            return setResultTransformer.list();
+            List<ItemCanceladoGarcom> itemCanceladoGarcoms = setResultTransformer.list();
+            session.close();
+            return itemCanceladoGarcoms;
         }
         return null;
     }

@@ -73,6 +73,7 @@ public class AcompanhamentoControle implements AcompanhamentoService {
            if(qtd != null){
                count =Integer.parseInt(String.valueOf(qtd))+1;
            }
+           session.close();   
         }
         return count;
     }

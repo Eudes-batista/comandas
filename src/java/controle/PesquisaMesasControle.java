@@ -104,7 +104,9 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
                     .append(" where ")
                     .append("  PEDIDO='").append(pedido).append("'");
             SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
-            return sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemPedido.class)).list();
+            List<ItemPedido> itemPedidos = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemPedido.class)).list();
+            session.close();
+            return itemPedidos;
         }
         return null;
     }

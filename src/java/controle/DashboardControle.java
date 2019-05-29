@@ -41,7 +41,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" AND STATUS ='").append("P").append("'");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(TotalVenda.class));
-            return (TotalVenda) setResultTransformer.uniqueResult();
+            TotalVenda totalVenda = (TotalVenda) setResultTransformer.uniqueResult();
+            session.close();
+            return totalVenda;
         }
         return null;
     }
@@ -65,7 +67,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" pedido,pessoas_mesa ");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ClienteAtendido.class));
-            return setResultTransformer.list();
+            List<ClienteAtendido> clienteAtendidos = setResultTransformer.list();
+            session.close();
+            return clienteAtendidos;
         }
         return null;
     }
@@ -89,7 +93,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" pedido,pessoas_mesa ");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ClienteAtendido.class));
-            return setResultTransformer.list();
+            List<ClienteAtendido> clienteAtendidos = setResultTransformer.list();
+            session.close();
+            return clienteAtendidos;
         }
         return null;        
     }
@@ -113,7 +119,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" VENDEDOR ");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
-            return setResultTransformer.list();
+            List<VendaGarcom> vendaGarcoms = setResultTransformer.list();
+            session.close();
+            return vendaGarcoms;
         }
         return null;
     }
@@ -138,7 +146,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" VENDEDOR,PEDIDO ");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(RejeicaoPorcentagemVendedor.class));
-            return setResultTransformer.list();
+            List<RejeicaoPorcentagemVendedor> rejeicaoPorcentagemVendedors = setResultTransformer.list();
+            session.close();
+            return rejeicaoPorcentagemVendedors;
         }
         return null;
 
@@ -163,7 +173,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" VENDEDOR ORDER BY VENDAS ASC");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
-            return setResultTransformer.list();
+            List<VendaGarcom> vendaGarcoms = setResultTransformer.list();
+            session.close();
+            return vendaGarcoms;
         }
         return null;
 
@@ -192,7 +204,9 @@ public class DashboardControle implements DashboardService, Serializable {
                     .append(" prdescri");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(Couvert.class));
-            return (Couvert) setResultTransformer.uniqueResult();
+            Couvert couvert = (Couvert) setResultTransformer.uniqueResult();
+            session.close();
+            return couvert;
         }
         return null;         
     }

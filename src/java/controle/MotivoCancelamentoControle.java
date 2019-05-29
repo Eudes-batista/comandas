@@ -68,6 +68,7 @@ public class MotivoCancelamentoControle implements MotivoCancelamentoService, Se
            if(qtd != null){
                count =Integer.parseInt(String.valueOf(qtd))+1;
            }
+           session.close();
         }
         return count;
     }
@@ -77,6 +78,7 @@ public class MotivoCancelamentoControle implements MotivoCancelamentoService, Se
         session = HibernateUtil.getSessionFactory().openSession();
         if(session != null){
            MotivoCancelamento motivoCancelamento =(MotivoCancelamento) session.createQuery("from MotivoCancelamento where codigo ="+codigo+" ").uniqueResult();
+           session.close();
            return motivoCancelamento;
         }
         return null;

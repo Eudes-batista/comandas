@@ -72,6 +72,7 @@ public class ClienteAtendidoControle implements ClienteAtendidoService, Serializ
         }
         if(!mapPessoas.isEmpty())
             mapPessoas.forEach((chave, valor) -> clienteAtendidos.add(new ClienteAtendidoPorMes(valor, chave)));
+        connection.close();   
         return clienteAtendidos;
     }
 

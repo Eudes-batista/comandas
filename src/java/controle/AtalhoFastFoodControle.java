@@ -50,7 +50,9 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService, Serializab
     public AtalhoFastFood carregar() {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return (AtalhoFastFood) session.createQuery("from AtalhoFastFood ").uniqueResult();
+            AtalhoFastFood atalhoFastFood = (AtalhoFastFood) session.createQuery("from AtalhoFastFood ").uniqueResult();
+            session.close();   
+            return atalhoFastFood;
         }
         return null;
     }

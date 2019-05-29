@@ -46,7 +46,9 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" VENDEDOR,META");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
-            return query.list();
+            List<VendaGarcom> vendaGarcoms = query.list();
+            session.close();
+            return vendaGarcoms;
         }
         return null;
     }
@@ -70,7 +72,9 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" PEDIDO ");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(RejeicaoPorcentagemVendedor.class));
-            return setResultTransformer.list();
+            List<RejeicaoPorcentagemVendedor> rejeicaoPorcentagemVendedors = setResultTransformer.list();
+            session.close();
+            return rejeicaoPorcentagemVendedors;
         }
         return null;
     }
@@ -94,7 +98,7 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" inner join")
                     .append(" scea01 on(prrefere=referencia)")
                     .append(" where")
-                    .append(" PORCENTAGEM <").append(10).append(" and substr(prdescri,1,7) != 'COUVERT' " )
+                    .append(" PORCENTAGEM <").append(10).append(" and substr(prdescri,1,7) != 'COUVERT' ")
                     .append(" AND DATA_PRECONTA BETWEEN ").append("'").append(filtroVendaDetalhe.getDataInicial()).append(" 00:00:00' ")
                     .append(" AND '").append(filtroVendaDetalhe.getDataFinal()).append(" 23:59:59'")
                     .append(" AND STATUS_ITEM ='").append("N").append("'")
@@ -105,7 +109,9 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
             System.out.println("sql = " + sql.toString());
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
-            return setResultTransformer.list();
+            List<VendaDetalhe> vendaDetalhes = setResultTransformer.list();
+            session.close();
+            return vendaDetalhes;
         }
         return null;
     }
@@ -137,7 +143,9 @@ public class VendaDetalheControler implements VendaDetalheService, Serializable 
                     .append(" order by PEDIDO");
             SQLQuery sQLQuery = session.createSQLQuery(sql.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(VendaDetalhe.class));
-            return setResultTransformer.list();
+            List<VendaDetalhe> vendaDetalhes = setResultTransformer.list();
+            session.close();
+            return vendaDetalhes;
         }
         return null;
     }

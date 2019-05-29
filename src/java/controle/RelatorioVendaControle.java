@@ -43,7 +43,9 @@ public class RelatorioVendaControle implements RelatorioVendaService, Serializab
                     .append(" group by VENDEDOR")
                     .append(" order by VENDAS DESC");
             Query query = session.createSQLQuery(stringBuilder.toString()).setResultTransformer(Transformers.aliasToBean(VendaGarcom.class));
-            return query.list();
+            List<VendaGarcom> vendaGarcoms = query.list();
+            session.close();
+            return vendaGarcoms;
         }
         return null;
     }
@@ -80,6 +82,7 @@ public class RelatorioVendaControle implements RelatorioVendaService, Serializab
             });
             lista.clear();
             mapa.forEach((chave,valor) -> lista.add(new RejeicaoPorcentagemVendedor("", chave, valor)));
+            session.close();
             return lista;
         }
         return null;
@@ -103,7 +106,9 @@ public class RelatorioVendaControle implements RelatorioVendaService, Serializab
                     .append(" pedido,pessoas_mesa ");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ClienteAtendido.class));
-            return setResultTransformer.list();
+            List<ClienteAtendido> clienteAtendidos = setResultTransformer.list();
+            session.close();
+            return clienteAtendidos;
         }
         return null;
     }

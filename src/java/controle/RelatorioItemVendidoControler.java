@@ -52,7 +52,9 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append("     REFERENCIA,PRDESCRI,VALOR_ITEM")
                     .append("     ORDER BY QUANTIDADE DESC");
             Query query = session.createSQLQuery(stringBuilder.toString()).setResultTransformer(Transformers.aliasToBean(ItemVendido.class));
-            return query.list();
+            List<ItemVendido> itemVendidos = query.list();
+            session.close();
+            return itemVendidos;
         }
         return null;
     }
@@ -91,7 +93,9 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append("   VENDEDOR ,QUANTIDADE_CANCELADA ,PRDESCRI ,NOME ,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL_CANCELAMENTO,NUMERO,OBSERVACAO_DESTINO");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());
             Query setResultTransformer = sQLQuery.setResultTransformer(Transformers.aliasToBean(ItemCanceladoGarcom.class));
-            return setResultTransformer.list();
+            List<ItemCanceladoGarcom> itemCanceladoGarcoms = setResultTransformer.list();
+            session.close();
+            return itemCanceladoGarcoms;
         }
         return null;
     }

@@ -87,7 +87,9 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     public List<EspelhoComanda> listarAuditoria() {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return session.createQuery("from EspelhoComanda").list();
+            List<EspelhoComanda> espelhoComandas = session.createQuery("from EspelhoComanda").list();
+            session.close();
+            return espelhoComandas;
         }
         return null;
     }
@@ -102,8 +104,10 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     public List<Object[]> listarProdutosPedido(String pedido) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
+            List<Object[]> objects = session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
                     + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') left outer join scea01 on (prrefere = eerefere) where pedido = '" + pedido + "' ").list();
+            session.close();        
+            return objects;        
         }
         return null;
     }

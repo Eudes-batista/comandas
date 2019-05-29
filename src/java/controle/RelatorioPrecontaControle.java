@@ -49,7 +49,9 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     + "   RESPONSAVEL_PRECONTA,   \n"
                     + "   MESA,\n"
                     + "   COMANDA, DATA_PRECONTA,MESA_ORIGEM;";
-            return session.createSQLQuery(sql).setResultTransformer(Transformers.aliasToBean(RelatorioPreconta.class)).list();
+            List<RelatorioPreconta> relatorioPrecontas = session.createSQLQuery(sql).setResultTransformer(Transformers.aliasToBean(RelatorioPreconta.class)).list();
+            session.close();
+            return relatorioPrecontas;
         }
         return null;
     }

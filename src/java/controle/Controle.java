@@ -231,6 +231,7 @@ public class Controle implements ComandaService, Serializable {
         Object count = session.createSQLQuery("select count(*) from  sosa98 where TECOMAND='" + comanda + "' and   TECDMESA='" + mesa + "' group by  TECDMESA").uniqueResult();
         if (count == null) {
             count = 0;
+            session.close();
         }
         return Integer.parseInt(String.valueOf(count));
     }
@@ -286,7 +287,7 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public void transferirComandaParaMesa(String mesa, Comandas comanda) {
         executarSql("update sosa98 set tecdmesa='" + mesa + "' where tecomand='" + comanda.getCOMANDA() + "'");
-        executarSql("update espelho_comanda set mesa='" + mesa + "',mesa_origem='"+comanda.getMESA()+"' where pedido='" + comanda.getPEDIDO() + "'");
+        executarSql("update espelho_comanda set mesa='" + mesa + "',mesa_origem='" + comanda.getMESA() + "' where pedido='" + comanda.getPEDIDO() + "'");
     }
 
     @Override
@@ -296,7 +297,7 @@ public class Controle implements ComandaService, Serializable {
         int somaQuantidadePessoasMesa;
         if (comanda.isEmpty()) {
             sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "',mesa_origem='"+comandaOrigem.getMESA()+"' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
+            sqlEspelhoComanda = "update espelho_comanda set comanda='" + comandaDestino + "',mesa_origem='" + comandaOrigem.getMESA() + "' where pedido ='" + comandaOrigem.getPEDIDO() + "'";
             executarSql(sqlSoa98);
             executarSql(sqlEspelhoComanda);
             return;
@@ -322,7 +323,7 @@ public class Controle implements ComandaService, Serializable {
             }
         }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
-        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "',mesa_origem='"+comandaOrigem.getMESA()+"' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
+        sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "',mesa_origem='" + comandaOrigem.getMESA() + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
         executarSql(sqlSoa98);
         executarSql(sqlEspelhoComanda);
     }
@@ -400,7 +401,7 @@ public class Controle implements ComandaService, Serializable {
                         numeros = gerarNumeroDeAtualizacao(numeros, numero);
                     }
                     executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='"+lancamentoOrigem.getMesa()+"' where   numero in(" + numeros + ")");
+                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + numeros + ")");
                     return;
                 }
                 numero += "," + lancamento.getNumero();
@@ -428,7 +429,7 @@ public class Controle implements ComandaService, Serializable {
                     numeros = gerarNumeroDeAtualizacao(numeros, numero);
                 }
                 executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='"+lancamentoOrigem.getMesa()+"' where   numero in(" + numeros + ")");
+                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + numeros + ")");
                 return;
             }
             numero += "," + lancamento.getNumero();
@@ -467,9 +468,11 @@ public class Controle implements ComandaService, Serializable {
     public List<ItemAcompanhamentoTransferencia> pesquisarItensComAcompanhamento(String pedido, String item) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return session.createSQLQuery("select ITEM,PEDIDO from sosa98 inner join item_acompanhamento on(pedido=tepedido) where tepedido='" + pedido + "' and item='" + item + "' group by ITEM,PEDIDO")
+            List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = session.createSQLQuery("select ITEM,PEDIDO from sosa98 inner join item_acompanhamento on(pedido=tepedido) where tepedido='" + pedido + "' and item='" + item + "' group by ITEM,PEDIDO")
                     .setResultTransformer(Transformers.aliasToBean(ItemAcompanhamentoTransferencia.class))
                     .list();
+            session.close();
+            return itemAcompanhamentoTransferencias;
         }
         return null;
     }
@@ -477,8 +480,10 @@ public class Controle implements ComandaService, Serializable {
     private List<ItemAcompanhamento> pesquisarAcompanhamento(String pedido, String item) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            return session.createQuery("from ItemAcompanhamento where pedido='" + pedido + "' and item='" + item + "'")
+            List<ItemAcompanhamento> itemAcompanhamentos = session.createQuery("from ItemAcompanhamento where pedido='" + pedido + "' and item='" + item + "'")
                     .list();
+            session.close();
+            return itemAcompanhamentos;
         }
         return null;
     }
@@ -562,6 +567,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             Object uniqueResult = session.createSQLQuery("select first 1 tenumseq from sosa98 where tepedido='" + pedido + "' group by tenumseq order by tenumseq desc")
                     .uniqueResult();
+            session.close();
             return uniqueResult == null ? 1 : Integer.parseInt(String.valueOf(uniqueResult));
         }
         return 0;
@@ -572,6 +578,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             List<Object> seguencias = session.createSQLQuery("select tenumseq from sosa98 where tepedido='" + pedido + "' group by tenumseq order by tenumseq")
                     .list();
+            session.close();
             return seguencias;
         }
         return null;
@@ -582,6 +589,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             Object uniqueResult = session.createSQLQuery("select count(*) from sosa98 where tepedido='" + pedido + "' and tenumseq='" + item + "'")
                     .uniqueResult();
+            session.close();
             return Integer.parseInt(String.valueOf(uniqueResult)) != 0;
         }
         return false;
@@ -593,6 +601,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             Object uniqueResult = session.createSQLQuery("select count(*) from espelho_comanda where pedido='" + pedido + "' group by pedido")
                     .uniqueResult();
+            session.close();
             return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
         }
         return 0;
@@ -604,6 +613,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             Object uniqueResult = session.createSQLQuery("select pessoas_mesa from espelho_comanda where pedido='" + pedido + "' group by pessoas_mesa")
                     .uniqueResult();
+            session.close();
             return uniqueResult != null ? Integer.parseInt(String.valueOf(uniqueResult)) : 0;
         }
         return 0;
@@ -634,6 +644,7 @@ public class Controle implements ComandaService, Serializable {
         if (session != null) {
             Object seguencias = session.createSQLQuery("select tenumero from sosa98 where tenumero='" + numero + "'")
                     .uniqueResult();
+            session.close();
             return seguencias != null;
         }
         return false;
@@ -647,6 +658,7 @@ public class Controle implements ComandaService, Serializable {
                     .uniqueResult();
             seguencias = seguencias == null ? "0000" : seguencias;
             seguencias = String.format("%04d", (Integer.parseInt(String.valueOf(seguencias)) + 1));
+            session.close();
             return String.valueOf(seguencias);
         }
         return "0001";
