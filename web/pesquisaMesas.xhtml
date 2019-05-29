@@ -125,8 +125,8 @@
                             </p:panelGrid>
                             <p:commandLink id="confirmaValor" value="OK" class="btn btn-success btn-modal btn-block" style="color: #fff;"
                                            actionListener="#{espelhoComandaBean.atualizarPorcemtagemEvalorPorcentagemItens(comanda)}"
+                                           action="#{pesquisaMesasBean.listarComandas()}"
                                            process="frmAuditoria:tabela:#{index}:valor @this" update="msg frmAuditoria:msgAuditoria frmAuditoria:tabela"
-                                           action="#{auditoriaBean.listarComandas()}"
                                            partialSubmit="true"
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
                         </div> 
