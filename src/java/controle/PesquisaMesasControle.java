@@ -34,7 +34,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
                 .append("from  espelho_comanda ")
                 .append(" inner join scea07 on(eerefere=referencia and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
                 .append(" inner join scea01 on(prrefere=eerefere)")
-                .append(" where DATA_PRECONTA BETWEEN '").append(dataInicial).append(" 00:00:00' ").append(" and '").append(dataFinal).append(" 23:59:59'")
+                .append(" where status_item='N' and DATA_PRECONTA BETWEEN '").append(dataInicial).append(" 00:00:00' ").append(" and '").append(dataFinal).append(" 23:59:59'")
                 .append(" group by COMANDA,STATUS,mesa,pessoas_mesa,pedido,prdescri,porcentagem,DATA_PRECONTA ")
                 .append(" order by STATUS desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
@@ -59,7 +59,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
                 .append(" from  espelho_comanda ")
                 .append(" inner join scea07 on(eerefere=referencia and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
                 .append(" inner join scea01 on(prrefere=eerefere)")
-                .append(" where ")
+                .append(" where status_item='N' and ")
                 .append(" COMANDA like '%").append(codigo).append("%'")
                 .append(" AND DATA_PRECONTA BETWEEN '").append(dataInicial).append(" 00:00:00' ").append(" and '").append(dataFinal).append(" 23:59:59'")
                 .append(" group by COMANDA,STATUS,MESA,pessoas_mesa,pedido,prdescri,porcentagem,DATA_PRECONTA ")
