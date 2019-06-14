@@ -93,6 +93,7 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
                     .append(",iif(IMPRESSAO ='1','SIM','NAO') as IMPRESSAO")
                     .append(",iif(STATUS_ITEM ='N','NORNAL','CANCELADO') as STATUS_ITEM")
                     .append(",QUANTIDADE as QUANTIDADE")
+                    .append(",QUANTIDADE_CANCELADA as QUANTIDADE_CANCELADA")
                     .append(",VALOR_ITEM as VALOR_ITEM")
                     .append(",(QUANTIDADE*VALOR_ITEM) as TOTAL")
                     .append(",VENDEDOR as GARCOM")

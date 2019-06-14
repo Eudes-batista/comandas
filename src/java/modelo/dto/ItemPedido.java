@@ -24,6 +24,7 @@ public class ItemPedido implements Serializable {
     private String IMPRESSAO;
     private String STATUS_ITEM;
     private Double QUANTIDADE;
+    private Double QUANTIDADE_CANCELADA;
     private Double VALOR_ITEM;
     private Double TOTAL;
     private String GARCOM;
