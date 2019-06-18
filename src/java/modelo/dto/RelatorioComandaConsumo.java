@@ -5,9 +5,11 @@ import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter
 @EqualsAndHashCode(of={"PEDIDO"})
+@ToString
 public class RelatorioComandaConsumo implements Serializable{
 
     private String MESA;
