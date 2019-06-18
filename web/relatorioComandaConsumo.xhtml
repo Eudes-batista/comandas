@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{relatorioComandaConsumoBean.init()}"/>
+    </f:metadata>
+    <h:head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <h:outputStylesheet library="css" name="rel-venda.css" />
+        <h:outputScript library="js" name="jquery-3.2.1.min.js" />
+        <h:outputScript library="js" name="bootstrap.min.js" />
+        <script>
+            document.addEventListener('keydown', function (evt) {
+                if (evt.keyCode === 121) {
+                    document.getElementById("filtro:confimarFiltro").click();
+                }
+            });
+            function printContent(el) {
+                var restorepage = $('body').html();
+                var printcontent = $('#' + el).clone();
+                $('body').empty().html(printcontent);
+                window.print();
+                window.close();
+                $('body').html(restorepage);
+            }
+            function imprimir() {
+                mostrarFomularios("none", "block");
+                printContent('print');
+                //<![CDATA[  
+                if (window.innerWidth >= 360 && window.innerWidth <= 767) {
+                    setTimeout(function () {
+                        mostrarFomularios("block", "none");
+                        document.getElementById("filtro:dataInicial").focus();
+                    }, 2000);
+                } else {
+                    mostrarFomularios("block", "none");
+                    document.getElementById("filtro:dataInicial").focus();
+                }
+                //]]>
+            }
+            function mostrarFomularios(isfiltro, relatorio) {
+                var filtro = document.getElementById("filtro");
+                filtro.style.display = isfiltro;
+                var print = document.getElementById("print");
+                print.style.display = relatorio;
+                var principal = document.getElementById("principal");
+                principal.style.display = relatorio;
+            }
+        </script>
+        <title>Relatorio de Itens Vendidos</title>
+    </h:head>
+    <h:body>
+        <div id="filtro" class="jumbotron" style="margin-left: auto;margin-right: auto;max-width: 800px;margin-top: 20px;padding: 20px;">
+            <h:form id="filtro">
+                <div class="container-fluid">
+                    <h3>Filtro</h3>
+                    <div class="row espaco">
+                        <div class="col-xs-6">
+                            <label >Data Inicial</label>
+                            <input jsf:id="dataInicial" jsf:converter="converterData" jsf:value="#{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataInicial}" type="date" class="form-control" placeholder="Data Inicial" 
+                                   autofocus="true"/>
+                        </div>
+                        <div class="col-xs-6">
+                            <label >Data Final</label>
+                            <input jsf:id="dataFinal" jsf:converter="converterData" jsf:value="#{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataFinal}" type="date" class="form-control" placeholder="Data Final" />                    
+                        </div>
+                    </div>
+                    <div class="row espaco">
+                        <div class="col-md-3">
+                            <label >Pesquisa</label>
+                            <h:inputText id="garcom" value="#{relatorioComandaConsumoBean.pesquisa}" class="form-control">
+                                <f:passThroughAttribute name="placeholder" value="Pesquisa" />
+                            </h:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p:commandLink id="confimarFiltro" class="btn btn-success btn-block" oncomplete="imprimir()"
+                                           update="corpo:tabela corpo:periodo corpo:empresa"
+                                           process="filtro" actionListener="#{relatorioComandaConsumoBean.listarComandasEmConsumo()}">
+                                <i class="fa fa-print"></i> Imprimir ( F10 )
+                            </p:commandLink>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <div class="container-fluid" id="principal" style="display: none;">
+            <h:form id="corpo">
+                <div id="print" style="display: none;">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="row">
+                                <img  class="logo" src="resources/imagens/logo.jpg"/>
+                            </div>
+                            <div class="row texto-logo">
+                                <h:panelGroup id="empresa">
+                                    <span>#{relatorioComandaConsumoBean.empresa.codigo} - #{relatorioComandaConsumoBean.empresa.razao}</span>
+                                </h:panelGroup>
+                            </div>
+                        </div>
+                        <div class="coml-xs-8  cabecalho">
+                            <div class="row">
+                                <div class="col-xs-8"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
+                                    <h:panelGroup id="periodo">
+                                        <span style="font-weight: bold;">Relatorio de mesas em consumo</span> <br/>
+                                        <span style="font-size: 8pt;padding: 20px;">
+                                            Período: #{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataInicial} à #{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataFinal}    
+                                        </span>
+                                        <span style="font-size: 8pt;padding: 20px;">
+                                            Grupo: #{empty grupo?'TODOS':grupo.t51dsgrp}     
+                                        </span>
+                                    </h:panelGroup>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h:panelGroup id="tabela">
+                                <!--Tabela Itens Vendidos-->
+                                <table class="table table-striped"  style="font-size: 8pt">
+                                    <thead>
+                                        <tr style="background: #f1f1f1;">
+                                            <th>Mesa</th>
+                                            <th>Comanda</th>
+                                            <th>Pedido</th>
+                                            <th>STATUS</th>
+                                            <th style="text-align: right;">Total</th>
+                                            <th>Responsavel Parcial</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size: 8pt">
+                                        <ui:repeat value="#{relatorioComandaConsumoBean.comandasConsumo}" var="comanda">
+                                            <tr>
+                                                <td>#{comanda.MESA}</td>
+                                                <td>#{comanda.COMANDA}</td>
+                                                <td>#{comanda.PEDIDO}</td>
+                                                <td>#{comanda.STATUS}</td>
+                                                <td style="text-align: right;">
+                                                    <h:outputText value="#{comanda.TOTAL}">
+                                                        <f:convertNumber pattern="###,##0.00"/>
+                                                    </h:outputText>
+                                                </td>
+                                                <td>#{comanda.PARCIAL}"</td>
+                                            </tr>
+                                        </ui:repeat>  
+                                    </tbody>
+                                </table>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </h:form>           
+        </div>       
+    </h:body>
+</html>
+
