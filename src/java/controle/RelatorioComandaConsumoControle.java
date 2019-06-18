@@ -25,7 +25,7 @@ public class RelatorioComandaConsumoControle implements RelatorioComandaConsumoS
                 .append(",PEDIDO as PEDIDO")
                 .append(",iif(STATUS <> 'P','EM CONSUMO','PRECONTA') as STATUS")
                 .append(",sum(quantidade*valor_item) TOTAL")
-                .append(",iif(responsavel_parcial <> '' and responsavel_parcial is null , responsavel_parcial, 'SEM RESPONSAVEL') as PARCIAL")
+                .append(",iif(responsavel_parcial <> '' and responsavel_parcial is not null , responsavel_parcial, 'SEM RESPONSAVEL') as PARCIAL")
                 .append(" from  espelho_comanda ")
                 .append("where ")
                 .append("    status <> 'P' ")
