@@ -100,25 +100,22 @@
                             <div class="row">
                                 <img  class="logo" src="resources/imagens/logo.jpg"/>
                             </div>
-                            <div class="row texto-logo">
-                                <h:panelGroup id="empresa">
-                                    <span>#{relatorioComandaConsumoBean.empresa.codigo} - #{relatorioComandaConsumoBean.empresa.razao}</span>
-                                </h:panelGroup>
-                            </div>
                         </div>
-                        <div class="coml-xs-8  cabecalho">
+                        <div class="col-xs-8  cabecalho">
                             <div class="row">
-                                <div class="col-xs-8"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
+                                <div class="col-xs-12"  style="background: #F1f1f1; padding: 10px; padding-left: 100px; border-radius: 5px;">
                                     <h:panelGroup id="periodo">
                                         <span style="font-weight: bold;">Relatorio de mesas em consumo</span> <br/>
                                         <span style="font-size: 8pt;padding: 20px;">
                                             Período: #{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataInicial} à #{relatorioComandaConsumoBean.filtroRelatorioPreconta.dataFinal}    
                                         </span>
-                                        <span style="font-size: 8pt;padding: 20px;">
-                                            Grupo: #{empty grupo?'TODOS':grupo.t51dsgrp}     
-                                        </span>
                                     </h:panelGroup>  
                                 </div>
+                            </div>
+                            <div class="row texto-logo text-right">
+                                <h:panelGroup id="empresa">
+                                    <span>#{relatorioComandaConsumoBean.empresa.codigo} - #{relatorioComandaConsumoBean.empresa.razao}</span>
+                                </h:panelGroup>
                             </div>
                         </div>
                     </div>
