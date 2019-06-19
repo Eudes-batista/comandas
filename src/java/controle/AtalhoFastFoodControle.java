@@ -57,6 +57,7 @@ public class AtalhoFastFoodControle implements AtalhoFastFoodService, Serializab
         return null;
     }
 
+    @Override
     public int verificarId() {
         session = HibernateUtil.getSessionFactory().openSession();
         int count = 1;

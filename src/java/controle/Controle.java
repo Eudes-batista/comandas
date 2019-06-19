@@ -231,8 +231,8 @@ public class Controle implements ComandaService, Serializable {
         Object count = session.createSQLQuery("select count(*) from  sosa98 where TECOMAND='" + comanda + "' and   TECDMESA='" + mesa + "' group by  TECDMESA").uniqueResult();
         if (count == null) {
             count = 0;
-            session.close();
         }
+        session.close();
         return Integer.parseInt(String.valueOf(count));
     }
 

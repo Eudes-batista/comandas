@@ -62,15 +62,15 @@ public class MotivoCancelamentoControle implements MotivoCancelamentoService, Se
     @Override
     public int verificarId() {
         session = HibernateUtil.getSessionFactory().openSession();
-        int count=1;
+        int seguenciaChavePrimaria=1;
         if(session != null){
            Object qtd= session.createSQLQuery("select first 1 CODIGO  from motivo_cancelamento order by codigo desc").uniqueResult();
            if(qtd != null){
-               count =Integer.parseInt(String.valueOf(qtd))+1;
+               seguenciaChavePrimaria =Integer.parseInt(String.valueOf(qtd))+1;
            }
            session.close();
         }
-        return count;
+        return seguenciaChavePrimaria;
     }
 
     @Override
