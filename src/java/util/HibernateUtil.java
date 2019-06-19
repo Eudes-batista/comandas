@@ -10,9 +10,9 @@ public class HibernateUtil {
 
     public static SessionFactory getSessionFactory() {
         try {
-            Configuration configuration = new Configuration();
-            configuration.configure("hibernate.cfg.xml");
             if (sessionFactory == null) {
+                Configuration configuration = new Configuration();
+                configuration.configure("hibernate.cfg.xml");
                 sessionFactory = configuration.buildSessionFactory();
             }
         } catch (HibernateException ex) {
