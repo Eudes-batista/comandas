@@ -1,6 +1,7 @@
 package modelo.dto;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ public class RelatorioPreconta implements Serializable {
     private String MESA;
     private String COMANDA;
     private Date DATA_PRECONTA;
-     private String MESA_ORIGEM;
+    private String MESA_ORIGEM;    
 
     public RelatorioPreconta() {
     }
@@ -29,7 +30,7 @@ public class RelatorioPreconta implements Serializable {
         this.MESA = MESA;
         this.COMANDA = COMANDA;
         this.DATA_PRECONTA = DATA_PRECONTA;
-    }
+    }        
 
     @Override
     public String toString() {

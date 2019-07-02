@@ -84,8 +84,11 @@
                                         <td >#{relatorioPreconta.MESA}</td>
                                         <td >#{relatorioPreconta.COMANDA}</td>
                                         <td >
-                                            <h:outputText value="#{relatorioPreconta.DATA_PRECONTA}">
-                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss"/>
+                                            <h:outputText value="#{relatorioPreconta.DATA_PRECONTA}" >
+                                                <f:convertDateTime type="date"/>
+                                            </h:outputText> - 
+                                            <h:outputText value="#{relatorioPreconta.DATA_PRECONTA}" >
+                                                <f:convertDateTime type="time"/>
                                             </h:outputText>
                                         </td>
                                         <td>
