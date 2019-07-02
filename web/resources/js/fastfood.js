@@ -11,8 +11,9 @@ function limitarCaracteres() {
     var nomeProdutos = document.querySelectorAll(".nome-produto");
     nomeProdutos.forEach(e => {
         var texto = e.textContent;
-        if (texto.toString().length >= 21)
-            e.textContent = texto.toString().substring(0, 20);
+        if (texto.toString().length >= 19){
+            e.textContent = texto.toString().substring(0, 18);
+       }
     });
 }
 function adicionarQuantidade(id, idInput) {

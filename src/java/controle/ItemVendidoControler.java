@@ -40,8 +40,6 @@ public class ItemVendidoControler implements ItemVendidoService, Serializable {
                     .append(" WHERE")
                     .append("   DATA_PRECONTA")
                     .append(" BETWEEN '").append(vendaDetalhe.getDataInicial()).append(" 00:00:00' ").append(" AND '").append(vendaDetalhe.getDataFinal()).append(" 23:59:59' ")
-                    .append(" AND ")
-                    .append("     STATUS_ITEM = 'N'")
                     .append(" AND STATUS ='P' ")
                     .append(" GROUP BY ")
                     .append("    REFERENCIA,PRDESCRI, VALOR_ITEM")

@@ -47,7 +47,6 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append(" REFERENCIA like '%").append(filtroItemVendido.getProduto()).append("%') ")
                     .append(" AND PRCGRUPO like '%").append(grupo).append("%' AND  ")
                     .append(" VENDEDOR like '%").append(filtroItemVendido.getGarcom()).append("%' )")
-                    .append(" AND STATUS_ITEM='N'")
                     .append("     GROUP BY ")
                     .append("     REFERENCIA,PRDESCRI,VALOR_ITEM")
                     .append("     ORDER BY QUANTIDADE DESC");

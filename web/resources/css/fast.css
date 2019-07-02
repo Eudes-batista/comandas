@@ -37,7 +37,7 @@ input{
 
 }
 .barra,input{
-    color: #757575;
+    color: #333;
     font-weight: bold;
 }
 input::placeholder{
