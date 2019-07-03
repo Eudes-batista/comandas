@@ -529,6 +529,7 @@ public class Controle implements ComandaService, Serializable {
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
+        espelhoComanda.setQuantidadeLancada(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
         espelhoComanda.setImpressao(lancamento.getImprimir());
         espelhoComanda.setStatus(lancamento.getStatus());

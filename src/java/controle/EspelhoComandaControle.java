@@ -11,7 +11,9 @@ import modelo.EspelhoComanda;
 import modelo.Lancamento;
 import modelo.Mesa;
 import modelo.dto.Cancelamento;
+import modelo.dto.EspelhoComandaDTO;
 import org.hibernate.Session;
+import org.hibernate.transform.Transformers;
 import servico.EspelhoComandaService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
@@ -194,6 +196,18 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
             String dataPreconta = object != null ? String.valueOf(object) : null;
             session.close();
             return dataPreconta;
+        }
+        return null;
+    }
+
+    @Override
+    public EspelhoComandaDTO buscarQuantidadeCanceladaElancada(String numero) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object object = session.createSQLQuery("select quantidade_cancelada,quantidade_lancada from espelho_comanda where numero='" + numero + "' ").setResultTransformer(Transformers.aliasToBean(EspelhoComandaDTO.class)).uniqueResult();
+            session.close();
+            EspelhoComandaDTO espelhoComandaDTO  = object == null ? null :  (EspelhoComandaDTO) object;
+            return espelhoComandaDTO;
         }
         return null;
     }

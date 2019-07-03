@@ -11,6 +11,7 @@ import lombok.Setter;
 import modelo.Comandas;
 import modelo.EspelhoComanda;
 import modelo.dto.Cancelamento;
+import modelo.dto.EspelhoComandaDTO;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
 import servico.EspelhoComandaService;
@@ -73,10 +74,6 @@ public class EspelhoComandaBean implements Serializable {
         this.espelhoComandaService.salvarPessoaQueAutorizouReipressao(usuario, item);
     }
 
-    private void listarAuditoria() {
-        this.espelhoComandas = this.espelhoComandaService.listarAuditoria();
-    }
-
     public double calcularPorcentagem(double valorCompra, double valorPago) {
         return (valorPago / (valorCompra / 100d) - 100);
     }
@@ -92,5 +89,10 @@ public class EspelhoComandaBean implements Serializable {
     public void atualizarUsuarioPreconta(String pedido, String usuario) {
         this.espelhoComandaService.atualizarResponsavelPreconta(pedido, usuario);
     }
+    
+    public EspelhoComandaDTO buscarQuantidadeCanceladaEQuantidadeLancada(String numero) {
+        return this.espelhoComandaService.buscarQuantidadeCanceladaElancada(numero);
+    }
+    
 
 }

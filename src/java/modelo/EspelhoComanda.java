@@ -38,6 +38,9 @@ public class EspelhoComanda implements Serializable {
 
     @Column(name = "quantidade", precision = 6, scale = 3, nullable = false)
     private Double quantidade;
+    
+    @Column(name = "quantidade_lancada", precision = 6, scale = 3, nullable = false)
+    private Double quantidadeLancada;
 
     @Column(name = "data", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

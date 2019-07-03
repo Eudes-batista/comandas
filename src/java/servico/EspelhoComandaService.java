@@ -4,6 +4,7 @@ import java.util.List;
 import modelo.EspelhoComanda;
 import modelo.Mesa;
 import modelo.dto.Cancelamento;
+import modelo.dto.EspelhoComandaDTO;
 
 public interface EspelhoComandaService {
     public void salvar(EspelhoComanda espelhoComanda);
@@ -22,4 +23,5 @@ public interface EspelhoComandaService {
     public void atualizarResponsavelParcial(String pedido,String responsavel);
     public void atualizarResponsavelTransferencia(String pedido,String responsavel);
     public String buscarDataPreconta(String pedido); 
+    public EspelhoComandaDTO buscarQuantidadeCanceladaElancada(String numero);
 }

@@ -4,12 +4,12 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.FirebirdDialect</property>
     <property name="hibernate.connection.driver_class">org.firebirdsql.jdbc.FBDriver</property>
-    <property name="hibernate.connection.url">jdbc:firebirdsql:localhost:E:\omega\dba\porto-mix-rest.gdb</property>
+    <property name="hibernate.connection.url">jdbc:firebirdsql:localhost:G:\omega\dba\porto-mix-rest.gdb</property>
     <property name="hibernate.connection.username">SYSDBA</property>
     <property name="hibernate.connection.password">masterkey</property>
     <property name="hibernate.current_session_context_class">thread</property>
-    <property name="hibernate.show_sql">false</property>
-    <property name="hibernate.format_sql">false</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.format_sql">true</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.connection.lc_ctype">WIN1252</property>
     <mapping resource="modelo/Sosa98.hbm.xml"/>

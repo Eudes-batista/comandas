@@ -33,6 +33,7 @@ import modelo.Lapt51;
 import modelo.Produto;
 import modelo.Sosa98;
 import modelo.Sosa98Id;
+import modelo.dto.EspelhoComandaDTO;
 import modelo.dto.ItemCanceladoGarcom;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
@@ -345,6 +346,7 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setReferencia(lancamento.getReferencia());
         espelhoComanda.setPessoasMesa(quantidadePessoas);
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
+        espelhoComanda.setQuantidadeLancada(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
         espelhoComanda.setImpressao(lancamento.getImprimir());
         espelhoComanda.setStatus(lancamento.getStatus());
@@ -655,16 +657,20 @@ public class ProdutoBean implements Serializable {
 
     private void alterarEspelhoComandaItemExcluido() {
         EspelhoComanda espelhoComanda = this.espelhoComandaBean.espelhoComanda;
-        this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(lancamento.getNumero())));
-        this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
-        double quantidadeRestante =  quantidade;
+        this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(this.lancamento.getNumero())));
+        this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(this.lancamento.getNumero()));
+        EspelhoComandaDTO espelhoComandaDTO = this.espelhoComandaBean.buscarQuantidadeCanceladaEQuantidadeLancada(this.lancamento.getNumero());
         if (this.lancamento.getQuantidade() != this.quantidade) {
-          quantidadeRestante = lancamento.getQuantidade() - this.quantidade;
-        } 
-        this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeRestante);
-        this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
-        this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
-        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(usuario.toUpperCase());
+            double quantidadeCancelada = espelhoComandaDTO == null ? this.quantidade : espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade;
+            this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
+            double quantidadeRestante = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
+            this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeRestante);
+        } else {
+            this.espelhoComandaBean.espelhoComanda.setQuantidade(0.0);
+            this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
+            this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
+        }
+        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
         this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
         this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
