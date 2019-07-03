@@ -237,7 +237,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setMesa(this.mesa);
         String item = this.controleService.gerarSequencia(this.comanda);
         lancamentoItem.setItem(item);
-        lancamentoItem.setNumero(this.controleService.gerarNumero() + item);
+        lancamentoItem.setNumero(this.controleService.gerarNumero());
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(0.5);
@@ -260,7 +260,7 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setMesa(this.mesa);
         String item = this.controleService.gerarSequencia(this.comanda);
         lancamentoItem.setItem(item);
-        lancamentoItem.setNumero(this.controleService.gerarNumero() + item);
+        lancamentoItem.setNumero(this.controleService.gerarNumero());
         lancamentoItem.setReferencia(p.getReferencia());
         lancamentoItem.setDescricao(p.getDescricao());
         lancamentoItem.setQuantidade(this.quantidade);

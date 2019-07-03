@@ -196,7 +196,7 @@ public class Controle implements ComandaService, Serializable {
         lancamento.setPedido(sosa98.getTepedido());
         new Log().registrarErroAoSalvarProduto(ex.getMessage(), lancamento);
     }
-
+    
     @Override
     public void excluir(String codigo) {
         executarSql("delete from sosa98 where tenumero='" + codigo + "'");
@@ -625,29 +625,18 @@ public class Controle implements ComandaService, Serializable {
     @Override
     public String gerarNumero() {
         String chave = gerarChave();
-        while (verrificarSequenciaChavePrimaria(chave)) {
-            chave = gerarChave();
-        }
         return chave;
     }
 
     private String gerarChave() {
-        LocalDate data = LocalDate.now();
-        LocalTime hora = LocalTime.now();
-        String chave = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
-        chave = chave.length() > 6 ? chave.substring(0, 6) : chave;
-        return chave;
-    }
-
-    private boolean verrificarSequenciaChavePrimaria(String numero) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            Object seguencias = session.createSQLQuery("select tenumero from sosa98 where tenumero='" + numero + "'")
+            Object seguencias = session.createSQLQuery("select max(coalesce(cast(numero as integer),0))+1 as contador from espelho_comanda")
                     .uniqueResult();
             session.close();
-            return seguencias != null;
+            return seguencias == null ? "1" : String.valueOf(seguencias);
         }
-        return false;
+        return "1";
     }
 
     @Override

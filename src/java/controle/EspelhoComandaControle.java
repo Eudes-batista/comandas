@@ -8,12 +8,14 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import modelo.EspelhoComanda;
+import modelo.Lancamento;
 import modelo.Mesa;
 import modelo.dto.Cancelamento;
 import org.hibernate.Session;
 import servico.EspelhoComandaService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
+import util.Log;
 
 @ManagedBean(name = "espelhoComandaService")
 @ViewScoped
@@ -25,11 +27,31 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     public void salvar(EspelhoComanda espelhoComanda) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            session.getTransaction().begin();
-            session.save(espelhoComanda);
-            session.getTransaction().commit();
-            session.close();
+            try {
+                session.getTransaction().begin();
+                session.save(espelhoComanda);
+                session.getTransaction().commit();
+            } catch (Exception ex) {
+                this.registrarErroAoSalvar(ex, espelhoComanda);
+            } finally {
+                session.close();
+            }
         }
+    }
+
+    private void registrarErroAoSalvar(Exception ex, EspelhoComanda espelhoComanda) {
+        Lancamento lancamento = new Lancamento();
+        lancamento.setComanda(espelhoComanda.getComanda());
+        lancamento.setMesa(espelhoComanda.getMesa());
+        lancamento.setItem(espelhoComanda.getNumeroItem());
+        lancamento.setNumero(String.valueOf(espelhoComanda.getNumero()));
+        lancamento.setReferencia(espelhoComanda.getReferencia());
+        lancamento.setQuantidade(espelhoComanda.getQuantidade());
+        lancamento.setObservacao(espelhoComanda.getObservacao());
+        lancamento.setVendedor(espelhoComanda.getVendedor());
+        lancamento.setStatus(espelhoComanda.getStatus());
+        lancamento.setPedido(espelhoComanda.getPedido());
+        new Log().registrarErroAoSalvarProduto(ex.getMessage(), lancamento);
     }
 
     @Override
@@ -106,8 +128,8 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         if (session != null) {
             List<Object[]> objects = session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
                     + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') left outer join scea01 on (prrefere = eerefere) where pedido = '" + pedido + "' ").list();
-            session.close();        
-            return objects;        
+            session.close();
+            return objects;
         }
         return null;
     }
