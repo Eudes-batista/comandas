@@ -23,7 +23,6 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Acompanhamento;
-import modelo.Cancelamento;
 import modelo.Comandas;
 import modelo.Configuracao;
 import modelo.EspelhoComanda;
@@ -46,7 +45,6 @@ import relatorio.PdfCancelamento;
 import relatorio.PdfPedido;
 import relatorio.Relatorio;
 import servico.AcompanhamentoService;
-import servico.CancelamentoService;
 import servico.ComandaService;
 import servico.GrupoAcompanhamentoService;
 import servico.GrupoServico;
@@ -77,8 +75,6 @@ public class ProdutoBean implements Serializable {
     private ComandaService controleService;
     @ManagedProperty(value = "#{vendedorService}")
     private VendedorService vendedorService;
-    @ManagedProperty(value = "#{cancelamentoService}")
-    private CancelamentoService cancelamentoService;
     @ManagedProperty(value = "#{itemAcompanhamentoService}")
     private ItemAcompanhamentoService itemAcompanhamentoService;
     @ManagedProperty(value = "#{grupoAcompanhamentoService}")
@@ -86,6 +82,8 @@ public class ProdutoBean implements Serializable {
     @ManagedProperty(value = "#{acompanhamentoService}")
     private AcompanhamentoService acompanhamentoService;
 
+    @ManagedProperty(value = "#{cancelamentoBean}")
+    private CancelamentoBean cancelamentoBean;
     @ManagedProperty(value = "#{impressaoBean}")
     private ImpressaoBean impressaoBean;
     @ManagedProperty(value = "#{espelhoComandaBean}")
@@ -130,37 +128,37 @@ public class ProdutoBean implements Serializable {
 
     public void init() {
         if (this.mesa == null || this.comanda == null) {
-            mensagem = "Mesa ou comanda inexistente.";
+            this.mensagem = "Mesa ou comanda inexistente.";
             PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
             return;
         }
         listarProdutos();
-        controlePedido = new ControlePedido(controleService, comanda);
-        pedido = pedido == null ? controlePedido.gerarNumero() : pedido;
-        status = status == null ? "" : status;
-        int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(pedido);
-        if (buscarNumeroDePessoas == 0) {
-            if (quantidadePessoas != null) {
-                quantidadePessoas = String.valueOf(Integer.parseInt(quantidadePessoas));
-            } else {
-                quantidadePessoas = "1";
-            }
-        } else {
-            quantidadePessoas = String.valueOf(buscarNumeroDePessoas);
+        this.controlePedido = new ControlePedido(this.controleService, this.comanda);
+        this.pedido = this.pedido == null ? this.controlePedido.gerarNumero() : this.pedido;
+        this.status = this.status == null ? "" : this.status;
+        int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(this.pedido);
+        if (buscarNumeroDePessoas != 0) {
+            this.quantidadePessoas = String.valueOf(buscarNumeroDePessoas);
+            return;
         }
+        if (this.quantidadePessoas == null) {
+            this.quantidadePessoas = "1";
+            return;
+        }
+        this.quantidadePessoas = String.valueOf(Integer.parseInt(this.quantidadePessoas));
     }
 
     public void listarGrupoAcompanhamentos() {
-        grupoAcompanhamentos = grupoAcompanhamentoService.pesquisarTodos();
+        this.grupoAcompanhamentos = this.grupoAcompanhamentoService.pesquisarTodos();
     }
 
     public void listarAcompanhamentosPorGrupo() {
-        if (grupoAcompanhamento != null) {
-            acompanhamentos = acompanhamentoService.pesquisarPorGrupo(grupoAcompanhamento.getNome());
+        if (this.grupoAcompanhamento != null) {
+            this.acompanhamentos = this.acompanhamentoService.pesquisarPorGrupo(this.grupoAcompanhamento.getNome());
             return;
         }
-        if (!grupoAcompanhamentos.isEmpty()) {
-            acompanhamentos = acompanhamentoService.pesquisarPorGrupo(grupoAcompanhamentos.get(0).getNome());
+        if (!this.grupoAcompanhamentos.isEmpty()) {
+            this.acompanhamentos = this.acompanhamentoService.pesquisarPorGrupo(this.grupoAcompanhamentos.get(0).getNome());
         }
 
     }
@@ -662,19 +660,22 @@ public class ProdutoBean implements Serializable {
 
     private void alterarEspelhoComandaItemExcluido() {
         EspelhoComanda espelhoComanda = this.espelhoComandaBean.espelhoComanda;
-        this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(this.lancamento.getNumero())));
-        this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(this.lancamento.getNumero()));
+        this.espelhoComandaBean.espelhoComanda = this.espelhoComandaBean.buscarPorId(Integer.parseInt(this.lancamento.getNumero()));
+
         EspelhoComandaDTO espelhoComandaDTO = this.espelhoComandaBean.buscarQuantidadeCanceladaEQuantidadeLancada(this.lancamento.getNumero());
+
         this.espelhoComandaBean.espelhoComanda.setQuantidade(0.0);
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
+
         if (this.lancamento.getQuantidade() != this.quantidade) {
             double quantidadeCancelada = espelhoComandaDTO == null ? this.quantidade : espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade;
-            this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
             double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
+            this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
             this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeAtual);
             this.espelhoComandaBean.espelhoComanda.setStatusItem("N");
         }
+
         this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
         this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
@@ -682,6 +683,9 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.espelhoComanda.setDataCancelamento(new Date());
         this.espelhoComandaBean.alterar();
         this.itemAcompanhamentoService.atualizarStatusAcompanhamento(lancamento, "C");
+        this.cancelamentoBean.setEspelhoComanda(this.espelhoComandaBean.espelhoComanda);
+        this.cancelamentoBean.setQuantidade(this.quantidade);
+        this.cancelamentoBean.salvarCancelamento();
     }
 
     private void excluirProdutoJaImpressoSosa98() {

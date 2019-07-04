@@ -21,6 +21,7 @@ public class CancelamentoControle implements CancelamentoService {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             session.getTransaction().begin();
+            cancelamento.setNumero(gerarChavePrimaria());
             session.save(cancelamento);
             session.getTransaction().commit();
             salvou = true;
@@ -44,6 +45,14 @@ public class CancelamentoControle implements CancelamentoService {
         List<Cancelamento> cancelamentos =  query.list();
         session.close();
         return cancelamentos;
+    }
+
+    @Override
+    public String gerarChavePrimaria() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query query = session.createSQLQuery("select max(coalesce(cast(numero as integer),0))+1 as contador from cancelamento_mesa");
+        Object obj = query.uniqueResult();
+        return String.valueOf(obj);
     }
 
 }

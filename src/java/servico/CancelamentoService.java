@@ -7,5 +7,5 @@ public interface CancelamentoService {
     
     public boolean salvar(Cancelamento cancelamento);
     public List<Cancelamento> listar();
-    
+    public String gerarChavePrimaria();
 }
