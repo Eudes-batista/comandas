@@ -50,7 +50,7 @@ public class CancelamentoControle implements CancelamentoService {
     @Override
     public String gerarChavePrimaria() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        Query query = session.createSQLQuery("select max(coalesce(cast(numero as integer),0))+1 as contador from cancelamento_mesa");
+        Query query = session.createSQLQuery("select coalesce(max(cast(numero as integer)),0)+1 as contador from cancelamento_mesa");
         Object obj = query.uniqueResult();
         return String.valueOf(obj);
     }

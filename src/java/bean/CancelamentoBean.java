@@ -44,6 +44,8 @@ public class CancelamentoBean implements Serializable{
         cancelamento.setObservacaoDestino(this.espelhoComanda.getObservacaoDestino());
         cancelamento.setResponsavel(this.espelhoComanda.getRespansavelCancelamento());
         cancelamento.setQuantidade(this.quantidade);
+        cancelamento.setComanda(this.espelhoComanda.getComanda());        
+        cancelamento.setMesa(this.espelhoComanda.getMesa());        
         this.cancelamentoService.salvar(cancelamento);
     }   
     

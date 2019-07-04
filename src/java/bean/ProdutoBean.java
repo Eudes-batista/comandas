@@ -669,7 +669,7 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
 
         if (this.lancamento.getQuantidade() != this.quantidade) {
-            double quantidadeCancelada = espelhoComandaDTO == null ? this.quantidade : espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade;
+            double quantidadeCancelada = espelhoComandaDTO != null && espelhoComandaDTO.getQUANTIDADE_CANCELADA() > 0 ? espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade : this.quantidade;
             double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
             this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
             this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeAtual);

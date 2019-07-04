@@ -29,6 +29,12 @@ public class Cancelamento implements Serializable {
     @Column(name = "numero", length = 15, nullable = false)
     private String numero;
 
+    @Column(name = "mesa", length = 4, nullable = false)
+    private String mesa;
+    
+    @Column(name = "comanda", length = 4, nullable = false)
+    private String comanda;
+    
     @Column(name = "pedido", length = 9, nullable = false)
     private String pedido;
 
