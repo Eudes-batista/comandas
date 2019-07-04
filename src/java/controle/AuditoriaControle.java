@@ -33,6 +33,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
                 .append(" inner join scea07 on(eerefere=terefere and eecodemp='").append(gerenciaArquivo.bucarInformacoes().getConfiguracao().getEmpresa()).append("') ")
                 .append(" inner join espelho_comanda on(numero=tenumero)")
                 .append(" inner join scea01 on(prrefere=eerefere)")
+                .append(" where status_item='N' ")
                 .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,prdescri,porcentagem")
                 .append(" order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
@@ -60,6 +61,7 @@ public class AuditoriaControle implements AuditoriaService, Serializable {
                 .append(" inner join scea01 on(prrefere=eerefere)")
                 .append(" where ")
                 .append(" tecomand like '%").append(codigo).append("%' ")
+                .append(" and status_item='N'")
                 .append(" group by tecomand,testatus,tecdmesa,pessoas_mesa,tepedido,prdescri,porcentagem")
                 .append(" order by testatus desc");
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());

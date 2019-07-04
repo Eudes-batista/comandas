@@ -156,7 +156,11 @@
                     <ui:repeat value="#{pesquisaMesasBean.itensPedido}" var="item">
                         <p:panel header="#{item.REFERENCIA} - #{item.DESCRICAO}">
                             <p:panelGrid layout="grid" columns="6" styleClass="ui-panelgrid-blank">
-                                <h:outputText value="Quantidade:" />
+                                <h:outputText value="Quantidade Lançada:" />
+                                <h:outputText value="#{item.QUANTIDADE_LANCADA}">
+                                    <f:convertNumber />
+                                </h:outputText>
+                                <h:outputText value="Quantidade Atual:" />
                                 <h:outputText value="#{item.QUANTIDADE}">
                                     <f:convertNumber />
                                 </h:outputText>
