@@ -50,4 +50,16 @@ public class Cancelamento implements Serializable{
     @Column(name="responsavel",length=50,nullable=false)
     private String responsavel;
     
+    @Column(name = "codigo_motivo", nullable = false)
+    private Integer codigo_motivo;
+    
+    @Column(name = "observacao_motivo", nullable = true, length = 200)
+    private String observacaoMotivo;
+
+    @Column(name = "foi_produzido", nullable = true)
+    private Boolean foiProduzido;
+
+    @Column(name = "observacao_destino", nullable = true, length = 200)
+    private String observacaoDestino;
+    
 }
