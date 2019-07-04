@@ -85,7 +85,7 @@ public class ProdutoBean implements Serializable {
     private GrupoAcompanhamentoService grupoAcompanhamentoService;
     @ManagedProperty(value = "#{acompanhamentoService}")
     private AcompanhamentoService acompanhamentoService;
-    
+
     @ManagedProperty(value = "#{impressaoBean}")
     private ImpressaoBean impressaoBean;
     @ManagedProperty(value = "#{espelhoComandaBean}")
@@ -665,15 +665,15 @@ public class ProdutoBean implements Serializable {
         this.espelhoComandaBean.setEspelhoComanda(this.espelhoComandaBean.buscarPorId(Integer.parseInt(this.lancamento.getNumero())));
         this.espelhoComandaBean.espelhoComanda.setNumero(Integer.parseInt(this.lancamento.getNumero()));
         EspelhoComandaDTO espelhoComandaDTO = this.espelhoComandaBean.buscarQuantidadeCanceladaEQuantidadeLancada(this.lancamento.getNumero());
+        this.espelhoComandaBean.espelhoComanda.setQuantidade(0.0);
+        this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
+        this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
         if (this.lancamento.getQuantidade() != this.quantidade) {
             double quantidadeCancelada = espelhoComandaDTO == null ? this.quantidade : espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade;
             this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
-            double quantidadeRestante = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
-            this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeRestante);
-        } else {
-            this.espelhoComandaBean.espelhoComanda.setQuantidade(0.0);
-            this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
-            this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
+            double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
+            this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeAtual);
+            this.espelhoComandaBean.espelhoComanda.setStatusItem("N");
         }
         this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());

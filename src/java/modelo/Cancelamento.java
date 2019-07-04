@@ -16,43 +16,44 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name="cancelamento_mesa")
-@EqualsAndHashCode(of={"numero"})
+@Table(name = "cancelamento_mesa")
+@EqualsAndHashCode(of = {"numero"})
 @ToString
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Cancelamento implements Serializable{
-    
+public class Cancelamento implements Serializable {
+
     @Id
-    @Column(name="numero",length=15,nullable=false)
+    @Column(name = "numero", length = 15, nullable = false)
     private String numero;
- 
-    @Column(name="pedido",length=9,nullable=false)
+
+    @Column(name = "pedido", length = 9, nullable = false)
     private String pedido;
-    
-    @Column(name="item",length=3,nullable=false)
+
+    @Column(name = "item", length = 3, nullable = false)
     private String item;
-    
-    @Column(name="produto",length=20,nullable=false)
+
+    @Column(name = "produto", length = 20, nullable = false)
     private String produto;
-    
-    @Column(name="quantidade",precision =6,scale= 3,nullable=false)
+
+    @Column(name = "quantidade", precision = 6, scale = 3, nullable = false)
     private Double quantidade;
-    
+
     @Column(name = "data", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date data;
-        
-    @Column(name="garcom",length=12,nullable=false)
+
+    @Column(name = "garcom", length = 12, nullable = false)
     private String garcom;
-        
-    @Column(name="responsavel",length=50,nullable=false)
+
+    @Column(name = "responsavel", length = 50, nullable = false)
     private String responsavel;
-    
+
     @Column(name = "codigo_motivo", nullable = false)
-    private Integer codigo_motivo;
-    
+    private Integer codigoMotivo;
+
     @Column(name = "observacao_motivo", nullable = true, length = 200)
     private String observacaoMotivo;
 
@@ -61,5 +62,5 @@ public class Cancelamento implements Serializable{
 
     @Column(name = "observacao_destino", nullable = true, length = 200)
     private String observacaoDestino;
-    
+
 }
