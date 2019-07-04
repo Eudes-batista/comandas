@@ -24,7 +24,7 @@ public class EspelhoComanda implements Serializable {
     @Column(name = "numero", nullable = false)
     private Integer numero;
 
-    @Column(name = "pedido", length = 6, nullable = false)
+    @Column(name = "pedido", length = 9, nullable = false)
     private String pedido;
 
     @Column(name = "numero_item", length = 8, nullable = false)

@@ -40,7 +40,7 @@
             <column name="teimprim" length="1" />
         </property>
         <property name="tepedido" type="string" >
-            <column name="tepedido" length="6" />
+            <column name="tepedido" length="9" />
         </property>
     </class>
 </hibernate-mapping>
