@@ -96,6 +96,17 @@ public class Log implements Serializable {
             Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
         }
     }
+    
+    public void registrarErroAoSalvarValoresPadrao(String error) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(path.toFile(), true))) {
+            pw.println();
+            pw.println("------- error ao iniciar valores padrao ---------");
+            pw.println(error);
+            pw.flush();
+        } catch (IOException ex) {
+            Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
+        }
+    }
 
     public StringBuilder recuperarLog() {
         StringBuilder str = new StringBuilder();

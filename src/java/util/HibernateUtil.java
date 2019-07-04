@@ -14,6 +14,7 @@ public class HibernateUtil {
                 Configuration configuration = new Configuration();
                 configuration.configure("hibernate.cfg.xml");
                 sessionFactory = configuration.buildSessionFactory();
+                ValoresIniciais.iniciar();
             }
         } catch (HibernateException ex) {
             sessionFactory = null;

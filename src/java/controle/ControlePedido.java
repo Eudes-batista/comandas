@@ -34,7 +34,7 @@ public class ControlePedido {
         LocalDate data = LocalDate.now();
         LocalTime hora = LocalTime.now();
         String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));
-        int pedido =numero.length() > 6 ? Integer.parseInt(numero.substring(0, 6)) : Integer.parseInt(numero);
+        int pedido =numero.length() > 9 ? Integer.parseInt(numero.substring(0, 9)) : Integer.parseInt(numero);
         return pedido;
     }
 }

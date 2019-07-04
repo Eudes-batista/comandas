@@ -21,6 +21,6 @@
     <mapping class="modelo.MotivoCancelamento"/>
     <mapping class="modelo.AtalhoFastFood"/>
     <mapping class="modelo.Cancelamento"/>
-    <mapping class="modelo.Transferencia" file="" jar="" package="" resource=""/>
+    <mapping class="modelo.Transferencia"/>
   </session-factory>
 </hibernate-configuration>

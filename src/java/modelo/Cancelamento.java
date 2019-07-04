@@ -47,7 +47,7 @@ public class Cancelamento implements Serializable{
     @Column(name="garcom",length=12,nullable=false)
     private String garcom;
         
-    @Column(name="garcom",length=50,nullable=false)
+    @Column(name="responsavel",length=50,nullable=false)
     private String responsavel;
     
 }

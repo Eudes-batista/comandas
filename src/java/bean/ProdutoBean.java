@@ -23,6 +23,7 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Acompanhamento;
+import modelo.Cancelamento;
 import modelo.Comandas;
 import modelo.Configuracao;
 import modelo.EspelhoComanda;
@@ -45,6 +46,7 @@ import relatorio.PdfCancelamento;
 import relatorio.PdfPedido;
 import relatorio.Relatorio;
 import servico.AcompanhamentoService;
+import servico.CancelamentoService;
 import servico.ComandaService;
 import servico.GrupoAcompanhamentoService;
 import servico.GrupoServico;
@@ -75,16 +77,19 @@ public class ProdutoBean implements Serializable {
     private ComandaService controleService;
     @ManagedProperty(value = "#{vendedorService}")
     private VendedorService vendedorService;
-    @ManagedProperty(value = "#{impressaoBean}")
-    private ImpressaoBean impressaoBean;
-    @ManagedProperty(value = "#{espelhoComandaBean}")
-    private EspelhoComandaBean espelhoComandaBean;
+    @ManagedProperty(value = "#{cancelamentoService}")
+    private CancelamentoService cancelamentoService;
+    @ManagedProperty(value = "#{itemAcompanhamentoService}")
+    private ItemAcompanhamentoService itemAcompanhamentoService;
     @ManagedProperty(value = "#{grupoAcompanhamentoService}")
     private GrupoAcompanhamentoService grupoAcompanhamentoService;
     @ManagedProperty(value = "#{acompanhamentoService}")
     private AcompanhamentoService acompanhamentoService;
-    @ManagedProperty(value = "#{itemAcompanhamentoService}")
-    private ItemAcompanhamentoService itemAcompanhamentoService;
+    
+    @ManagedProperty(value = "#{impressaoBean}")
+    private ImpressaoBean impressaoBean;
+    @ManagedProperty(value = "#{espelhoComandaBean}")
+    private EspelhoComandaBean espelhoComandaBean;
     @ManagedProperty(value = "#{motivoCancelamentoBean}")
     private MotivoCancelamentoBean motivoCancelamentoBean;
 
