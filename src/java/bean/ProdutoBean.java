@@ -121,11 +121,11 @@ public class ProdutoBean implements Serializable {
     private Lancamento lancamentoAcompanhamento;
     private Produto produto;
     private Log log;
-    
     private GrupoAcompanhamento grupoAcompanhamento;
     private Comandas comandaTransferencia;
     private ControlePedido controlePedido;
     private Lancamento lancamento;
+    private Cancelamento cancelamento;
 
     public void init() {
         if (this.mesa == null || this.comanda == null) {
@@ -149,14 +149,14 @@ public class ProdutoBean implements Serializable {
         this.quantidadePessoas = String.valueOf(Integer.parseInt(this.quantidadePessoas));
         this.instacias();
     }
-    
+
     private void instacias() {
         this.lancamentosAdicionados = new ArrayList<>();
         this.lancamentosAdicionadosAuxlizar = new ArrayList<>();
         this.lancamentoAcompanhamento = new Lancamento();
         this.produto = new Produto();
         this.log = new Log();
-    }    
+    }
 
     public void listarGrupoAcompanhamentos() {
         this.grupoAcompanhamentos = this.grupoAcompanhamentoService.pesquisarTodos();
@@ -637,33 +637,35 @@ public class ProdutoBean implements Serializable {
     }
 
     public void excluirProdutoJaImpresso() {
-        if (validarGerente()) {
-            excluirProdutoJaImpressoSosa98();
-            cancelamentoDeItem();
-            ItemCanceladoGarcom canceladoGarcom = preencherInformacoesCancelamento();
-            if (!imprimirCancelamento(lancamento, canceladoGarcom)) {
-                Messages.addGlobalWarn("Erro ao imprimir cancelamento\n verifique se a impressora está ligada.");
-                return;
-            }
-            PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
-            this.lancamento = null;
-            this.lancamento = new Lancamento();
-            this.espelhoComandaBean.espelhoComanda = null;
-            this.usuario = "";
-            this.senha = "";
-        } else {
+        if (!validarGerente()) {
             Messages.addGlobalWarn("Usuário não autorizado.");
+            return;
         }
+        excluirProdutoJaImpressoSosa98();
+        cancelamentoDeItem();
+        ItemCanceladoGarcom canceladoGarcom = preencherInformacoesCancelamento();
+        if (!imprimirCancelamento(lancamento, canceladoGarcom)) {
+            Messages.addGlobalWarn("Erro ao imprimir cancelamento\n verifique se a impressora está ligada.");
+            return;
+        }
+        PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
+        this.lancamento = null;
+        this.espelhoComandaBean.espelhoComanda = null;
+        this.cancelamento = null;
+        canceladoGarcom = null;
+        this.usuario = "";
+        this.senha = "";
+        this.lancamento = new Lancamento();
     }
 
     private ItemCanceladoGarcom preencherInformacoesCancelamento() {
         ItemCanceladoGarcom canceladoGarcom = new ItemCanceladoGarcom();
         canceladoGarcom.setCANCELAMENTO(this.quantidade);
-        int codigoMotivoCancelamento = espelhoComandaBean.espelhoComanda.getCodigoMotivoCancelamento();
+        int codigoMotivoCancelamento = this.cancelamento.getCodigoMotivo();
         canceladoGarcom.setMOTIVO(this.motivoCancelamentoBean.buscarPorCodigo(codigoMotivoCancelamento).getNome());
-        canceladoGarcom.setOBSERVACAO(this.espelhoComandaBean.espelhoComanda.getObservacaoMotivo());
-        canceladoGarcom.setPRODUZIDO(this.espelhoComandaBean.espelhoComanda.getFoiProduzido() ? "SIM" : "NÃO");
-        canceladoGarcom.setRESPONSAVEL(this.espelhoComandaBean.espelhoComanda.getRespansavelCancelamento());
+        canceladoGarcom.setOBSERVACAO(this.cancelamento.getObservacaoMotivo());
+        canceladoGarcom.setPRODUZIDO(this.cancelamento.getFoiProduzido() ? "SIM" : "NÃO");
+        canceladoGarcom.setRESPONSAVEL(this.cancelamento.getResponsavel());
         return canceladoGarcom;
     }
 
@@ -703,21 +705,21 @@ public class ProdutoBean implements Serializable {
     }
 
     private Cancelamento preencherCancelamento(EspelhoComanda espelhoComanda) {
-        Cancelamento cancelamento = new Cancelamento();
-        cancelamento.setData(this.espelhoComandaBean.espelhoComanda.getDataCancelamento());
-        cancelamento.setItem(this.espelhoComandaBean.espelhoComanda.getNumeroItem());
-        cancelamento.setPedido(this.espelhoComandaBean.espelhoComanda.getPedido());
-        cancelamento.setProduto(this.espelhoComandaBean.espelhoComanda.getReferencia());
-        cancelamento.setGarcom(this.espelhoComandaBean.espelhoComanda.getVendedor());
-        cancelamento.setQuantidade(this.quantidade);
-        cancelamento.setComanda(this.espelhoComandaBean.espelhoComanda.getComanda());
-        cancelamento.setMesa(this.espelhoComandaBean.espelhoComanda.getMesa());
-        cancelamento.setCodigoMotivo(espelhoComanda.getCodigoMotivoCancelamento());
-        cancelamento.setFoiProduzido(espelhoComanda.getFoiProduzido());
-        cancelamento.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
-        cancelamento.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
-        cancelamento.setResponsavel(this.usuario.toUpperCase());
-        return cancelamento;
+        this.cancelamento = new Cancelamento();
+        this.cancelamento.setData(this.espelhoComandaBean.espelhoComanda.getDataCancelamento());
+        this.cancelamento.setItem(this.espelhoComandaBean.espelhoComanda.getNumeroItem());
+        this.cancelamento.setPedido(this.espelhoComandaBean.espelhoComanda.getPedido());
+        this.cancelamento.setProduto(this.espelhoComandaBean.espelhoComanda.getReferencia());
+        this.cancelamento.setGarcom(this.espelhoComandaBean.espelhoComanda.getVendedor());
+        this.cancelamento.setQuantidade(this.quantidade);
+        this.cancelamento.setComanda(this.espelhoComandaBean.espelhoComanda.getComanda());
+        this.cancelamento.setMesa(this.espelhoComandaBean.espelhoComanda.getMesa());
+        this.cancelamento.setCodigoMotivo(espelhoComanda.getCodigoMotivoCancelamento());
+        this.cancelamento.setFoiProduzido(espelhoComanda.getFoiProduzido());
+        this.cancelamento.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
+        this.cancelamento.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
+        this.cancelamento.setResponsavel(this.usuario.toUpperCase());
+        return this.cancelamento;
     }
 
     private void excluirProdutoJaImpressoSosa98() {
@@ -753,7 +755,7 @@ public class ProdutoBean implements Serializable {
         this.lancamento = lancamentoTransferencia;
     }
 
-    private boolean imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom){
+    private boolean imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) {
         try {
             PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
             File pdf = pdfService.gerarPdf();
