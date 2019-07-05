@@ -31,21 +31,7 @@ public class CancelamentoBean implements Serializable{
         
     }
     
-    public void salvarCancelamento() {
-        Cancelamento cancelamento = new Cancelamento();
-        cancelamento.setCodigoMotivo(this.espelhoComanda.getCodigoMotivoCancelamento());
-        cancelamento.setData(this.espelhoComanda.getDataCancelamento());
-        cancelamento.setFoiProduzido(this.espelhoComanda.getFoiProduzido());
-        cancelamento.setItem(this.espelhoComanda.getNumeroItem());
-        cancelamento.setPedido(this.espelhoComanda.getPedido());
-        cancelamento.setProduto(this.espelhoComanda.getReferencia());
-        cancelamento.setGarcom(this.espelhoComanda.getVendedor());
-        cancelamento.setObservacaoMotivo(this.espelhoComanda.getObservacaoMotivo());
-        cancelamento.setObservacaoDestino(this.espelhoComanda.getObservacaoDestino());
-        cancelamento.setResponsavel(this.espelhoComanda.getRespansavelCancelamento());
-        cancelamento.setQuantidade(this.quantidade);
-        cancelamento.setComanda(this.espelhoComanda.getComanda());        
-        cancelamento.setMesa(this.espelhoComanda.getMesa());        
+    public void salvarCancelamento(Cancelamento cancelamento) {        
         this.cancelamentoService.salvar(cancelamento);
     }
     
