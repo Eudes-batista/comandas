@@ -169,7 +169,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     @Override
     public void atualizarStatusItens(Cancelamento cancelamento) {
         String dataCancelamento = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='" + cancelamento.getStatus() + "',QUANTIDADE_CANCELADA=QUANTIDADE,motivo_cancelamento=" + cancelamento.getMotivo() + ",data_cancelamento='" + dataCancelamento + "' where pedido in(" + cancelamento.getPedidos() + ") and MOTIVO_CANCELAMENTO is null ");
+        executarSql("update espelho_comanda set RESPONSAVEL_CANCELAMENTO='" + cancelamento.getUsuario() + "' ,status_item='" + cancelamento.getStatus() + "',quantidade_cancelada = (quantidade+coalesce(quantidade_cancelada,0)), quantidade=0,motivo_cancelamento=" + cancelamento.getMotivo() + ",data_cancelamento='" + dataCancelamento + "' where pedido in(" + cancelamento.getPedidos() + ") and MOTIVO_CANCELAMENTO is null ");
         executarSql("update item_acompanhamento set status='" + cancelamento.getStatus() + "' where pedido in(" + cancelamento.getPedidos() + ") and status = 'N' ");
     }
 
