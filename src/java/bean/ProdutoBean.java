@@ -6,7 +6,6 @@ import controle.ControlePedido;
 import controle.ControleRelatorio;
 import java.awt.print.PrinterException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -93,9 +92,9 @@ public class ProdutoBean implements Serializable {
     private MotivoCancelamentoBean motivoCancelamentoBean;
 
     private List<Lapt51> grupos;
-    private List<Produto> produtos = new ArrayList<>();
-    private List<Lancamento> lancamentosAdicionados = new ArrayList<>();
-    private List<Lancamento> lancamentosAdicionadosAuxlizar = new ArrayList<>();
+    private List<Produto> produtos;
+    private List<Lancamento> lancamentosAdicionados;
+    private List<Lancamento> lancamentosAdicionadosAuxlizar;
     private List<Lancamento> lancamentosSelecionadadosTransferencia;
     private List<Lancamento> lancamentosTransferencias;
     private List<Acompanhamento> acompanhamentos;
@@ -119,13 +118,14 @@ public class ProdutoBean implements Serializable {
     private String status;
     private String usuarioTransferencia;
 
-    private Lancamento lancamentoAcompanhamento = new Lancamento();
-    private ControlePedido controlePedido;
-    private Produto produto = new Produto();
-    private Lancamento lancamento;
+    private Lancamento lancamentoAcompanhamento;
+    private Produto produto;
+    private Log log;
+    
     private GrupoAcompanhamento grupoAcompanhamento;
     private Comandas comandaTransferencia;
-    private Log log = new Log();
+    private ControlePedido controlePedido;
+    private Lancamento lancamento;
 
     public void init() {
         if (this.mesa == null || this.comanda == null) {
@@ -147,7 +147,16 @@ public class ProdutoBean implements Serializable {
             return;
         }
         this.quantidadePessoas = String.valueOf(Integer.parseInt(this.quantidadePessoas));
+        this.instacias();
     }
+    
+    private void instacias() {
+        this.lancamentosAdicionados = new ArrayList<>();
+        this.lancamentosAdicionadosAuxlizar = new ArrayList<>();
+        this.lancamentoAcompanhamento = new Lancamento();
+        this.produto = new Produto();
+        this.log = new Log();
+    }    
 
     public void listarGrupoAcompanhamentos() {
         this.grupoAcompanhamentos = this.grupoAcompanhamentoService.pesquisarTodos();
@@ -632,12 +641,11 @@ public class ProdutoBean implements Serializable {
             excluirProdutoJaImpressoSosa98();
             cancelamentoDeItem();
             ItemCanceladoGarcom canceladoGarcom = preencherInformacoesCancelamento();
-            try {
-                imprimirCancelamento(lancamento, canceladoGarcom);
-                PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
-            } catch (DocumentException | IOException | PrinterException ex) {
+            if (!imprimirCancelamento(lancamento, canceladoGarcom)) {
                 Messages.addGlobalWarn("Erro ao imprimir cancelamento\n verifique se a impressora está ligada.");
+                return;
             }
+            PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
             this.lancamento = null;
             this.lancamento = new Lancamento();
             this.espelhoComandaBean.espelhoComanda = null;
@@ -662,61 +670,55 @@ public class ProdutoBean implements Serializable {
     private void cancelamentoDeItem() {
         EspelhoComanda espelhoComanda = this.espelhoComandaBean.espelhoComanda;
         this.espelhoComandaBean.espelhoComanda = this.espelhoComandaBean.buscarPorId(Integer.parseInt(this.lancamento.getNumero()));
-        if (this.lancamento.getQuantidade() != this.quantidade) {
-            cancelamentoParcial(espelhoComanda);
-        } else {
-            cancelamentoTotal(espelhoComanda);
+        this.espelhoComandaBean.espelhoComanda.setDataCancelamento(new Date());
+        if (this.lancamento.getQuantidade() == this.quantidade) {
+            preencherInformacoesCancelamentoTotal(espelhoComanda);
             this.itemAcompanhamentoService.atualizarStatusAcompanhamento(lancamento, "C");
+        } else {
+            preencherCancelamentoParcial();
         }
         this.espelhoComandaBean.alterar();
-        this.cancelamentoBean.setEspelhoComanda(this.espelhoComandaBean.espelhoComanda);
-        this.cancelamentoBean.setQuantidade(this.quantidade);
-        this.cancelamentoBean.salvarCancelamento(this.preencherCancelamento());
+        this.cancelamentoBean.salvarCancelamento(this.preencherCancelamento(espelhoComanda));
     }
 
-    private void cancelamentoParcial(EspelhoComanda espelhoComanda) {
+    private void preencherCancelamentoParcial() {
         EspelhoComandaDTO espelhoComandaDTO = this.espelhoComandaBean.buscarQuantidadeCanceladaEQuantidadeLancada(this.lancamento.getNumero());
         double quantidadeCancelada = espelhoComandaDTO != null && espelhoComandaDTO.getQUANTIDADE_CANCELADA() > 0 ? espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade : this.quantidade;
         double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(quantidadeCancelada);
         this.espelhoComandaBean.espelhoComanda.setQuantidade(quantidadeAtual);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("N");
-        this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
-        this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
-        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
-        this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
-        this.espelhoComandaBean.espelhoComanda.setDataCancelamento(new Date());
+
     }
 
-    private void cancelamentoTotal(EspelhoComanda espelhoComanda) {
+    private void preencherInformacoesCancelamentoTotal(EspelhoComanda espelhoComanda) {
         this.espelhoComandaBean.espelhoComanda.setQuantidade(0.0);
         this.espelhoComandaBean.espelhoComanda.setQuantidadeCancelada(this.quantidade);
         this.espelhoComandaBean.espelhoComanda.setStatusItem("C");
         this.espelhoComandaBean.espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
-        this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
-        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
         this.espelhoComandaBean.espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
-        this.espelhoComandaBean.espelhoComanda.setDataCancelamento(new Date());
+        this.espelhoComandaBean.espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
+        this.espelhoComandaBean.espelhoComanda.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
+        this.espelhoComandaBean.espelhoComanda.setRespansavelCancelamento(this.usuario.toUpperCase());
     }
-    
-    private modelo.Cancelamento preencherCancelamento() {
-        modelo.Cancelamento cancelamento = new modelo.Cancelamento();
-        cancelamento.setCodigoMotivo(this.espelhoComandaBean.espelhoComanda.getCodigoMotivoCancelamento());
+
+    private Cancelamento preencherCancelamento(EspelhoComanda espelhoComanda) {
+        Cancelamento cancelamento = new Cancelamento();
         cancelamento.setData(this.espelhoComandaBean.espelhoComanda.getDataCancelamento());
-        cancelamento.setFoiProduzido(this.espelhoComandaBean.espelhoComanda.getFoiProduzido());
         cancelamento.setItem(this.espelhoComandaBean.espelhoComanda.getNumeroItem());
         cancelamento.setPedido(this.espelhoComandaBean.espelhoComanda.getPedido());
         cancelamento.setProduto(this.espelhoComandaBean.espelhoComanda.getReferencia());
         cancelamento.setGarcom(this.espelhoComandaBean.espelhoComanda.getVendedor());
-        cancelamento.setObservacaoMotivo(this.espelhoComandaBean.espelhoComanda.getObservacaoMotivo());
-        cancelamento.setObservacaoDestino(this.espelhoComandaBean.espelhoComanda.getObservacaoDestino());
-        cancelamento.setResponsavel(this.espelhoComandaBean.espelhoComanda.getRespansavelCancelamento());
         cancelamento.setQuantidade(this.quantidade);
-        cancelamento.setComanda(this.espelhoComandaBean.espelhoComanda.getComanda());        
+        cancelamento.setComanda(this.espelhoComandaBean.espelhoComanda.getComanda());
         cancelamento.setMesa(this.espelhoComandaBean.espelhoComanda.getMesa());
+        cancelamento.setCodigoMotivo(espelhoComanda.getCodigoMotivoCancelamento());
+        cancelamento.setFoiProduzido(espelhoComanda.getFoiProduzido());
+        cancelamento.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
+        cancelamento.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
+        cancelamento.setResponsavel(this.usuario.toUpperCase());
         return cancelamento;
     }
-    
 
     private void excluirProdutoJaImpressoSosa98() {
         if (this.lancamento.getQuantidade() == this.quantidade) {
@@ -751,12 +753,17 @@ public class ProdutoBean implements Serializable {
         this.lancamento = lancamentoTransferencia;
     }
 
-    private void imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) throws FileNotFoundException, DocumentException, IOException, PrinterException {
-        PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
-        File pdf = pdfService.gerarPdf();
-        String impressora = new GerenciaArquivo().bucarInformacoes().getConfiguracao().getImpressora();
-        ControleImpressao controleImpressao = new ControleImpressao(impressora);
-        controleImpressao.imprime(pdf);
+    private boolean imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom){
+        try {
+            PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
+            File pdf = pdfService.gerarPdf();
+            String impressora = new GerenciaArquivo().bucarInformacoes().getConfiguracao().getImpressora();
+            ControleImpressao controleImpressao = new ControleImpressao(impressora);
+            controleImpressao.imprime(pdf);
+            return true;
+        } catch (DocumentException | IOException | PrinterException ex) {
+            return false;
+        }
     }
 
 }

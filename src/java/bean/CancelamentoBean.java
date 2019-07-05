@@ -22,11 +22,6 @@ public class CancelamentoBean implements Serializable{
     @Getter @Setter
     private List<Cancelamento> cancelamentos;
     
-    @Setter
-    private EspelhoComanda espelhoComanda;
-    @Setter
-    private double quantidade;
-    
     public void init() {
         
     }
