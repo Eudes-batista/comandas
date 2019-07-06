@@ -234,14 +234,14 @@ public class ComandasBean implements Serializable {
     }
 
     private void formatarMesaComQuatroDigitos() throws NumberFormatException {
-        if (Pattern.compile("\\d").matcher(mesaDestino).find()) {
-            mesaDestino = String.format("%04d", Integer.parseInt(mesaDestino));
+        if (Pattern.compile("\\d").matcher(this.mesaDestino).find()) {
+            this.mesaDestino = String.format("%04d", Integer.parseInt(this.mesaDestino));
         }
     }
 
     private void atualizarERedirecionar() {
-        if (comandas.size() > 1) {
-            comandas.remove(new Comandas(comandaOrigem));
+        if (this.comandas.size() > 1) {
+            this.comandas.remove(new Comandas(this.comandaOrigem));
             PrimeFaces.current().ajax().update("frm:tabelaComanda");
             PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
             return;
@@ -255,18 +255,18 @@ public class ComandasBean implements Serializable {
 
     private void transferirMesaComanda(Comandas comandaOrigem) {
         if ("mesa".equals(this.tipoTransferencia)) {
-            controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
+            this.controleService.transferirComandaParaMesa(this.mesaDestino, comandaOrigem);
             return;
         }
-        controleService.transferirComandaParaComanda(comandaOrigem, mesaDestino);
+        this.controleService.transferirComandaParaComanda(comandaOrigem, this.mesaDestino);
     }
 
     public void pesquisarComanda() {
-        this.comandas = controleService.listarComandasPorCodigo(codigoMesa, pesquisa);
+        this.comandas = controleService.listarComandasPorCodigo(this.codigoMesa, this.pesquisa);
     }
 
     public void fecharComanda(Comandas comanda) {
-        controleService.atualizarStatusPreconta(comanda);
+        this.controleService.atualizarStatusPreconta(comanda);
     }
 
     public String getTipoTransferencia() {
@@ -279,14 +279,14 @@ public class ComandasBean implements Serializable {
     }
 
     public void validaVendedor() {
-        usuarioBean.setUsuario(new Usuario(usuario, senha));
-        String permissao = vendedorService.validarVendedor(usuarioBean.gerarSenha());
+        this.usuarioBean.setUsuario(new Usuario(this.usuario, this.senha));
+        String permissao = this.vendedorService.validarVendedor(this.usuarioBean.gerarSenha());
         if ("null".equals(permissao)) {
             Messages.addGlobalWarn("Senha incorreta.");
             return;
         }
         imprimirPreconta(this.comandaSelecionada.getCOMANDA());
-        espelhoComandaService.atualizarResponsavelPreconta(this.comandaSelecionada.getPEDIDO(), permissao.toUpperCase());
+        this.espelhoComandaService.atualizarResponsavelPreconta(this.comandaSelecionada.getPEDIDO(), permissao.toUpperCase());
         PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
     }
 }
