@@ -181,7 +181,7 @@ public class MesasBean implements Serializable {
         Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesa1);
         Empresa empresa = relatorio.getEmpresa();
         Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
-        String impressora = gerenciaArquivo.getConfiguracao().getImpressora();
+        String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
         PdfService pdfService = selecionarTipoImpressao(tipo, empresa, mapComanda);
         try {
             new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
