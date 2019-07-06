@@ -231,6 +231,8 @@
                                     <thead>
                                         <tr>
                                             <th>Pedido</th>
+                                            <th>Mesa</th>
+                                            <th>Comanda</th>
                                             <th>Item</th>
                                             <th>Cancelamentos</th>
                                             <th>Total</th>
@@ -246,6 +248,8 @@
                                         <ui:repeat value="#{relatorioItemVendidoBean.itemCanceladoGarcons}" var="item">
                                             <tr>
                                                 <td>#{item.PEDIDO}</td>
+                                                <td>#{item.MESA}</td>
+                                                <td>#{item.COMANDA}</td>
                                                 <td>#{item.ITEM}</td>
                                                 <td style="text-align: right;">#{item.CANCELAMENTO}</td>
                                                 <td>
@@ -268,11 +272,6 @@
                                             <td>
                                                 <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
                                                     <f:convertNumber />
-                                                </h:outputText>
-                                            </td>
-                                            <td>
-                                                <h:outputText value="#{relatorioItemVendidoBean.total}">
-                                                    <f:convertNumber pattern="###,##0.00"/>
                                                 </h:outputText>
                                             </td>
                                         </tr>

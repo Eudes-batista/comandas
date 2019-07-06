@@ -64,13 +64,16 @@
                                     <th>Pedido</th>
                                     <th>Referencia</th>
                                     <th>Descricao</th>
-                                    <th>Quantidade</th>
+                                    <th>Quantidade Lançada</th>
+                                    <th>Quantidade Atual</th>
+                                    <th>Quantidade Cancelada</th>
                                     <th>Valor Item</th>
                                     <th>Status</th>
                                     <th>Garçom</th>
                                     <th>Data</th>
                                     <th>Data Preconta</th>
                                     <th>Motivo</th>
+                                    <th>Responsavel Cancelamento</th>
                                     <th>D.Cancelamento</th>
                                 </tr>
                             </thead>
@@ -83,7 +86,17 @@
                                         <td>#{itemVendido.REFERENCIA}</td>
                                         <td>#{itemVendido.DESCRICAO}</td>
                                         <td>
+                                            <h:outputText value="#{itemVendido.QUANTIDADE_LANCADA}">
+                                                <f:convertNumber />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
                                             <h:outputText value="#{itemVendido.QUANTIDADE}">
+                                                <f:convertNumber />
+                                            </h:outputText>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{itemVendido.QUANTIDADE_CANCELADA}">
                                                 <f:convertNumber />
                                             </h:outputText>
                                         </td>
@@ -106,11 +119,12 @@
                                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                             </h:outputText>
                                         </td>
+                                        <td>#{itemVendido.RESPONSAVEL_CANCELAMENTO}</td>
                                         <td>
                                             <h:outputText value="#{itemVendido.DATA_CANCELAMENTO}">
                                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                             </h:outputText>
-                                        </td>
+                                        </td>                                        
                                         <td>#{itemVendido.MOTIVO}</td>
                                     </tr>
                                 </ui:repeat>  

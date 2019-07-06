@@ -38,7 +38,6 @@ public class RelatorioItemVendidoBean implements Serializable {
     private EmpresaService empresaService;
     @ManagedProperty(value = "#{relatorioItemVendidoService}")
     private RelatorioItemVendidoService relatorioItemVendidoService;
-    
 
     private List<Vendedor> vendedores;
     private List<Lapt51> grupos;
@@ -52,7 +51,6 @@ public class RelatorioItemVendidoBean implements Serializable {
 
     private String pesquisa;
 
-    private double total;
     private double quantidade;
 
     public void init() {
@@ -91,15 +89,14 @@ public class RelatorioItemVendidoBean implements Serializable {
         if (!filtroItemVendido.isCancelado()) {
             this.itemVendidos = this.relatorioItemVendidoService.listaItensVendidos(filtroItemVendido);
             somarTotais();
-        }else{
-            this.itemCanceladoGarcons = this.relatorioItemVendidoService.listarItensCanceladosPorGarcom(filtroItemVendido);
-            this.quantidade = this.itemCanceladoGarcons.stream().filter(item -> item.getCANCELAMENTO() != null).mapToDouble(ItemCanceladoGarcom::getCANCELAMENTO).sum();
-            this.total = this.itemCanceladoGarcons.stream().filter(item -> item.getCANCELAMENTO() != null).mapToDouble(ItemCanceladoGarcom::getTOTAL).sum();
+            return;
         }
+        this.itemCanceladoGarcons = this.relatorioItemVendidoService.listarItensCanceladosPorGarcom(filtroItemVendido);
+        this.quantidade = this.itemCanceladoGarcons.stream().filter(item -> item.getCANCELAMENTO() != null).mapToDouble(ItemCanceladoGarcom::getCANCELAMENTO).sum();
+
     }
 
     private void somarTotais() {
-        this.total = this.itemVendidos.stream().mapToDouble(ItemVendido::getTOTAL).sum();
         this.quantidade = this.itemVendidos.stream().mapToDouble(ItemVendido::getQUANTIDADE).sum();
 
     }

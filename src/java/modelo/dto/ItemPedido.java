@@ -30,5 +30,6 @@ public class ItemPedido implements Serializable {
     private Double TOTAL;
     private String GARCOM;
     private String MOTIVO;
+    private String RESPONSAVEL_CANCELAMENTO;
     private Date DATA_CANCELAMENTO;  
 }
