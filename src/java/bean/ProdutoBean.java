@@ -33,6 +33,7 @@ import modelo.Sosa98;
 import modelo.Sosa98Id;
 import modelo.dto.EspelhoComandaDTO;
 import modelo.dto.ItemCanceladoGarcom;
+import modelo.dto.TransferenciaItensParaComanda;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
 import org.omnifaces.util.Faces;
@@ -718,22 +719,22 @@ public class ProdutoBean implements Serializable {
 
     private void excluirProdutoJaImpressoSosa98() {
         if (this.lancamento.getQuantidade() == this.quantidade) {
-            this.controleService.excluir(lancamento.getNumero());
+            this.controleService.excluir(this.lancamento.getNumero());
             this.lancamentosAdicionados.remove(this.lancamento);
         } else {
-            double qtd = lancamento.getQuantidade() - quantidade;
-            this.controleService.alterarQuantidadeItem(qtd, lancamento.getNumero());
+            double qtd = this.lancamento.getQuantidade() - this.quantidade;
+            this.controleService.alterarQuantidadeItem(qtd, this.lancamento.getNumero());
             listarProdutosAdicionados();
         }
     }
 
     public void transferirItensParaMesaComanda() {
-        if (lancamentosSelecionadadosTransferencia.isEmpty()) {
+        if (this.lancamentosSelecionadadosTransferencia.isEmpty()) {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
-        }
-        controleService.transferenciaItensParaComanda(comandaTransferencia, lancamentosSelecionadadosTransferencia, lancamentosAdicionadosAuxlizar, usuarioTransferencia.toUpperCase());
-        if (lancamentosAdicionados.size() == lancamentosSelecionadadosTransferencia.size()) {
+        }        
+        this.controleService.transferenciaItensParaComanda(new TransferenciaItensParaComanda(this.comandaTransferencia, this.lancamentosSelecionadadosTransferencia, this.lancamentosAdicionadosAuxlizar, this.usuarioTransferencia.toUpperCase()));
+        if (this.lancamentosAdicionados.size() == this.lancamentosSelecionadadosTransferencia.size()) {
             try {
                 Faces.redirect("mesas.jsf");
             } catch (IOException ex) {
@@ -751,7 +752,7 @@ public class ProdutoBean implements Serializable {
 
     private boolean imprimirCancelamento(Lancamento lancamento, ItemCanceladoGarcom itemCanceladoGarcom) {
         try {
-            PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, itemAcompanhamentoService);
+            PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, this.itemAcompanhamentoService);
             File pdf = pdfService.gerarPdf();
             String impressora = new GerenciaArquivo().bucarInformacoes().getConfiguracao().getImpressora();
             ControleImpressao controleImpressao = new ControleImpressao(impressora);

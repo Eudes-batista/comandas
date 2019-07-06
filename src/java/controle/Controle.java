@@ -18,6 +18,7 @@ import modelo.Sosa98;
 import modelo.Sosa98Id;
 import modelo.dto.Cancelamento;
 import modelo.dto.ItemAcompanhamentoTransferencia;
+import modelo.dto.TransferenciaItensParaComanda;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -28,6 +29,7 @@ import servico.CancelamentoService;
 import servico.ComandaService;
 import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
+import servico.TransferenciaService;
 import util.GerenciaArquivo;
 import util.HibernateUtil;
 import util.Log;
@@ -52,6 +54,10 @@ public class Controle implements ComandaService, Serializable {
     @Setter
     @ManagedProperty(value = "#{cancelamentoService}")
     private CancelamentoService cancelamentoService;
+    @Getter
+    @Setter
+    @ManagedProperty(value = "#{transferenciaService}")
+    private TransferenciaService transferenciaService;
 
     @Override
     public List<Comandas> listarComandasPorMesas(String mesa) {
@@ -385,59 +391,63 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void transferenciaItensParaComanda(Comandas comanda, List<Lancamento> lancamentosTransferencia, List<Lancamento> lancamentosOrigem, String usuarioTransferencia) {
-        List<Comandas> comandas = pesquisarComandaPorCodigo(comanda.getCOMANDA());
-        String pedido, statusComandaPreconta, quantidadePessoas, numeros = lancamentosTransferencia.stream().map(Lancamento::getNumero).collect(Collectors.joining(",")), numero = "";
+    public void transferenciaItensParaComanda(TransferenciaItensParaComanda transferenciaItensParaComanda) {
+        List<Comandas> comandas = pesquisarComandaPorCodigo(transferenciaItensParaComanda.getComanda().getCOMANDA());
+        String chavesRegistros = transferenciaItensParaComanda.getLancamentosTransferencia().stream().map(Lancamento::getNumero).collect(Collectors.joining(","));
         if (comandas.isEmpty()) {
-            pedido = new ControlePedido(this, comanda.getCOMANDA()).gerarNumero();
-            statusComandaPreconta = "";
-            quantidadePessoas = "1";
-            List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias;
-            for (Lancamento lancamento : lancamentosTransferencia) {
-                Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
-                if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
-                    itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
-                    if (!itemAcompanhamentoTransferencias.isEmpty()) {
-                        ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                        atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
-                    }
-                    if (!numero.isEmpty()) {
-                        numeros = gerarNumeroDeAtualizacao(numeros, numero);
-                    }
-                    executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                    executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + numeros + ")");
-                    return;
-                }
-                numero += "," + lancamento.getNumero();
-                transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, quantidadePessoas);
-            }
+            transferirItensParaComandaInexistente(transferenciaItensParaComanda, comandas, chavesRegistros);
             return;
         }
-        pedido = String.valueOf(comandas.get(0).getPEDIDO());
-        statusComandaPreconta = comandas.get(0).getSTATUS();
-        quantidadePessoas = String.valueOf(buscarNumeroDePessoas(pedido));
-        for (Lancamento lancamento : lancamentosTransferencia) {
-            Lancamento lancamentoOrigem = lancamentosOrigem.stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
-            if (lancamento.getQuantidade() == lancamentoOrigem.getQuantidade()) {
-                List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
-                if (itemAcompanhamentoTransferencias.isEmpty()) {
-                    int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
-                    int seguencia = ultimoItemComandaDestino + 1;
-                    executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + lancamentosTransferencia.get(0).getPedido() + "' and tenumseq='" + lancamentosTransferencia.get(0).getItem() + "'");
-                    executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + lancamentosTransferencia.get(0).getPedido() + "' and numero_item='" + lancamentosTransferencia.get(0).getItem() + "'");
-                } else {
-                    ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
-                    atualizarSeguenciaItemComanda(item, pedido);
-                }
-                if (!numero.isEmpty()) {
-                    numeros = gerarNumeroDeAtualizacao(numeros, numero);
-                }
-                executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + comanda.getMESA() + "' ,tecomand='" + comanda.getCOMANDA() + "' where tenumero in(" + numeros + ")");
-                executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + usuarioTransferencia.toUpperCase() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + comanda.getMESA() + "' ,comanda='" + comanda.getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + numeros + ")");
+        transferirItensParaComandaExistente(transferenciaItensParaComanda, comandas, chavesRegistros);
+    }
+
+    private void transferirItensParaComandaInexistente(TransferenciaItensParaComanda transferenciaItensParaComanda, List<Comandas> comandas, String chavesRegistros) {
+        String pedido= new ControlePedido(this, transferenciaItensParaComanda.getComanda().getCOMANDA()).gerarNumero(), statusComandaPreconta="", quantidadePessoas="1", numero = "";
+        List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias;
+        for (Lancamento lancamento : transferenciaItensParaComanda.getLancamentosTransferencia()) {
+            Lancamento lancamentoOrigem = transferenciaItensParaComanda.getLancamentosOrigem().stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
+            if (lancamento.getQuantidade() != lancamentoOrigem.getQuantidade()) {
+                numero += "," + lancamento.getNumero();
+                transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
                 return;
             }
-            numero += "," + lancamento.getNumero();
-            transferenciaParcialDeItens(comanda, lancamento, lancamentoOrigem, usuarioTransferencia, pedido, quantidadePessoas);
+            itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+            if (!itemAcompanhamentoTransferencias.isEmpty()) {
+                ItemAcompanhamentoTransferencia itemAcompanhamentoTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                atualizarSeguenciaItemComanda(itemAcompanhamentoTransferencia, pedido);
+            }
+            if (!numero.isEmpty()) {
+                chavesRegistros = gerarNumeroDeAtualizacao(chavesRegistros, numero);
+            }
+            executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,tecomand='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "' where tenumero in(" + chavesRegistros + ")");
+            executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + transferenciaItensParaComanda.getUsuarioTransferencia() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,comanda='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + chavesRegistros + ")");
+        }
+    }
+
+    private void transferirItensParaComandaExistente(TransferenciaItensParaComanda transferenciaItensParaComanda, List<Comandas> comandas, String chavesRegistros) {
+        String pedido = String.valueOf(comandas.get(0).getPEDIDO()),statusComandaPreconta = comandas.get(0).getSTATUS(),quantidadePessoas = String.valueOf(buscarNumeroDePessoas(pedido)),numero = "";
+        for (Lancamento lancamento : transferenciaItensParaComanda.getLancamentosTransferencia()) {
+            Lancamento lancamentoOrigem = transferenciaItensParaComanda.getLancamentosOrigem().stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
+            if (lancamento.getQuantidade() != lancamentoOrigem.getQuantidade()) {
+                numero += "," + lancamento.getNumero();
+                transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
+                return;
+            }
+            List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
+            if (itemAcompanhamentoTransferencias.isEmpty()) {
+                int ultimoItemComandaDestino = buscarUltimoItemComandaDestino(pedido);
+                int seguencia = ultimoItemComandaDestino + 1;
+                executarSql("update sosa98 set tenumseq='" + seguencia + "' where tepedido='" + transferenciaItensParaComanda.getLancamentosTransferencia().get(0).getPedido() + "' and tenumseq='" + transferenciaItensParaComanda.getLancamentosTransferencia().get(0).getItem() + "'");
+                executarSql("update espelho_comanda set NUMERO_ITEM='" + seguencia + "' where pedido='" + transferenciaItensParaComanda.getLancamentosTransferencia().get(0).getPedido() + "' and numero_item='" + transferenciaItensParaComanda.getLancamentosTransferencia().get(0).getItem() + "'");
+            } else {
+                ItemAcompanhamentoTransferencia item = new ItemAcompanhamentoTransferencia(Integer.parseInt(lancamento.getItem()), lancamento.getPedido());
+                atualizarSeguenciaItemComanda(item, pedido);
+            }
+            if (!numero.isEmpty()) {
+                chavesRegistros = gerarNumeroDeAtualizacao(chavesRegistros, numero);
+            }
+            executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,tecomand='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "' where tenumero in(" + chavesRegistros + ")");
+            executarSql("update espelho_comanda set RESPONSAVEL_TRANSFERENCIA='" + transferenciaItensParaComanda.getUsuarioTransferencia() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,comanda='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + chavesRegistros + ")");
         }
     }
 

@@ -18,7 +18,7 @@ public class ValoresIniciais {
 
     private void criarGeradorDeSeguenciaCancelamentoMesa() {
         executarSql("CREATE GENERATOR GEN_CANCELAMENTO_MESA;");
-        executarSql("SET GENERATOR GEN_CANCELAMENTO_MESA TO 10;");
+        executarSql("SET GENERATOR GEN_CANCELAMENTO_MESA TO 1;");
     }
 
     private void alterarCamposEspelhoComandaSosa98() {

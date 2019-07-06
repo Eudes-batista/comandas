@@ -2,10 +2,10 @@ package servico;
 
 import java.util.List;
 import modelo.Comandas;
-import modelo.Lancamento;
 import modelo.Sosa98;
 import modelo.dto.Cancelamento;
 import modelo.dto.ItemAcompanhamentoTransferencia;
+import modelo.dto.TransferenciaItensParaComanda;
 
 public interface ComandaService {
 
@@ -57,7 +57,7 @@ public interface ComandaService {
     
     public void transferirItens(String numero,String item);
     
-    public void transferenciaItensParaComanda(Comandas comanda,List<Lancamento> lancamentosTransferencia,List<Lancamento> lancamentosOrigem,String usuarioTransferencia);
+    public void transferenciaItensParaComanda(TransferenciaItensParaComanda transferenciaItensParaComanda);
     
     public int verificarSePedidoJaExiste(String pedido);
     
