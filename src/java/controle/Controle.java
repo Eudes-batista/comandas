@@ -2,8 +2,6 @@ package controle;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +16,7 @@ import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
 import modelo.Sosa98;
 import modelo.Sosa98Id;
+import modelo.dto.Cancelamento;
 import modelo.dto.ItemAcompanhamentoTransferencia;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
@@ -25,6 +24,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.transform.Transformers;
+import servico.CancelamentoService;
 import servico.ComandaService;
 import servico.EspelhoComandaService;
 import servico.ItemAcompanhamentoService;
@@ -48,6 +48,10 @@ public class Controle implements ComandaService, Serializable {
     @Setter
     @ManagedProperty(value = "#{itemAcompanhamentoService}")
     private ItemAcompanhamentoService itemAcompanhamentoService;
+    @Getter
+    @Setter
+    @ManagedProperty(value = "#{cancelamentoService}")
+    private CancelamentoService cancelamentoService;
 
     @Override
     public List<Comandas> listarComandasPorMesas(String mesa) {
@@ -196,7 +200,7 @@ public class Controle implements ComandaService, Serializable {
         lancamento.setPedido(sosa98.getTepedido());
         new Log().registrarErroAoSalvarProduto(ex.getMessage(), lancamento);
     }
-    
+
     @Override
     public void excluir(String codigo) {
         executarSql("delete from sosa98 where tenumero='" + codigo + "'");
@@ -652,6 +656,40 @@ public class Controle implements ComandaService, Serializable {
             return String.valueOf(seguencias);
         }
         return "0001";
+    }
+
+    @Override
+    public void cancelarPedidos(Cancelamento cancelamento) {
+        String chavePrimaria = this.cancelamentoService.gerarChavePrimaria();
+
+        this.executarSql("SET GENERATOR GEN_CANCELAMENTO_MESA TO " + chavePrimaria);
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("insert into cancelamento_mesa (numero,pedido,mesa,comanda,item,produto,FOI_PRODUZIDO,quantidade,garcom,data,responsavel,observacao_destino,OBSERVACAO_MOTIVO,codigo_motivo) \n")
+                .append("select \n")
+                .append("GEN_ID(GEN_CANCELAMENTO_MESA,1) as numero \n")
+                .append(",PEDIDO \n")
+                .append(",MESA \n")
+                .append(",COMANDA \n")
+                .append(",NUMERO_ITEM \n")
+                .append(",REFERENCIA \n")
+                .append(",0 \n")
+                .append(",QUANTIDADE \n")
+                .append(",VENDEDOR \n")
+                .append(",CURRENT_TIMESTAMP \n")
+                .append(",'")
+                .append(cancelamento.getUsuario())
+                .append("' \n")
+                .append(", OBSERVACAO_DESTINO \n")
+                .append(",'EXCLUSAO DE MESA' \n")
+                .append(",99 \n")
+                .append("from \n")
+                .append("espelho_comanda \n")
+                .append("where \n")
+                .append("PEDIDO in(").append(cancelamento.getPedidos()).append(") \n")
+                .append("and STATUS_ITEM = 'N'");
+
+        this.executarSql(sql.toString());
     }
 
 }

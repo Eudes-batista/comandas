@@ -4,6 +4,7 @@ import java.util.List;
 import modelo.Comandas;
 import modelo.Lancamento;
 import modelo.Sosa98;
+import modelo.dto.Cancelamento;
 import modelo.dto.ItemAcompanhamentoTransferencia;
 
 public interface ComandaService {
@@ -65,5 +66,8 @@ public interface ComandaService {
     public String gerarNumero();
     
     public String gerarNumeroComanda();
+    
+    public void cancelarPedidos(Cancelamento cancelamento);
+    
     
 }
