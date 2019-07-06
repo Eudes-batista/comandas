@@ -61,11 +61,11 @@ public class ComandasBean implements Serializable {
     @ManagedProperty(value = "#{vendedorService}")
     private VendedorService vendedorService;
 
-    private List<Comandas> comandas = new ArrayList<>();
-    private List<Lancamento> lancamentos = new ArrayList<>();
+    private List<Comandas> comandas;
+    private List<Lancamento> lancamentos;
     private List<ItemAcompanhamento> itemAcompanhamentos;
 
-    private ImpressaoBean impressaoBean = new ImpressaoBean();
+    private ImpressaoBean impressaoBean;
 
     private String codigoMesa;
     private double totalMesa;
@@ -81,20 +81,23 @@ public class ComandasBean implements Serializable {
     private Comandas comandaSelecionada;
 
     public void init() {
+        this.comandas = new ArrayList<>();
+        this.lancamentos = new ArrayList<>();
+        this.impressaoBean = new ImpressaoBean();
         listarComandas();
         totalMesa();
     }
 
     private void listarComandas() {
-        this.comandas = controleService.listarComandasPorMesas(codigoMesa);
-        this.itemAcompanhamentos = itemAcompanhamentoService.pesquisarTodos();
+        this.comandas = this.controleService.listarComandasPorMesas(this.codigoMesa);
+        this.itemAcompanhamentos = this.itemAcompanhamentoService.pesquisarTodos();
     }
 
     public void listarProdutosAdicionados(String comanda) {
-        comandaOrigem = comanda;
-        lancamentos.clear();
-        controleService.ListarLancamentos(comanda, codigoMesa).forEach(l -> {
-            lancamentos.add(new Lancamento(String.valueOf(l[0]),
+        this.comandaOrigem = comanda;
+        this.lancamentos.clear();
+        this.controleService.ListarLancamentos(comanda, this.codigoMesa).forEach(l -> {
+            this.lancamentos.add(new Lancamento(String.valueOf(l[0]),
                     String.valueOf(l[1]),
                     String.valueOf(l[2]),
                     String.valueOf(l[3]),
@@ -121,10 +124,10 @@ public class ComandasBean implements Serializable {
     }
 
     private void totalMesa() {
-        Object somarTotal = mesaService.somarTotal(codigoMesa);
-        totalMesa = 0.0;
+        Object somarTotal = this.mesaService.somarTotal(codigoMesa);
+        this.totalMesa = 0.0;
         if (somarTotal != null) {
-            totalMesa = Double.parseDouble(String.valueOf(somarTotal));
+            this.totalMesa = Double.parseDouble(String.valueOf(somarTotal));
         }
     }
 
@@ -134,14 +137,14 @@ public class ComandasBean implements Serializable {
 
     public void imprimirPreconta(String comanda) {
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
-        Relatorio relatorio = new Relatorio(controleService, empresaService, codigoMesa);
+        Relatorio relatorio = new Relatorio(this.controleService, this.empresaService, this.codigoMesa);
         Comandas comandaInformacoes = this.comandas.get(this.comandas.indexOf(new Comandas(comanda)));
         Empresa empresa = relatorio.getEmpresa();
         List<Lancamento> lancamentosImpressao = new ArrayList<>();
-        controleService.ListarLancamentos(comanda, codigoMesa).forEach(l -> {
+        this.controleService.ListarLancamentos(comanda, this.codigoMesa).forEach(l -> {
             Lancamento lancamento = new Lancamento();
             lancamento.setComanda(comanda);
-            lancamento.setMesa(codigoMesa);
+            lancamento.setMesa(this.codigoMesa);
             lancamento.setReferencia(String.valueOf(l[3]));
             lancamento.setDescricao(String.valueOf(l[4]));
             lancamento.setQuantidade(Double.parseDouble(String.valueOf(l[5])));
@@ -167,9 +170,9 @@ public class ComandasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa() {
-        mesasBean.setPesquisa(codigoMesa);
-        mesasBean.pesquisarMesas();
-        mesasBean.imprimirPreconta(codigoMesa);
+        this.mesasBean.setPesquisa(this.codigoMesa);
+        this.mesasBean.pesquisarMesas();
+        this.mesasBean.imprimirPreconta(this.codigoMesa);
         listarComandas();
     }
 
