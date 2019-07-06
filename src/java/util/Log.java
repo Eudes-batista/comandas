@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.faces.context.FacesContext;
 import modelo.Lancamento;
+import modelo.Transferencia;
 import org.omnifaces.util.Messages;
 import servico.MesaService;
 
@@ -96,12 +97,33 @@ public class Log implements Serializable {
             Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
         }
     }
-    
+
     public void registrarErroAoSalvarValoresPadrao(String error) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(path.toFile(), true))) {
             pw.println();
             pw.println("------- error ao iniciar valores padrao ---------");
             pw.println(error);
+            pw.flush();
+        } catch (IOException ex) {
+            Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
+        }
+    }
+
+    public void registrarErroAoSalvarTransferencia(String error, Transferencia transferencia) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(path.toFile(), true))) {
+            pw.println();
+            pw.println("------- error ao salvar transferencia ---------");
+            pw.println("mesa origem " + transferencia.getMesaOrigem());
+            pw.println("mesa destino " + transferencia.getMesaDestino());
+            pw.println("comanda origem" + transferencia.getComandaOrigem());
+            pw.println("comanda destino" + transferencia.getComandaDestino());
+            pw.println("referencia " + transferencia.getProduto());
+            pw.println("quantidade " + transferencia.getQuantidade());
+            pw.println("vendedor " + transferencia.getGarcom());
+            pw.println("pedido destino" + transferencia.getPedidoDestino());
+            pw.println("pedido origem" + transferencia.getPedidoOrigem());
+            pw.println("responsavel" + transferencia.getResponsavel());
+            pw.println("Erro: "+error);
             pw.flush();
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao gravar informação no arquivo de  log.txt");
