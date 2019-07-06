@@ -119,20 +119,20 @@
                                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                             </h:outputText>
                                         </td>
+                                       <td>#{itemVendido.MOTIVO}</td>
                                         <td>#{itemVendido.RESPONSAVEL_CANCELAMENTO}</td>
                                         <td>
                                             <h:outputText value="#{itemVendido.DATA_CANCELAMENTO}">
                                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
                                             </h:outputText>
-                                        </td>                                        
-                                        <td>#{itemVendido.MOTIVO}</td>
+                                        </td>                                                                                
                                     </tr>
                                 </ui:repeat>  
                             </tbody>
                         </table>
                     </div>
                     <div align="left">
-                        <a href="itensVendidos.jsf" class="btn btn-link">Voltar</a>
+                        <a href="itensVendidos.jsf" class="btn btn-link" style="font-size:14pt;">Voltar</a>
                     </div>   
                 </h:form>
             </div>
