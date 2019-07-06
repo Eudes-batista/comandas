@@ -732,7 +732,7 @@ public class ProdutoBean implements Serializable {
         if (this.lancamentosSelecionadadosTransferencia.isEmpty()) {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
-        }        
+        }
         this.controleService.transferenciaItensParaComanda(new TransferenciaItensParaComanda(this.comandaTransferencia, this.lancamentosSelecionadadosTransferencia, this.lancamentosAdicionadosAuxlizar, this.usuarioTransferencia.toUpperCase()));
         if (this.lancamentosAdicionados.size() == this.lancamentosSelecionadadosTransferencia.size()) {
             try {
