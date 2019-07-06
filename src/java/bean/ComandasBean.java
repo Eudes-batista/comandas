@@ -136,46 +136,34 @@ public class ComandasBean implements Serializable {
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
         Relatorio relatorio = new Relatorio(controleService, empresaService, codigoMesa);
         Comandas comandaInformacoes = this.comandas.get(this.comandas.indexOf(new Comandas(comanda)));
-        if (gerenciaArquivo.bucarInformacoes().getConfiguracao().getTipoImpressao().equals("rede")) {
-            StringBuilder montarCupom = relatorio.montarCupomComanda(comanda);
-            try {
-                Ini ini = new Ini(new File(impressaoBean.buscarCaminho()));
-                ControleRelatorio.imprimir(ini.get("LOCAL").get("impressora"), montarCupom);
-                fecharComanda(comandaInformacoes);
-            } catch (IOException ex) {
-                Messages.addGlobalError("Erro ao econtra o arquivo " + ex.getMessage());
-            }
-        } else {
-            Empresa empresa = relatorio.getEmpresa();
-            List<Lancamento> lancamentosImpressao = new ArrayList<>();
-            controleService.ListarLancamentos(comanda, codigoMesa).forEach(l -> {
-                Lancamento lancamento = new Lancamento();
-                lancamento.setComanda(comanda);
-                lancamento.setMesa(codigoMesa);
-                lancamento.setReferencia(String.valueOf(l[3]));
-                lancamento.setDescricao(String.valueOf(l[4]));
-                lancamento.setQuantidade(Double.parseDouble(String.valueOf(l[5])));
-                lancamento.setPreco(Double.parseDouble(String.valueOf(l[6])));
-                lancamento.setPrecoTotal(Double.parseDouble(String.valueOf(l[7])));
-                lancamento.setVendedor(String.valueOf(l[8]));
-                lancamento.setPedido(String.valueOf(l[13]));
-                lancamentosImpressao.add(lancamento);
-            });
-            String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
-            try {
-                PdfComanda pdfComanda = new PdfComanda(lancamentosImpressao, empresa);
-                ControleImpressao controleImpressao = new ControleImpressao(impressora);
-                File file = pdfComanda.gerarPdf();
-                controleImpressao.imprime(file);
-                fecharComanda(comandaInformacoes);
-            } catch (FileNotFoundException ex) {
-                Messages.addGlobalError("Erro ao econtra o arquivo " + ex.getMessage());
-            } catch (DocumentException | PrinterException | IOException ex) {
-                Messages.addGlobalError("Impressora desligada ou cambo desconectado.\n" + impressora);
-            }
+        Empresa empresa = relatorio.getEmpresa();
+        List<Lancamento> lancamentosImpressao = new ArrayList<>();
+        controleService.ListarLancamentos(comanda, codigoMesa).forEach(l -> {
+            Lancamento lancamento = new Lancamento();
+            lancamento.setComanda(comanda);
+            lancamento.setMesa(codigoMesa);
+            lancamento.setReferencia(String.valueOf(l[3]));
+            lancamento.setDescricao(String.valueOf(l[4]));
+            lancamento.setQuantidade(Double.parseDouble(String.valueOf(l[5])));
+            lancamento.setPreco(Double.parseDouble(String.valueOf(l[6])));
+            lancamento.setPrecoTotal(Double.parseDouble(String.valueOf(l[7])));
+            lancamento.setVendedor(String.valueOf(l[8]));
+            lancamento.setPedido(String.valueOf(l[13]));
+            lancamentosImpressao.add(lancamento);
+        });
+        String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
+        try {
+            PdfComanda pdfComanda = new PdfComanda(lancamentosImpressao, empresa);
+            ControleImpressao controleImpressao = new ControleImpressao(impressora);
+            File file = pdfComanda.gerarPdf();
+            controleImpressao.imprime(file);
+            fecharComanda(comandaInformacoes);
+        } catch (FileNotFoundException ex) {
+            Messages.addGlobalError("Erro ao econtra o arquivo " + ex.getMessage());
+        } catch (DocumentException | PrinterException | IOException ex) {
+            Messages.addGlobalError("Impressora desligada ou cambo desconectado.\n" + impressora);
         }
         listarComandas();
-
     }
 
     public void imprimirPrecontaMesa() {
@@ -193,47 +181,53 @@ public class ComandasBean implements Serializable {
     public void validarUsuario() {
         RequestContext context = RequestContext.getCurrentInstance();
         boolean fechar;
-        usuarioBean.setUsuario(new Usuario(usuario, senha));
-        if (usuarioBean.validarGerente()) {
-            if ("EXCLUIR".equals(this.tipo)) {
-                controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
-                comandas.remove(this.comanda);
-                Cancelamento cancelamento = new Cancelamento();
-                cancelamento.setUsuario(usuario.toUpperCase());
-                cancelamento.setPedidos(this.comanda.getPEDIDO());
-                cancelamento.setStatus("D");
-                cancelamento.setMotivo(100);
-                espelhoComandaService.atualizarStatusItens(cancelamento);
-                totalMesa();
-            } else if ("TRANFERENCIA".equals(this.tipo)) {
-                PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
-            }
-            setUsuario("");
-            setSenha("");
-            fechar = true;
-        } else {
+        this.usuarioBean.setUsuario(new Usuario(this.usuario, this.senha));
+        if (!this.usuarioBean.validarGerente()) {
             fechar = false;
             Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
+            context.addCallbackParam("fechar", fechar);
+            return;
         }
+        if ("EXCLUIR".equals(this.tipo)) {
+            excluirComanda();
+        } else if ("TRANFERENCIA".equals(this.tipo)) {
+            PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
+        }
+        setUsuario("");
+        setSenha("");
+        fechar = true;
         context.addCallbackParam("fechar", fechar);
     }
 
+    private void excluirComanda() {
+        this.controleService.excluirMesa(this.codigoMesa, this.comanda.getCOMANDA());
+        this.comandas.remove(this.comanda);
+        Cancelamento cancelamento = new Cancelamento();
+        cancelamento.setUsuario(this.usuario.toUpperCase());
+        cancelamento.setPedidos(this.comanda.getPEDIDO());
+        cancelamento.setStatus("D");
+        cancelamento.setMotivo(100);
+        this.controleService.cancelarPedidos(cancelamento);
+        this.espelhoComandaService.atualizarStatusItens(cancelamento);
+        totalMesa();
+    }
+
     public void transferirComanda() {
-        if (mesaDestino == null) {
+        if (this.mesaDestino == null) {
             return;
         }
         formatarMesaComQuatroDigitos();
-        if (!mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(mesaDestino).find()) {
+        if (!this.mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(this.mesaDestino).find()) {
             Messages.addGlobalWarn("Coloque o numero da mesa ou a sigla RSVA para resevar a mesa.");
             return;
         }
-        Comandas cm = comandas.stream().filter(c -> c.getCOMANDA().equals(comandaOrigem)).findAny().orElse(null);
+        Comandas cm = this.comandas.stream().filter(c -> c.getCOMANDA().equals(this.comandaOrigem)).findAny().orElse(null);
         if (cm != null && !cm.getSTATUS().equals("P")) {
             transferirMesaComanda(cm);
             atualizarERedirecionar();
             return;
         }
-        Messages.addGlobalWarn("Mesa está em preconta " + mesaDestino);
+        Messages.addGlobalWarn("Mesa está em preconta " + this.mesaDestino);
     }
 
     private void formatarMesaComQuatroDigitos() throws NumberFormatException {
@@ -259,9 +253,9 @@ public class ComandasBean implements Serializable {
     private void transferirMesaComanda(Comandas comandaOrigem) {
         if ("mesa".equals(this.tipoTransferencia)) {
             controleService.transferirComandaParaMesa(mesaDestino, comandaOrigem);
-        } else {
-            controleService.transferirComandaParaComanda(comandaOrigem, mesaDestino);
+            return;
         }
+        controleService.transferirComandaParaComanda(comandaOrigem, mesaDestino);
     }
 
     public void pesquisarComanda() {
@@ -284,12 +278,12 @@ public class ComandasBean implements Serializable {
     public void validaVendedor() {
         usuarioBean.setUsuario(new Usuario(usuario, senha));
         String permissao = vendedorService.validarVendedor(usuarioBean.gerarSenha());
-        if (!"null".equals(permissao)) {
-            imprimirPreconta(this.comandaSelecionada.getCOMANDA());
-            espelhoComandaService.atualizarResponsavelPreconta(this.comandaSelecionada.getPEDIDO(), permissao.toUpperCase());
-            PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
-        } else {
+        if ("null".equals(permissao)) {
             Messages.addGlobalWarn("Senha incorreta.");
+            return;
         }
+        imprimirPreconta(this.comandaSelecionada.getCOMANDA());
+        espelhoComandaService.atualizarResponsavelPreconta(this.comandaSelecionada.getPEDIDO(), permissao.toUpperCase());
+        PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
     }
 }
