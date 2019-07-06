@@ -82,12 +82,8 @@
                                         <td>#{item.CANCELAMENTO}</td>
                                         <td>
                                             <h:outputText value="#{item.DATA_CANCELAMENTO}">
-                                                <f:convertDateTime type="date"/>
-                                            </h:outputText>
-                                            -
-                                            <h:outputText value="#{item.DATA_CANCELAMENTO}">
-                                                <f:convertDateTime type="time"/>
-                                            </h:outputText>
+                                                <f:convertDateTime locale="pt-BR" pattern="dd/MM/yyyy HH:mm:ss" />
+                                            </h:outputText>                                            
                                         </td>
                                         <td>#{item.MOTIVO}</td>
                                         <td>#{item.PRODUZIDO eq '1' ? 'Foi produzido' :'Não foi produzido'}</td>
