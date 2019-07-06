@@ -3,7 +3,6 @@ package bean;
 import com.itextpdf.text.DocumentException;
 import controle.ControleImpressao;
 import controle.ControlePedido;
-import controle.ControleRelatorio;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import lombok.Setter;
 import modelo.Acompanhamento;
 import modelo.Cancelamento;
 import modelo.Comandas;
-import modelo.Configuracao;
 import modelo.EspelhoComanda;
 import modelo.GrupoAcompanhamento;
 import modelo.ItemAcompanhamento;
@@ -43,7 +41,6 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import relatorio.PdfCancelamento;
 import relatorio.PdfPedido;
-import relatorio.Relatorio;
 import servico.AcompanhamentoService;
 import servico.ComandaService;
 import servico.GrupoAcompanhamentoService;
@@ -515,16 +512,10 @@ public class ProdutoBean implements Serializable {
         }
         try {
             String caminhoDaImpressora = buscarCaminhoImpressora(subgrupo);
-            Configuracao configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
-            if (configuracao.getTipoImpressao().equals("rede")) {
-                StringBuilder cupom = new Relatorio().montarCupomPedido(lancamentos, lanc);
-                ControleRelatorio.imprimir(caminhoDaImpressora, cupom);
-            } else {
-                ControleImpressao controleImpressao = new ControleImpressao(caminhoDaImpressora);
-                PdfService pdfPedido = new PdfPedido(lancamentos, lanc, itemAcompanhamentoService);
-                File gerarPdf = pdfPedido.gerarPdf();
-                controleImpressao.imprime(gerarPdf);
-            }
+            ControleImpressao controleImpressao = new ControleImpressao(caminhoDaImpressora);
+            PdfService pdfPedido = new PdfPedido(lancamentos, lanc, itemAcompanhamentoService);
+            File gerarPdf = pdfPedido.gerarPdf();
+            controleImpressao.imprime(gerarPdf);
             controleService.atualizarStatusImpressao(comanda);
             espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
             listarProdutosAdicionados();
