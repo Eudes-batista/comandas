@@ -89,7 +89,7 @@ public class RelatorioItemVendidoControler implements RelatorioItemVendidoServic
                     .append(" where \n")
                     .append(" DATA BETWEEN ").append("'").append(filtroItemVendido.getDataInicial()).append(" 00:00:00'  \n")
                     .append(" AND '").append(filtroItemVendido.getDataFinal()).append(" 23:59:59' \n")
-                    .append(" AND (REFERENCIA like '%").append(filtroItemVendido.getProduto()).append("%' AND  ").append(" PRCGRUPO like '%").append(grupo).append("%' AND  ").append(" VENDEDOR like '%").append(filtroItemVendido.getGarcom()).append("%' ) \n")
+                    .append(" AND (PRODUTO like '%").append(filtroItemVendido.getProduto()).append("%' AND  ").append(" PRCGRUPO like '%").append(grupo).append("%' AND  ").append(" GARCOM like '%").append(filtroItemVendido.getGarcom()).append("%' ) \n")
                     .append(" group by \n")
                     .append("   GARCOM,QUANTIDADE,PRDESCRI,NOME,OBSERVACAO_MOTIVO,PEDIDO,foi_produzido,RESPONSAVEL,NUMERO,OBSERVACAO_DESTINO,DATA,MESA,COMANDA");
             SQLQuery sQLQuery = session.createSQLQuery(stringBuilder.toString());

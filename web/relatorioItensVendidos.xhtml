@@ -235,7 +235,6 @@
                                             <th>Comanda</th>
                                             <th>Item</th>
                                             <th>Cancelamentos</th>
-                                            <th>Total</th>
                                             <th>Motivo</th>
                                             <th>Situação</th>
                                             <th>Responsavel</th>
@@ -252,11 +251,6 @@
                                                 <td>#{item.COMANDA}</td>
                                                 <td>#{item.ITEM}</td>
                                                 <td style="text-align: right;">#{item.CANCELAMENTO}</td>
-                                                <td>
-                                                    <h:outputText value="#{item.TOTAL}">
-                                                        <f:convertNumber pattern="###,##0.00"/>
-                                                    </h:outputText>
-                                                </td>
                                                 <td>#{item.MOTIVO}</td>
                                                 <td>#{item.PRODUZIDO eq '1' ? 'Foi produzido' :'Não foi produzido'}</td>
                                                 <td>#{item.RESPONSAVEL}</td>
@@ -268,12 +262,9 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="2" style="text-align: right;">Total:</td>
-                                            <td>
-                                                <h:outputText value="#{relatorioItemVendidoBean.quantidade}">
-                                                    <f:convertNumber />
-                                                </h:outputText>
-                                            </td>
+                                            <td colspan="5" style="text-align: right;">
+                                                <h:outputText value="Total: #{relatorioItemVendidoBean.quantidade}"/>
+                                            </td>                                           
                                         </tr>
                                     </tfoot>
                                 </table>

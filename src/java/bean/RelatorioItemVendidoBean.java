@@ -52,6 +52,7 @@ public class RelatorioItemVendidoBean implements Serializable {
     private String pesquisa;
 
     private double quantidade;
+    private double total;
 
     public void init() {
         String data = LocalDate.now().toString();
@@ -98,6 +99,7 @@ public class RelatorioItemVendidoBean implements Serializable {
 
     private void somarTotais() {
         this.quantidade = this.itemVendidos.stream().mapToDouble(ItemVendido::getQUANTIDADE).sum();
+        this.total = this.itemVendidos.stream().mapToDouble(ItemVendido::getTOTAL).sum();
 
     }
 }
