@@ -2,11 +2,14 @@ package modelo.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter @Setter
+@ToString
+@EqualsAndHashCode(of={"GARCOM"})
 public class ItemCanceladoGarcom implements Serializable{
     
     private String  NUMERO;
@@ -20,6 +23,8 @@ public class ItemCanceladoGarcom implements Serializable{
     private String  PRODUZIDO;
     private String  RESPONSAVEL;  
     private String  DESTINO;  
+    private String  MESA;  
+    private String  COMANDA;  
     private Date  DATA_CANCELAMENTO;  
 
     public ItemCanceladoGarcom() {
@@ -46,34 +51,6 @@ public class ItemCanceladoGarcom implements Serializable{
     public ItemCanceladoGarcom(String GARCOM, Double TOTAL) {
         this.GARCOM = GARCOM;
         this.TOTAL = TOTAL;
-    }
-
-    @Override
-    public String toString() {
-        return "ItemCanceladoGarcom{" + "NUEMRO=" + NUMERO + ", PEDIDO=" + PEDIDO + ", GARCOM=" + GARCOM + ", TOTAL=" + TOTAL + ", CANCELAMENTO=" + CANCELAMENTO + ", ITEM=" + ITEM + ", MOTIVO=" + MOTIVO + ", OBSERVACAO=" + OBSERVACAO + ", PRODUZIDO=" + PRODUZIDO + ", RESPONSAVEL=" + RESPONSAVEL + '}';
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.GARCOM);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ItemCanceladoGarcom other = (ItemCanceladoGarcom) obj;
-        return Objects.equals(this.GARCOM, other.GARCOM);
-    }
-    
+    }  
     
 }
