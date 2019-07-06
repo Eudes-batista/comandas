@@ -294,15 +294,16 @@ public class MesasBean implements Serializable {
     }
 
     private void excluirMesa() {
-        logMesa.registrarExclusao(this.mesa.getMESA(), usuario);
-        controle.excluirMesa(this.mesa.getMESA());
-        mesas.remove(new Mesa(this.mesa.getMESA()));
+        this.logMesa.registrarExclusao(this.mesa.getMESA(), this.usuario);
+        this.controle.excluirMesa(this.mesa.getMESA());
+        this.mesas.remove(new Mesa(this.mesa.getMESA()));
         Cancelamento cancelamento = new Cancelamento();
-        cancelamento.setUsuario(usuario.toUpperCase());
+        cancelamento.setUsuario(this.usuario.toUpperCase());
         cancelamento.setPedidos(this.mesa.getPEDIDO());
         cancelamento.setStatus("M");
         cancelamento.setMotivo(99);
-        espelhoComandaService.atualizarStatusItens(cancelamento);
+        this.comandaService.cancelarPedidos(cancelamento);
+        this.espelhoComandaService.atualizarStatusItens(cancelamento);
     }
 
     public void transferiMesa() {
