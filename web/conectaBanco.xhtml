@@ -26,15 +26,8 @@
                         <p:inputText id="empresa" value="#{bancoConecta.configuracao.empresa}" placeholder="Obrigatorio" 
                                      required="true" requiredMessage="Campo Obrigatorio: Empresa"/>
                         <p:outputLabel value="Tipo de Impressão" for="tipoImpressao"/>
-                        <p:selectOneMenu id="tipoImpressao" value="#{bancoConecta.configuracao.tipoImpressao}" placeholder="Obrigatorio" 
-                                         required="true" requiredMessage="Campo Obrigatorio: Tipo Impressão">
-                            <f:selectItem itemLabel="Selecione um Tipo de Impressão" noSelectionOption="true"/>
-                            <f:selectItem itemLabel="Rede" itemValue="rede"/>
-                            <f:selectItem itemLabel="Marca" itemValue="marca"/>
-                            <f:ajax event="valueChange" render="impressora" execute="@this"/>
-                        </p:selectOneMenu>
                         <p:outputLabel value="Modelo da Impressora" for="impressora"/>
-                        <p:inputText id="impressora" disabled="#{bancoConecta.configuracao.tipoImpressao ne 'marca' }"  value="#{bancoConecta.configuracao.impressora}" placeholder="Obrigatorio" 
+                        <p:inputText id="impressora"  value="#{bancoConecta.configuracao.impressora}" placeholder="Obrigatorio" 
                                      required="true" requiredMessage="Campo Obrigatorio: Modelo da Impressora" />
                         <p:outputLabel value="Paga 10%?" for="dezporcento"/>
                         <p:selectOneMenu id="dezporcento" value="#{bancoConecta.configuracao.cobraDezPorcento}" placeholder="Obrigatorio">

@@ -41,11 +41,10 @@ public class GerenciaArquivo {
             if (!lines.isEmpty() && !"".equals(lines.get(0))) {
                 getConfiguracao().setCaminho(lines.get(0));
                 getConfiguracao().setEmpresa(lines.get(1));
-                getConfiguracao().setTipoImpressao(lines.get(2));
-                getConfiguracao().setImpressora(lines.get(3));
-                getConfiguracao().setCobraDezPorcento(lines.get(4));
-                getConfiguracao().setCondicaoParaImpressao(lines.get(5));
-                getConfiguracao().setGerarComandaAutomatico(lines.get(6));
+                getConfiguracao().setImpressora(lines.get(2));
+                getConfiguracao().setCobraDezPorcento(lines.get(3));
+                getConfiguracao().setCondicaoParaImpressao(lines.get(4));
+                getConfiguracao().setGerarComandaAutomatico(lines.get(5));
             }
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao consultar no arquivo " + ex.getMessage());
@@ -57,15 +56,14 @@ public class GerenciaArquivo {
 
         if (carregarCaimnho() != null && !carregarCaimnho().isEmpty()) {
             try (PrintWriter pw = new PrintWriter(carregarCaimnho())) {
-                pw.println(configuracao.getCaminho());
-                pw.println(configuracao.getEmpresa());
-                pw.println(configuracao.getTipoImpressao());
-                pw.println(configuracao.getImpressora() == null ? "" : configuracao.getImpressora());
-                pw.println(configuracao.getCobraDezPorcento() == null ? "" : configuracao.getCobraDezPorcento());
-                pw.println(configuracao.getCondicaoParaImpressao() == null ? "" : configuracao.getCondicaoParaImpressao());
-                pw.println(configuracao.getGerarComandaAutomatico());
+                pw.println(this.configuracao.getCaminho());
+                pw.println(this.configuracao.getEmpresa());
+                pw.println(this.configuracao.getImpressora() == null ? "" : this.configuracao.getImpressora());
+                pw.println(this.configuracao.getCobraDezPorcento() == null ? "" : this.configuracao.getCobraDezPorcento());
+                pw.println(this.configuracao.getCondicaoParaImpressao() == null ? "" : this.configuracao.getCondicaoParaImpressao());
+                pw.println(this.configuracao.getGerarComandaAutomatico());
                 pw.flush();
-                salvarAsConfiguracoesDoBancoDeDados(configuracao.getCaminho());
+                salvarAsConfiguracoesDoBancoDeDados(this.configuracao.getCaminho());
                 Messages.addGlobalInfo("salvo com sucesso!!");
             } catch (IOException | URISyntaxException ex) {
                 Messages.addGlobalError("Erro ao escrever arquivo configBanco.txt " + ex.getMessage());
@@ -92,7 +90,7 @@ public class GerenciaArquivo {
     }
 
     public Configuracao getConfiguracao() {
-        return configuracao;
+        return this.configuracao;
     }
 
     public URI buscarCaminho() throws URISyntaxException {

@@ -2,9 +2,7 @@ package bean;
 
 import com.itextpdf.text.DocumentException;
 import controle.ControleImpressao;
-import controle.ControleRelatorio;
 import java.awt.print.PrinterException;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -25,7 +23,6 @@ import modelo.Empresa;
 import modelo.Lancamento;
 import modelo.Mesa;
 import modelo.dto.Cancelamento;
-import org.ini4j.Ini;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
@@ -150,7 +147,7 @@ public class MesasBean implements Serializable {
                 }
             }
         }
-        mesas.sort((m1, m2) -> m1.getMESA().compareTo(m2.getMESA()));
+        this.mesas.sort((m1, m2) -> m1.getMESA().compareTo(m2.getMESA()));
     }
 
     public void imprimirPreconta(String mesa) {
