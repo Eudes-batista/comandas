@@ -2,6 +2,7 @@ package bean;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -9,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Comandas;
+import modelo.Mesa;
 import modelo.dto.ItemPedido;
 import servico.PesquisaMesasService;
 
@@ -54,9 +56,10 @@ public class PesquisaMesasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa(Comandas comandas) {
-        mesasBean.setPesquisa(comandas.getMESA());
-        mesasBean.pesquisarMesas();
-        mesasBean.imprimirPreconta(comandas.getMESA());
+        this.mesasBean.setMesas(new ArrayList<Mesa>());
+        this.mesasBean.setPesquisa(comandas.getMESA());
+        this.mesasBean.pesquisarMesas();
+        this.mesasBean.imprimirPreconta(comandas.getMESA());
         listarComandas();
     }
 }

@@ -340,6 +340,7 @@ public class ProdutoBean implements Serializable {
             ));
             salvarEspelho(lancamento, data);
             log.salvarLancamento(lancamento, vendedor);
+            this.quantidade = 1;
         } catch (Exception ex) {
             this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens\n e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
@@ -409,14 +410,14 @@ public class ProdutoBean implements Serializable {
     }
 
     public void excluirItem(Lancamento lancamento) {
-        controleService.excluir(lancamento.getNumero());
+        this.controleService.excluir(lancamento.getNumero());
         if ("0".equals(lancamento.getImprimir())) {
-            espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
-            itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
+            this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
+            this.itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
         }
-        lancamentosAdicionados.remove(lancamento);
+        this.lancamentosAdicionados.remove(lancamento);
         totalizarItensAdicionado();
-        quantidadeItensAdicionados = lancamentosAdicionados.isEmpty() ? 0 : quantidadeItensAdicionados;
+        this.quantidadeItensAdicionados--;
     }
 
     public void receberCodigo(Lancamento lancamento, String condicao) {
@@ -485,10 +486,10 @@ public class ProdutoBean implements Serializable {
                 if ("P".equals(this.status)) {
                     mensagem = "Comanda em preconta, reabra a comanda para transferir.";
                     PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
-                } else {
-                    this.usuarioTransferencia = this.usuario;
-                    PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
+                    return;
                 }
+                this.usuarioTransferencia = this.usuario;
+                PrimeFaces.current().executeScript("PF('sidebarTransferenciaItens').show();");
                 break;
         }
     }
@@ -517,8 +518,6 @@ public class ProdutoBean implements Serializable {
             PdfService pdfPedido = new PdfPedido(lancamentos, lanc, itemAcompanhamentoService);
             File gerarPdf = pdfPedido.gerarPdf();
             controleImpressao.imprime(gerarPdf);
-            controleService.atualizarStatusImpressao(comanda);
-            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
             listarProdutosAdicionados();
         } catch (IOException ex) {
             mensagem = "Impressora desligada ou cambo desconectado.";
@@ -550,30 +549,35 @@ public class ProdutoBean implements Serializable {
     public void imprimirTodos() {
         List<Lancamento> lancamentosMemoria = this.lancamentosAdicionados;
         if (lancamentosMemoria.isEmpty()) {
-            mensagem = "Itens já foram enviados para impressão.";
-            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+            this.mostrarMenssagemItemJaFoiImpresso();
             return;
         }
         listarProdutosAdicionados();
         if (lancamentosMemoria.size() != this.lancamentosAdicionados.size()) {
-            mensagem = "Erro na comunicação do servidor, verifique a lista dos itens e lançe novamente.";
+            this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
             return;
         }
-        long count = this.lancamentosAdicionados.stream().filter(l -> l.getDescricao().contains("COUVERT")).count();
-        if (count != 0) {
-            controleService.atualizarStatusImpressao(comanda);
-            espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
+        long count = this.lancamentosAdicionados.stream().filter(l -> l.getDescricao().contains("COUVERT") || "0".equals(l.getImprimir())).count();
+        if (count == 0) {
+            this.mostrarMenssagemItemJaFoiImpresso();
+            return;
         }
-        Map<String, List<Lancamento>> mapLanmentos = separarLancamentoPorGrupo();
+        this.controleService.atualizarStatusImpressao(this.comanda);
+        this.espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.pedido);
+        Map<String, List<Lancamento>> mapLanmentos = this.separarLancamentoPorGrupo();
         if (!mapLanmentos.isEmpty()) {
             mapLanmentos.forEach((subgrupo, lancamentos) -> imprimir(subgrupo, lancamentos, null));
             this.quantidadeItensAdicionados = 0;
-            mensagem = "Pedido enviado para impressão.";
+            this.mensagem = "Pedido enviado para impressão.";
             PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
             return;
         }
-        mensagem = "Itens já foram enviados para impressão.";
+        this.mostrarMenssagemItemJaFoiImpresso();
+    }
+
+    private void mostrarMenssagemItemJaFoiImpresso() {
+        this.mensagem = "Itens já foram enviados para impressão.";
         PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
     }
 

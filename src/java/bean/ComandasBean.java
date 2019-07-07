@@ -2,7 +2,6 @@ package bean;
 
 import com.itextpdf.text.DocumentException;
 import controle.ControleImpressao;
-import controle.ControleRelatorio;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,9 +20,9 @@ import modelo.Comandas;
 import modelo.Empresa;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
+import modelo.Mesa;
 import modelo.dto.Cancelamento;
 import modelo.dto.Usuario;
-import org.ini4j.Ini;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
@@ -170,6 +169,7 @@ public class ComandasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa() {
+        this.mesasBean.setMesas(new ArrayList<Mesa>());
         this.mesasBean.setPesquisa(this.codigoMesa);
         this.mesasBean.pesquisarMesas();
         this.mesasBean.imprimirPreconta(this.codigoMesa);
