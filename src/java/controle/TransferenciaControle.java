@@ -1,5 +1,6 @@
 package controle;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -7,14 +8,13 @@ import modelo.Transferencia;
 import modelo.dto.FiltroTransferencia;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import servico.TransferenciaService;
 import util.HibernateUtil;
 import util.Log;
 
 @ManagedBean(name = "transferenciaService")
 @ViewScoped
-public class TransferenciaControle implements TransferenciaService {
+public class TransferenciaControle implements TransferenciaService,Serializable {
 
     private Session session = null;
 

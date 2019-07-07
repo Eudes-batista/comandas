@@ -1,5 +1,6 @@
 package controle;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -12,7 +13,7 @@ import util.HibernateUtil;
 
 @ManagedBean(name = "cancelamentoService")
 @ViewScoped
-public class CancelamentoControle implements CancelamentoService {
+public class CancelamentoControle implements CancelamentoService,Serializable {
 
     @Override
     public boolean salvar(Cancelamento cancelamento) {
