@@ -117,7 +117,7 @@
                             <p:messages id="msg" closable="true" showIcon="false" autoUpdate="false"/>
                             <p:panelGrid id="panelPg" columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-2,ui-grid-col-10">
                                 <p:outputLabel value="Total" style="color:#fff;"/>
-                                <h:outputLabel value="#{comanda.TOTAL * 1.1}" style="color:#fff; font-size: 15pt;">
+                                <h:outputLabel value="#{comanda.TOTAL_COM_DEZ_PORCENTO}" style="color:#fff; font-size: 15pt;">
                                     <f:convertNumber pattern="###,##0.00"/>
                                 </h:outputLabel> 
                                 <p:outputLabel value="Pago" style="color:#fff;"/>
