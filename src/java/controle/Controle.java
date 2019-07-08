@@ -424,7 +424,7 @@ public class Controle implements ComandaService, Serializable {
                 transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
                 transferencia.setQuantidade(calcultarQuantidadeRestante(lancamentoOrigem, lancamento));
                 this.transferenciaService.salvar(transferencia);
-                return;
+                continue;
             }
             itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
             if (!itemAcompanhamentoTransferencias.isEmpty()) {
@@ -462,7 +462,7 @@ public class Controle implements ComandaService, Serializable {
                 transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
                 transferencia.setQuantidade(calcultarQuantidadeRestante(lancamentoOrigem, lancamento));
                 this.transferenciaService.salvar(transferencia);
-                return;
+                continue;
             }
             List<ItemAcompanhamentoTransferencia> itemAcompanhamentoTransferencias = pesquisarItensComAcompanhamento(lancamento.getPedido(), lancamento.getItem());
             if (itemAcompanhamentoTransferencias.isEmpty()) {
