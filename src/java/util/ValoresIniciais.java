@@ -24,6 +24,7 @@ public class ValoresIniciais {
     private void alterarCamposEspelhoComandaSosa98() {
         executarSql("alter table espelho_comanda alter pedido type varchar(9)");
         executarSql("alter table sosa98 alter tepedido type varchar(9)");
+        executarSql("alter table item_acompanhamento alter pedido type varchar(9)");
     }
 
     private void executarSql(String sql) {
