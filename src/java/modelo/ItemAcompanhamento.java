@@ -23,7 +23,7 @@ public class ItemAcompanhamento implements Serializable{
     private Integer item;
     
     @Id
-    @Column(name="pedido",length = 6,nullable = false)
+    @Column(name="pedido",length = 9,nullable = false)
     private String pedido; 
     
     @Id
