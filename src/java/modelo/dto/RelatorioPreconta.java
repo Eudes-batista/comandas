@@ -1,13 +1,14 @@
 package modelo.dto;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class RelatorioPreconta implements Serializable {
 
     private String PEDIDO;
@@ -18,6 +19,8 @@ public class RelatorioPreconta implements Serializable {
     private String COMANDA;
     private Date DATA_PRECONTA;
     private String MESA_ORIGEM;    
+    private String RESPONSAVEL_REABRIU_MESA;
+    private String MESA_REABERTA;    
 
     public RelatorioPreconta() {
     }
@@ -31,11 +34,4 @@ public class RelatorioPreconta implements Serializable {
         this.COMANDA = COMANDA;
         this.DATA_PRECONTA = DATA_PRECONTA;
     }        
-
-    @Override
-    public String toString() {
-        return "RelatorioPreconta{" + "PEDIDO=" + PEDIDO + ", RESPONSAVEL_TRANSFERENCIA=" + RESPONSAVEL_TRANSFERENCIA + ", RESPONSAVEL_PARCIAL=" + RESPONSAVEL_PARCIAL + ", RESPONSAVEL_PRECONTA=" + RESPONSAVEL_PRECONTA + ", MESA=" + MESA + ", COMANDA=" + COMANDA + ", DATA_PRECONTA=" + DATA_PRECONTA + '}';
-    }
-    
-    
 }

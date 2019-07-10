@@ -25,14 +25,16 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             String sql = "select \n"
-                    + "   PEDIDO,   \n"
+                    + "   PEDIDO, \n"
                     + "   RESPONSAVEL_TRANSFERENCIA,    \n"
                     + "   RESPONSAVEL_PARCIAL,\n"
                     + "   RESPONSAVEL_PRECONTA,\n"
                     + "   MESA, \n"
                     + "   COMANDA, \n"
                     + "   DATA_PRECONTA,\n"
-                    + "   MESA_ORIGEM\n"
+                    + "   MESA_ORIGEM,\n"
+                    + "   RESPONSAVEL_REABRIU_MESA,\n"
+                    + "   MESA_REABERTA\n"
                     + "from \n"
                     + "   espelho_comanda \n"
                     + "where \n"
@@ -43,12 +45,17 @@ public class RelatorioPrecontaControle implements RelatorioPrecontaService, Seri
                     + "   AND MESA LIKE '%" + filtroRelatorioPreconta.getMesa() + "%'\n"
                     + "   AND COMANDA LIKE '%" + filtroRelatorioPreconta.getComanda() + "%'\n"
                     + "GROUP BY\n"
-                    + "PEDIDO,   \n"
-                    + "   RESPONSAVEL_TRANSFERENCIA,    \n"
+                    + "   PEDIDO, \n"
+                    + "   RESPONSAVEL_TRANSFERENCIA, \n"
                     + "   RESPONSAVEL_PARCIAL,\n"
-                    + "   RESPONSAVEL_PRECONTA,   \n"
+                    + "   RESPONSAVEL_PRECONTA, \n"
                     + "   MESA,\n"
-                    + "   COMANDA, DATA_PRECONTA,MESA_ORIGEM;";
+                    + "   COMANDA,\n"
+                    + "   DATA_PRECONTA,\n"
+                    + "   MESA_ORIGEM,\n"
+                    + "   RESPONSAVEL_REABRIU_MESA,\n"
+                    + "   MESA_REABERTA\n"
+                    ;
             List<RelatorioPreconta> relatorioPrecontas = session.createSQLQuery(sql).setResultTransformer(Transformers.aliasToBean(RelatorioPreconta.class)).list();
             session.close();
             return relatorioPrecontas;
