@@ -119,6 +119,12 @@ public class EspelhoComanda implements Serializable {
     
     @Column(name="responsavel_parcial",length = 50,nullable = true)
     private String responsavelParcial;
+    
+    @Column(name="mesa_reaberta",length = 1,nullable = true)
+    private String mesa_reaberta;
+    
+    @Column(name="responsavel_reabriu_mesa",length = 50,nullable = true)
+    private String responsavelPorReabriMesa;
 
     @Override
     public int hashCode() {

@@ -20,7 +20,8 @@ public class Mesa implements Serializable {
     private String STATUS;
     private String PAGANTES;
     private String PEDIDO;
-    private String COMANDA;   
+    private String COMANDA;  
+    private String ResponsavelPorReabrirMesa;
 
     public Mesa(String mesa) {
         this.MESA = mesa;

@@ -413,8 +413,10 @@ public class MesasBean implements Serializable {
             this.reabrimesa = true;
         }
         this.mesa = this.mesas.get(this.mesas.indexOf(this.mesa));
+        this.mesa.setResponsavelPorReabrirMesa("");
         if (this.reabrimesa) {
             mesa.setSTATUS("");
+            this.mesa.setResponsavelPorReabrirMesa(this.usuario);
             controle.atualizarStatusPreconta(this.mesa, "REABRIR");
             PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");
         }
