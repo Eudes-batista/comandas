@@ -1,7 +1,8 @@
 package controle.teste;
 
 import controle.Controle;
-import modelo.dto.Cancelamento;
+import java.util.Date;
+import modelo.dto.EspelhoComandaDTO;
 
 public class Test {
 
@@ -9,14 +10,11 @@ public class Test {
        
         Controle controle = new Controle();
         
-        Cancelamento cancelamento = new Cancelamento();
+        EspelhoComandaDTO espelhoComanda = controle.buscarPedidoDeDistino("285137495");
         
-        cancelamento.setMotivo(99);
-        cancelamento.setPedidos("203090658,102030659");
-        cancelamento.setStatus("M");
-        cancelamento.setUsuario("CSS");
+        Date data = espelhoComanda.getDATA_PRECONTA();
         
-        controle.cancelarPedidos(cancelamento);
+        
     }
 
 }
