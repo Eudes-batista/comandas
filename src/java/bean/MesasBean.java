@@ -339,6 +339,7 @@ public class MesasBean implements Serializable {
     }
 
     public void fecharMesa(Mesa mesa) {
+        mesa.setResponsavelPorReabrirMesa("");
         this.controle.atualizarStatusPreconta(mesa, "FECHAR");
         atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
         listarMesas();
@@ -416,7 +417,7 @@ public class MesasBean implements Serializable {
         this.mesa.setResponsavelPorReabrirMesa("");
         if (this.reabrimesa) {
             mesa.setSTATUS("");
-            this.mesa.setResponsavelPorReabrirMesa(this.usuario);
+            this.mesa.setResponsavelPorReabrirMesa(this.usuario.toUpperCase());
             controle.atualizarStatusPreconta(this.mesa, "REABRIR");
             PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");
         }
