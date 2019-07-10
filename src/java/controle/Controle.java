@@ -2,7 +2,6 @@ package controle;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -482,10 +481,10 @@ public class Controle implements ComandaService, Serializable {
             transferencia.setQuantidade(lancamento.getQuantidade());
             this.transferenciaService.salvar(transferencia);
             EspelhoComandaDTO espelhoComandaDTO = buscarPedidoDeDistino(pedido);
-            String dataPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getDATA_PRECONTA() != null ? "'"+espelhoComandaDTO.getDATA_PRECONTA().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString()+"'" : "null";
+            String dataPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getDATA_PRECONTA() != null ? "'"+espelhoComandaDTO.getDATA_PRECONTA().toString()+"'" : "null";
             String responsavelPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getRESPONSAVEL_PRECONTA() != null ? "'"+espelhoComandaDTO.getRESPONSAVEL_PRECONTA()+"'" : "null";
-            executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,tecomand='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "' where tenumero in(" + chavesRegistros + ")");
             executarSql("update espelho_comanda set RESPONSAVEL_PRECONTA="+responsavelPreconta+",DATA_PRECONTA="+dataPreconta+",RESPONSAVEL_TRANSFERENCIA='" + transferenciaItensParaComanda.getUsuarioTransferencia() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,comanda='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + chavesRegistros + ")");
+            executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,tecomand='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "' where tenumero in(" + chavesRegistros + ")");
         }
     }
     
