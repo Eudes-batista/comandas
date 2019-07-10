@@ -484,7 +484,7 @@ public class Controle implements ComandaService, Serializable {
 
         }
     }
-
+    
     private double calcultarQuantidadeRestante(Lancamento lancamentoOrigem, Lancamento lancamentoDestino) {
         double quantidadeItem = lancamentoOrigem.getQuantidade() - lancamentoDestino.getQuantidade();
         return quantidadeItem;
