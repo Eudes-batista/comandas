@@ -329,10 +329,10 @@ public class Controle implements ComandaService, Serializable {
                 }
                 executarSql("update sosa98 set tenumseq='" + ultimoItemComandaDestino + "' where tepedido='" + comandaOrigem.getPEDIDO() + "' and tenumseq='" + item + "'");
                 executarSql("update espelho_comanda set NUMERO_ITEM='" + ultimoItemComandaDestino + "' where pedido='" + comandaOrigem.getPEDIDO() + "' and numero_item='" + item + "'");
-            } else {
-                ItemAcompanhamentoTransferencia itemTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(String.valueOf(item)), comandaOrigem.getPEDIDO());
-                atualizarSeguenciaItemComanda(itemTransferencia, pedido);
+                continue;
             }
+            ItemAcompanhamentoTransferencia itemTransferencia = new ItemAcompanhamentoTransferencia(Integer.parseInt(String.valueOf(item)), comandaOrigem.getPEDIDO());
+            atualizarSeguenciaItemComanda(itemTransferencia, pedido);
         }
         sqlSoa98 = "update sosa98 set tecomand='" + comandaDestino + "',tecdmesa='" + mesaDestino + "',tepedido='" + pedido + "',testatus='" + status + "' where tecomand='" + comandaOrigem.getCOMANDA() + "'";
         sqlEspelhoComanda = "update espelho_comanda set pessoas_mesa='" + somaQuantidadePessoasMesa + "',comanda='" + comandaDestino + "',mesa='" + mesaDestino + "',pedido='" + pedido + "',status='" + status + "',mesa_origem='" + comandaOrigem.getMESA() + "' where pedido in('" + comandaOrigem.getPEDIDO() + "','" + pedido + "')";
@@ -443,7 +443,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     private void transferirItensParaComandaExistente(TransferenciaItensParaComanda transferenciaItensParaComanda, List<Comandas> comandas, String chavesRegistros) {
-        String pedido = String.valueOf(comandas.get(0).getPEDIDO()) , statusComandaPreconta = comandas.get(0).getSTATUS(), quantidadePessoas = String.valueOf(buscarNumeroDePessoas(pedido)), numero = "";
+        String pedido = String.valueOf(comandas.get(0).getPEDIDO()), statusComandaPreconta = comandas.get(0).getSTATUS(), quantidadePessoas = String.valueOf(buscarNumeroDePessoas(pedido)), numero = "";
         Transferencia transferencia = new Transferencia();
         transferencia.setComandaDestino(comandas.get(0).getCOMANDA());
         transferencia.setMesaDestino(comandas.get(0).getMESA());
@@ -481,17 +481,17 @@ public class Controle implements ComandaService, Serializable {
             transferencia.setQuantidade(lancamento.getQuantidade());
             this.transferenciaService.salvar(transferencia);
             EspelhoComandaDTO espelhoComandaDTO = buscarPedidoDeDistino(pedido);
-            String dataPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getDATA_PRECONTA() != null ? "'"+espelhoComandaDTO.getDATA_PRECONTA().toString()+"'" : "null";
-            String responsavelPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getRESPONSAVEL_PRECONTA() != null ? "'"+espelhoComandaDTO.getRESPONSAVEL_PRECONTA()+"'" : "null";
-            executarSql("update espelho_comanda set RESPONSAVEL_PRECONTA="+responsavelPreconta+",DATA_PRECONTA="+dataPreconta+",RESPONSAVEL_TRANSFERENCIA='" + transferenciaItensParaComanda.getUsuarioTransferencia() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,comanda='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + chavesRegistros + ")");
+            String dataPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getDATA_PRECONTA() != null ? "'" + espelhoComandaDTO.getDATA_PRECONTA().toString() + "'" : "null";
+            String responsavelPreconta = espelhoComandaDTO != null && espelhoComandaDTO.getRESPONSAVEL_PRECONTA() != null ? "'" + espelhoComandaDTO.getRESPONSAVEL_PRECONTA() + "'" : "null";
+            executarSql("update espelho_comanda set RESPONSAVEL_PRECONTA=" + responsavelPreconta + ",DATA_PRECONTA=" + dataPreconta + ",RESPONSAVEL_TRANSFERENCIA='" + transferenciaItensParaComanda.getUsuarioTransferencia() + "',pessoas_mesa='" + quantidadePessoas + "',status='" + statusComandaPreconta + "' ,pedido='" + pedido + "' ,mesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,comanda='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "',mesa_origem='" + lancamentoOrigem.getMesa() + "' where   numero in(" + chavesRegistros + ")");
             executarSql("update          sosa98 set testatus='" + statusComandaPreconta + "' ,tepedido='" + pedido + "' ,tecdmesa='" + transferenciaItensParaComanda.getComanda().getMESA() + "' ,tecomand='" + transferenciaItensParaComanda.getComanda().getCOMANDA() + "' where tenumero in(" + chavesRegistros + ")");
         }
     }
-    
+
     public EspelhoComandaDTO buscarPedidoDeDistino(String pedido) {
         this.session = HibernateUtil.getSessionFactory().openSession();
-        if(this.session != null){
-            SQLQuery sqlQuery = this.session.createSQLQuery("select first 1 comanda,mesa,pedido,pessoas_mesa,status,data_preconta,responsavel_preconta from espelho_comanda where pedido='"+pedido+"' and status_item='N'");
+        if (this.session != null) {
+            SQLQuery sqlQuery = this.session.createSQLQuery("select first 1 comanda,mesa,pedido,pessoas_mesa,status,data_preconta,responsavel_preconta from espelho_comanda where pedido='" + pedido + "' and status_item='N'");
             Query query = sqlQuery.setResultTransformer(Transformers.aliasToBean(EspelhoComandaDTO.class));
             Object uniqueResult = query.uniqueResult();
             this.session.close();
@@ -499,8 +499,7 @@ public class Controle implements ComandaService, Serializable {
         }
         return null;
     }
-    
-    
+
     private double calcultarQuantidadeRestante(Lancamento lancamentoOrigem, Lancamento lancamentoDestino) {
         double quantidadeItem = lancamentoOrigem.getQuantidade() - lancamentoDestino.getQuantidade();
         return quantidadeItem;
