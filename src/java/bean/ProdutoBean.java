@@ -605,15 +605,14 @@ public class ProdutoBean implements Serializable {
     }
 
     public void validaVendedor() {
-        String permissao = vendedorService.validarVendedor(gerarSenha());
-        if (!"null".equals(permissao)) {
-            vendedor = permissao;
-            PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
-            this.senha = "";
-        } else {
+        String permissao = this.vendedorService.validarVendedor(gerarSenha());
+        if ("null".equals(permissao)) {
             Messages.addGlobalWarn("Senha incorreta.");
+            return;
         }
-
+        this.vendedor = permissao;
+        PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
+        this.senha = "";
     }
 
     public void adidcionarAcompanhamento(String acompanhamento) {
@@ -725,11 +724,11 @@ public class ProdutoBean implements Serializable {
         if (this.lancamento.getQuantidade() == this.quantidade) {
             this.controleService.excluir(this.lancamento.getNumero());
             this.lancamentosAdicionados.remove(this.lancamento);
-        } else {
-            double qtd = this.lancamento.getQuantidade() - this.quantidade;
-            this.controleService.alterarQuantidadeItem(qtd, this.lancamento.getNumero());
-            listarProdutosAdicionados();
+            return;
         }
+        double qtd = this.lancamento.getQuantidade() - this.quantidade;
+        this.controleService.alterarQuantidadeItem(qtd, this.lancamento.getNumero());
+        listarProdutosAdicionados();
     }
 
     public void transferirItensParaMesaComanda() {
