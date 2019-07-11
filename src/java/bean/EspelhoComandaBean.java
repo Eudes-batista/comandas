@@ -44,9 +44,9 @@ public class EspelhoComandaBean implements Serializable {
             Messages.addGlobalWarn("Valor menor que o da venda.");
             return;
         }
-        Double valorPago = this.valor;
-        Double valorDaCompra = comandas.getTOTAL();
-        Double porcentagem = calcularPorcentagem(valorDaCompra, valorPago);
+        double valorPago = this.valor;
+        double valorDaCompra = comandas.getTOTAL();
+        double porcentagem = calcularPorcentagem(valorDaCompra, valorPago);
         this.valor = Double.parseDouble(new DecimalFormat("###,##0.00").format(porcentagem).replace(".", "").replace(",", "."));
         espelhoComandaService.atualizarPorcentagem(comandas.getPEDIDO(), this.valor);
         PrimeFaces.current().ajax().update("frmAuditoria:tabela");
