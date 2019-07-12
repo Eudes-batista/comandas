@@ -64,4 +64,8 @@
         <error-code>500</error-code>
         <location>/erros/errorServidor.jsf</location>
     </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/erros/erroPaginaNaoEncontrada.jsf</location>
+    </error-page>
 </web-app>
