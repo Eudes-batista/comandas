@@ -61,7 +61,7 @@
         <param-value>true</param-value>
     </context-param>
     <error-page>
-        <exception-type>org.hibernate.exception.GenericJDBCException</exception-type>
+        <error-code>500</error-code>
         <location>/erros/errorServidor.jsf</location>
     </error-page>
 </web-app>
