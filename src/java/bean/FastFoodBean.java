@@ -392,18 +392,22 @@ public class FastFoodBean implements Serializable {
 
     private void excluir(Lancamento lancamento) {
         if ("0".equals(lancamento.getImprimir())) {
-            this.controleService.excluir(lancamento.getNumero());
-            this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
             return;
         }
-        EspelhoComanda espelhoComanda = this.produtoBean.getEspelhoComandaBean().getEspelhoComanda();
-        espelhoComanda.setMesa(this.espelhoComandaBean.getEspelhoComanda().getMesa());
-        espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
-        espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
-        espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
-        espelhoComanda.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
-        espelhoComanda.setRespansavelCancelamento(this.usuario.getNOME().toUpperCase());
+        EspelhoComanda espelhoComanda = new EspelhoComanda();
+        espelhoComanda.setMesa(lancamento.getMesa());
+        espelhoComanda.setCodigoMotivoCancelamento(99);
+        espelhoComanda.setFoiProduzido(true);
+        espelhoComanda.setObservacaoMotivo("CLIENTE DESISTIU");
+        espelhoComanda.setObservacaoDestino("");
+        String nomeDoUsuario = this.usuario.getNOME().toUpperCase();
+        espelhoComanda.setRespansavelCancelamento(nomeDoUsuario);
+        this.produtoBean.setLancamento(lancamento);
+        this.produtoBean.setQuantidade(lancamento.getQuantidade());
+        this.produtoBean.setUsuario(nomeDoUsuario);
+        this.produtoBean.getEspelhoComandaBean().setEspelhoComanda(espelhoComanda);
         this.produtoBean.cancelamentoDeItem();
+        this.controleService.excluir(lancamento.getNumero());
     }
 
 }
