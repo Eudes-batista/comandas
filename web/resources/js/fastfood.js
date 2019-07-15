@@ -35,6 +35,9 @@ function mandarFocu() {
     var botoes = document.querySelectorAll(".focu");
     botoes.forEach(b => {
         b.focus();
+    });    
+    document.querySelectorAll(".zeraQuantidade").forEach(elemento =>{
+        elemento.textContent = "1";
     });
 }
 function tratarNumerosNegativos(valor) {
