@@ -25,11 +25,11 @@ public class EspelhoComandaBean implements Serializable {
     @ManagedProperty(value = "#{espelhoComandaService}")
     private EspelhoComandaService espelhoComandaService;
 
-    public EspelhoComanda espelhoComanda;
+    private EspelhoComanda espelhoComanda;
 
-    public double valor;
+    private double valor;
 
-    public List<EspelhoComanda> espelhoComandas;
+    private List<EspelhoComanda> espelhoComandas;
 
     public void init() {
         espelhoComanda = null;

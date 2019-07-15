@@ -391,10 +391,19 @@ public class FastFoodBean implements Serializable {
     }
 
     private void excluir(Lancamento lancamento) {
-        if ("1".equals(lancamento.getImprimir())) {
+        if ("0".equals(lancamento.getImprimir())) {
             this.controleService.excluir(lancamento.getNumero());
             this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
+            return;
         }
+        EspelhoComanda espelhoComanda = this.produtoBean.getEspelhoComandaBean().getEspelhoComanda();
+        espelhoComanda.setMesa(this.espelhoComandaBean.getEspelhoComanda().getMesa());
+        espelhoComanda.setCodigoMotivoCancelamento(espelhoComanda.getCodigoMotivoCancelamento());
+        espelhoComanda.setFoiProduzido(espelhoComanda.getFoiProduzido());
+        espelhoComanda.setObservacaoMotivo(espelhoComanda.getObservacaoMotivo());
+        espelhoComanda.setObservacaoDestino(espelhoComanda.getObservacaoDestino());
+        espelhoComanda.setRespansavelCancelamento(this.usuario.getNOME().toUpperCase());
+        this.produtoBean.cancelamentoDeItem();
     }
 
 }
