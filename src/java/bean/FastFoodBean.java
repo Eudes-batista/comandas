@@ -300,6 +300,7 @@ public class FastFoodBean implements Serializable {
         }
         espelhoComanda.setPessoasMesa(this.comandas.getPESSOAS().isEmpty() ? "1" : this.comandas.getPESSOAS());
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
+        espelhoComanda.setQuantidadeLancada(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
         espelhoComanda.setImpressao(lancamento.getImprimir());
         espelhoComanda.setStatus(lancamento.getStatus());
