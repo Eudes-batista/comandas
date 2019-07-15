@@ -90,6 +90,7 @@ public class FastFoodBean implements Serializable {
         this.lancamentos = new ArrayList<>();
         this.comandas = new Comandas();
         this.configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
+        this.produtoBean.instacias();
     }
 
     public void pesquisarProduto() {
@@ -363,26 +364,28 @@ public class FastFoodBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa() {
-        mesasBean.setPesquisa(this.comandas.getCOMANDA());
-        mesasBean.pesquisarMesas();
-        mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
+        this.mesasBean.setMesas(new ArrayList());
+        this.mesasBean.setPesquisa(this.comandas.getCOMANDA());
+        this.mesasBean.pesquisarMesas();
+        this.mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
         listarComandas();
     }
 
     private void atualiazarStatusComanda() {
-        this.controleService.atualizarStatusImpressao(comandas.getCOMANDA());
+        this.controleService.atualizarStatusImpressao(this.comandas.getCOMANDA());
         this.espelhoComandaBean.getEspelhoComandaService().atualizarStatusImpressao(this.comandas.getPEDIDO());
         this.espelhoComandaBean.atualizarUsuarioPreconta(this.comandas.getPEDIDO(), this.usuario.getNOME());
     }
 
     public void imprimirPrecontaMesa(Comandas comandas) {
-        mesasBean.setPesquisa(comandas.getCOMANDA());
-        mesasBean.setMesa(new Mesa());
-        mesasBean.getMesa().setMESA(comandas.getCOMANDA());
-        mesasBean.getMesa().setCOMANDA(comandas.getCOMANDA());
-        mesasBean.getMesa().setPAGANTES(comandas.getPAGANTES());
-        mesasBean.pesquisarMesas();
-        mesasBean.imprimirPreconta(comandas.getCOMANDA());
+        this.mesasBean.setMesas(new ArrayList());
+        this.mesasBean.setPesquisa(comandas.getCOMANDA());
+        this.mesasBean.setMesa(new Mesa());
+        this.mesasBean.getMesa().setMESA(comandas.getCOMANDA());
+        this.mesasBean.getMesa().setCOMANDA(comandas.getCOMANDA());
+        this.mesasBean.getMesa().setPAGANTES(comandas.getPAGANTES());
+        this.mesasBean.pesquisarMesas();
+        this.mesasBean.imprimirPreconta(comandas.getCOMANDA());
         this.espelhoComandaBean.atualizarUsuarioPreconta(this.comandas.getPEDIDO(), this.usuario.getNOME());
         listarComandas();
     }

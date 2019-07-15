@@ -148,7 +148,7 @@ public class ProdutoBean implements Serializable {
         this.quantidadePessoas = String.valueOf(Integer.parseInt(this.quantidadePessoas));
     }
 
-    private void instacias() {
+    public void instacias() {
         this.lancamentosAdicionados = new ArrayList<>();
         this.lancamentosAdicionadosAuxlizar = new ArrayList<>();
         this.lancamentoAcompanhamento = new Lancamento();
