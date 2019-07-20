@@ -287,8 +287,6 @@ public class ProdutoBean implements Serializable {
     }
 
     public void preparaItem(Lancamento lancamento) {
-        this.lancamentosAdicionados.add(lancamento);
-        this.quantidadeItensAdicionados += 1;
         salvar(lancamento);
     }
 
@@ -340,6 +338,8 @@ public class ProdutoBean implements Serializable {
                     lancamento.getPedido()
             ));
             this.log.salvarLancamento(lancamento, this.vendedor);
+            this.lancamentosAdicionados.add(lancamento);
+            this.quantidadeItensAdicionados += 1;
             this.quantidade = 1;
         } catch (Exception ex) {
             this.controleService.excluir(lancamento.getNumero());
