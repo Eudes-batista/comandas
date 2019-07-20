@@ -352,7 +352,7 @@ public class ProdutoBean implements Serializable {
         }
     }
 
-    private void salvarEspelho(Lancamento lancamento, Date data) {
+    private void salvarEspelho(Lancamento lancamento, Date data) throws Exception {
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
