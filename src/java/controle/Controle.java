@@ -588,7 +588,7 @@ public class Controle implements ComandaService, Serializable {
         }
     }
 
-    private void salvarEspelho(Lancamento lancamento, Date data, String usuario, String pessoas) {
+    private void salvarEspelho(Lancamento lancamento, Date data, String usuario, String pessoas) throws Exception {
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
