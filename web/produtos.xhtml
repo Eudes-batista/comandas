@@ -19,9 +19,14 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="resources/css/bootstrap.css" />
+        <h:outputScript library="primefaces" name="jquery.js"/>
         <h:outputStylesheet library="css" name="lancarProdutos.css" />
         <h:outputScript library="js" name="function.js" />
+        <script src="resources/js/bootstrap.min.js"></script>
         <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
             var fecharNotificacao = function () {
                 setTimeout(function () {
                     PF('bar').hide();
@@ -32,6 +37,7 @@
             };
             var selecionarPesquisa = function () {
                 selecionarCampo(document.getElementById("frm:pesquisar"));
+                $('[data-toggle="tooltip"]').tooltip();
             };
             document.addEventListener("keydown", function (e) {
                 if (e.keyCode === 113) {
@@ -67,28 +73,37 @@
                             <ul>
                                 <li>
                                     <p:commandLink id="grupos" value="Grupos" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar1').show()" actionListener="#{produtoBean.listarGrupos()}"
-                                                   update="frm:listaGrupo" process="@this"/>
-                                    <p:tooltip for="grupos" value="Grupos ( F2 )" showEffect="fade" hideEffect="fade"
-                                               position="bottom"/>
+                                                   update="frm:listaGrupo" process="@this">
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="Grupos ( F2 )"/>
+                                    </p:commandLink>
                                 </li>
                                 <li>
-                                    <p:commandLink id="totalItens" value="Itens #{produtoBean.quantidadeItensAdicionados}" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar2').show()"
-                                                   update="frm:tabela frm:valorTotalItens" actionListener="#{produtoBean.listarProdutosAdicionados()}" process="@this"/>
-                                    <p:tooltip for="totalItens" value="Itens ( F4 )" showEffect="fade" hideEffect="fade"
-                                               position="bottom"/>
+                                    <p:commandLink id="totalItens" value="Itens #{produtoBean.quantidadeItensAdicionados}" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar2').show();"
+                                                   update="frm:tabela frm:valorTotalItens" actionListener="#{produtoBean.listarProdutosAdicionados()}" process="@this">
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="Itens ( F4 )"/>  
+                                    </p:commandLink>
                                 </li>
 
                                 <li style="display: none;">
-                                    <p:link id="sair" class="btn-modal btn btn-warning btn-block" outcome="comandas.jsf?id=#{produtoBean.mesa}">Voltar</p:link>
-                                    <p:tooltip for="sair" value="Sair ( ESC )" showEffect="fade" hideEffect="fade"
-                                               position="bottom"/>
+                                    <p:link id="sair" class="btn-modal btn btn-warning btn-block" outcome="comandas.jsf?id=#{produtoBean.mesa}">
+                                        Voltar
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="Sair ( ESC )"/>          
+                                    </p:link>
                                 </li>
                                 <li style="width: 50% ;text-align: center;">
                                     <p:commandLink id="imprimirTodos" value="Imprimir Pedido" class="btn-modal btn btn-success btn-block" 
                                                    update="@this" actionListener="#{produtoBean.imprimirTodos()}" process="@this"
-                                                   onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
-                                    <p:tooltip for="imprimirTodos" value="Imprimir Pedido ( F7 )" showEffect="fade" hideEffect="fade"
-                                               position="bottom"/>
+                                                   onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();">
+                                        <f:passThroughAttribute name="data-toggle" value="tooltip"/>
+                                        <f:passThroughAttribute name="data-placement" value="bottom"/>
+                                        <f:passThroughAttribute name="title" value="Imprimir Pedido ( F7 )"/>          
+                                    </p:commandLink>
                                 </li>
                             </ul>                        
                         </div>
@@ -212,6 +227,7 @@
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
                                                 <p:commandLink style="color: red; border-radius: 50px !important; font-size: 15pt;" process="@this"
+                                                               oncomplete="selecionarPesquisa();"
                                                                actionListener="#{produtoBean.excluirItem(lancamento)}" rendered="#{lancamento.imprimir ne '1'}" update="frm:tabela frm:valorTotalItens frm:totalItens">
                                                     <i class="fa fa-trash"></i>
                                                 </p:commandLink>
@@ -388,7 +404,8 @@
                             <p:commandLink id="confirmarCancelamento" style="color: #fff;" class="btn-modal btn btn-success btn-block" value="Confirma" 
                                            update="frm:tabela frm:totalItens frm:valorTotalItens frmCancelamento:msgCancelar" process="frmCancelamento:panelInformacao frmCancelamento:panelAutorizacao @this" 
                                            resetValues="true" actionListener="#{produtoBean.excluirProdutoJaImpresso()}"
-                                           onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>
+                                           onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"
+                                           oncomplete="selecionarPesquisa();"/>
                             <a style="color: #fff;font-size: 13pt;" class="btn-modal btn btn-danger btn-block" onclick="PF('dialogoCancelamento').hide();">
                                 Fechar
                             </a>
@@ -476,8 +493,8 @@
                   responsive="true" showEffect="fade" hideEffect="fade">
             <h3 style="text-align: center;">Aguarde...</h3>
         </p:dialog>
-         <!--MODAL DE QUANTIDADE TRANSFERENCIA DE ITENS-->
-         <p:dialog id="dlQuantidade" header="Alterar Quantidade #{produtoBean.lancamento.descricao}" widgetVar="dialogQuantidade" modal="true" draggable="false" closable="false" resizable="false"
+        <!--MODAL DE QUANTIDADE TRANSFERENCIA DE ITENS-->
+        <p:dialog id="dlQuantidade" header="Alterar Quantidade #{produtoBean.lancamento.descricao}" widgetVar="dialogQuantidade" modal="true" draggable="false" closable="false" resizable="false"
                   responsive="true" showEffect="fade" hideEffect="fade" dynamic="true" width="300" styleClass="mesa-modal"
                   fitViewport="true" >
             <h:form id="frmQuantidade">
