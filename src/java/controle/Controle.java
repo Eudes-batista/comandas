@@ -210,7 +210,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void excluir(String codigo) {
+    public void excluir(String codigo) throws Exception{
         executarSql("delete from sosa98 where tenumero='" + codigo + "'");
     }
 

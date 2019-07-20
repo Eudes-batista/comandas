@@ -21,7 +21,7 @@ public interface ComandaService {
     
     public void alterar(Sosa98 sosa98);
 
-    public void excluir(String codigo);
+    public void excluir(String codigo) throws Exception;
 
     public Sosa98 buscarPorId(String codigo);
     

@@ -287,7 +287,7 @@ public class FastFoodBean implements Serializable {
         }
     }
 
-    private void salvarEspelho(Lancamento lancamento, Date data) {
+    private void salvarEspelho(Lancamento lancamento, Date data) throws Exception {
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
@@ -407,7 +407,11 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.setUsuario(nomeDoUsuario);
         this.produtoBean.getEspelhoComandaBean().setEspelhoComanda(espelhoComanda);
         this.produtoBean.cancelamentoDeItem();
-        this.controleService.excluir(lancamento.getNumero());
+        try {
+            this.controleService.excluir(lancamento.getNumero());
+        } catch (Exception ex) {
+            Messages.addGlobalWarn("Erro ao excluir item.");
+        }
     }
 
 }

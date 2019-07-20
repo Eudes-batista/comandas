@@ -342,7 +342,11 @@ public class ProdutoBean implements Serializable {
             this.quantidadeItensAdicionados += 1;
             this.quantidade = 1;
         } catch (Exception ex) {
-            this.controleService.excluir(lancamento.getNumero());
+            try {
+                this.controleService.excluir(lancamento.getNumero());
+            } catch (Exception ex1) {
+                Messages.addGlobalWarn("Erro ao excluir item");
+            }
             this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens\n e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
         }
@@ -411,14 +415,18 @@ public class ProdutoBean implements Serializable {
     }
 
     public void excluirItem(Lancamento lancamento) {
-        this.controleService.excluir(lancamento.getNumero());
-        if ("0".equals(lancamento.getImprimir())) {
-            this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
-            this.itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
+        try {
+            this.controleService.excluir(lancamento.getNumero());
+            if ("0".equals(lancamento.getImprimir())) {
+                this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
+                this.itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
+            }
+            this.lancamentosAdicionados.remove(lancamento);
+            totalizarItensAdicionado();
+            this.quantidadeItensAdicionados--;
+        } catch (Exception ex) {
+            Messages.addGlobalWarn("Erro ao excluir item.");
         }
-        this.lancamentosAdicionados.remove(lancamento);
-        totalizarItensAdicionado();
-        this.quantidadeItensAdicionados--;
     }
 
     public void receberCodigo(Lancamento lancamento, String condicao) {
@@ -723,8 +731,12 @@ public class ProdutoBean implements Serializable {
 
     private void excluirProdutoJaImpressoSosa98() {
         if (this.lancamento.getQuantidade() == this.quantidade) {
-            this.controleService.excluir(this.lancamento.getNumero());
-            this.lancamentosAdicionados.remove(this.lancamento);
+            try {
+                this.controleService.excluir(this.lancamento.getNumero());
+                this.lancamentosAdicionados.remove(this.lancamento);
+            } catch (Exception ex) {
+                Messages.addGlobalWarn("Erro ao excluir item.");
+            }
             return;
         }
         double qtd = this.lancamento.getQuantidade() - this.quantidade;

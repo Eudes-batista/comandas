@@ -54,7 +54,7 @@ public class EspelhoComandaBean implements Serializable {
         Messages.addGlobalInfo("Operação realizada com sucesso!!");
     }
 
-    public void salvar() {
+    public void salvar() throws Exception {
         this.espelhoComandaService.salvar(this.espelhoComanda);
     }
 
