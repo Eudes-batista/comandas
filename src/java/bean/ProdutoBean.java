@@ -342,6 +342,7 @@ public class ProdutoBean implements Serializable {
             log.salvarLancamento(lancamento, vendedor);
             this.quantidade = 1;
         } catch (Exception ex) {
+            this.controleService.excluir(lancamento.getNumero());
             this.mensagem = "Erro na comunicação do servidor, verifique a lista dos itens\n e lançe novamente.";
             PrimeFaces.current().executeScript("PF('dialogoErro').show();");
         }
