@@ -7,7 +7,7 @@ import modelo.dto.Cancelamento;
 import modelo.dto.EspelhoComandaDTO;
 
 public interface EspelhoComandaService {
-    public void salvar(EspelhoComanda espelhoComanda);
+    public void salvar(EspelhoComanda espelhoComanda) throws Exception;
     public void alterar(EspelhoComanda espelhoComanda);
     public void excluir(Integer numero);
     public EspelhoComanda buscarPorId(Integer numero);

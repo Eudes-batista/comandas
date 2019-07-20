@@ -9,6 +9,11 @@ public class ControlePedido {
     private final ComandaService comandaService;
     private final String comanda;
 
+    public ControlePedido() {
+        this.comandaService = null;
+        this.comanda = null;
+    }
+    
     public ControlePedido(ComandaService comandaService, String comanda) {
         this.comandaService = comandaService;
         this.comanda = comanda;
@@ -30,7 +35,7 @@ public class ControlePedido {
         return comandaService.verificarSePedidoJaExiste(String.valueOf(pedido)) != 0;
     }
     
-    private int gerarPedido(){
+    public int gerarPedido(){
         LocalDate data = LocalDate.now();
         LocalTime hora = LocalTime.now();
         String numero = String.valueOf(((data.getYear() * data.getMonthValue() * data.getDayOfMonth()) + (2217 * hora.getHour())) + (hora.getSecond() + hora.getNano()));

@@ -182,10 +182,10 @@ public class Controle implements ComandaService, Serializable {
             session.save(sosa98);
             transaction.commit();
         } catch (Exception ex) {
-            registrarErroAoSalvarProduto(sosa98, ex);
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
+            registrarErroAoSalvarProduto(sosa98, ex);
             throw ex;
         } finally {
             if (this.session != null) {

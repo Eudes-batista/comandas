@@ -26,7 +26,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     private Session session = null;
 
     @Override
-    public void salvar(EspelhoComanda espelhoComanda) {
+    public void salvar(EspelhoComanda espelhoComanda) throws Exception {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
             try {
@@ -34,10 +34,11 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
                 session.save(espelhoComanda);
                 session.getTransaction().commit();
             } catch (Exception ex) {
-                this.registrarErroAoSalvar(ex, espelhoComanda);
                 if(session.getTransaction() != null && session.getTransaction().isActive()){
                     session.getTransaction().rollback();
                 }
+                this.registrarErroAoSalvar(ex, espelhoComanda);
+                throw ex;
             } finally {
                 session.close();
             }

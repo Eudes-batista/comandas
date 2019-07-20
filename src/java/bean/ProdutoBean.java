@@ -326,6 +326,7 @@ public class ProdutoBean implements Serializable {
     public void salvar(Lancamento lancamento) {
         try {
             Date data = new Date();
+            salvarEspelho(lancamento, data);
             this.controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
                     lancamento.getComanda(),
                     lancamento.getReferencia(),
@@ -338,7 +339,6 @@ public class ProdutoBean implements Serializable {
                     lancamento.getImprimir(),
                     lancamento.getPedido()
             ));
-            salvarEspelho(lancamento, data);
             this.log.salvarLancamento(lancamento, this.vendedor);
             this.quantidade = 1;
         } catch (Exception ex) {
