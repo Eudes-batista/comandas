@@ -172,34 +172,34 @@ public class ProdutoBean implements Serializable {
     }
 
     public void listarGrupos() {
-        grupos = grupoServico.listarGrupos();
+        this.grupos = this.grupoServico.listarGrupos();
     }
 
     public void listarProdutos() {
-        produtos = produtoServico.lsitarProdutos();
+        this.produtos = this.produtoServico.lsitarProdutos();
     }
 
     public void listarProdutoPorGrupo(Lapt51 lapt51) {
-        produtos = produtoServico.lsitarProdutoPorGrupo(lapt51.getT51cdgrp());
+        this.produtos = this.produtoServico.lsitarProdutoPorGrupo(lapt51.getT51cdgrp());
         mudarQuantidade();
     }
 
     public void pesquisarProduto() {
-        produtos = produtoServico.listarPorReferenciaDescricaoCodigoBarra(pesquisa == null ? "" : pesquisa.toUpperCase());
+        this.produtos = this.produtoServico.listarPorReferenciaDescricaoCodigoBarra(pesquisa == null ? "" : pesquisa.toUpperCase());
         mudarQuantidade();
     }
 
     private void mudarQuantidade() {
-        if (quantidade != 1) {
-            quantidade = 1;
+        if (this.quantidade != 1) {
+            this.quantidade = 1;
         }
     }
 
     public void listarProdutosAdicionados() {
-        lancamentosAdicionados.clear();
-        lancamentosAdicionadosAuxlizar.clear();
-        controleService.ListarLancamentos(comanda, mesa).forEach(l -> {
-            lancamentosAdicionados.add(new Lancamento(String.valueOf(l[0]),
+        this.lancamentosAdicionados.clear();
+        this.lancamentosAdicionadosAuxlizar.clear();
+        this.controleService.ListarLancamentos(this.comanda, this.mesa).forEach(l -> {
+            this.lancamentosAdicionados.add(new Lancamento(String.valueOf(l[0]),
                     String.valueOf(l[1]),
                     String.valueOf(l[2]),
                     String.valueOf(l[3]),
@@ -214,7 +214,7 @@ public class ProdutoBean implements Serializable {
                     String.valueOf(l[12]).equals("null") ? "" : String.valueOf(l[12]),
                     String.valueOf(l[13]).equals("null") ? "" : String.valueOf(l[13])
             ));
-            lancamentosAdicionadosAuxlizar.add(new Lancamento(String.valueOf(l[0]),
+            this.lancamentosAdicionadosAuxlizar.add(new Lancamento(String.valueOf(l[0]),
                     String.valueOf(l[1]),
                     String.valueOf(l[2]),
                     String.valueOf(l[3]),
@@ -306,27 +306,27 @@ public class ProdutoBean implements Serializable {
     }
 
     public void salvoAcompanhamento() {
-        itemAcompanhamentoService.excluirTodos(lancamentoAcompanhamento.getItem(), pedido);
-        if (itensAcompanhamentos != null) {
-            for (int i = 0; i < itensAcompanhamentos.size(); i++) {
+        this.itemAcompanhamentoService.excluirTodos(this.lancamentoAcompanhamento.getItem(), this.pedido);
+        if (this.itensAcompanhamentos != null) {
+            for (int i = 0; i < this.itensAcompanhamentos.size(); i++) {
                 ItemAcompanhamento itemAcompanhamento = new ItemAcompanhamento();
-                itemAcompanhamento.setAcompanhamento(itensAcompanhamentos.get(i));
-                itemAcompanhamento.setItem(Integer.parseInt(lancamentoAcompanhamento.getItem()));
+                itemAcompanhamento.setAcompanhamento(this.itensAcompanhamentos.get(i));
+                itemAcompanhamento.setItem(Integer.parseInt(this.lancamentoAcompanhamento.getItem()));
                 itemAcompanhamento.setNumeroItem(String.valueOf(i + 1));
                 itemAcompanhamento.setPedido(pedido);
                 itemAcompanhamento.setStatus("N");
-                itemAcompanhamentoService.salvar(itemAcompanhamento);
+                this.itemAcompanhamentoService.salvar(itemAcompanhamento);
             }
         }
-        if (!lancamentoAcompanhamento.getObservacao().isEmpty()) {
-            alterar(lancamentoAcompanhamento);
+        if (!this.lancamentoAcompanhamento.getObservacao().isEmpty()) {
+            alterar(this.lancamentoAcompanhamento);
         }
     }
 
     public void salvar(Lancamento lancamento) {
         try {
             Date data = new Date();
-            controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
+            this.controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
                     lancamento.getComanda(),
                     lancamento.getReferencia(),
                     lancamento.getQuantidade(),
@@ -339,7 +339,7 @@ public class ProdutoBean implements Serializable {
                     lancamento.getPedido()
             ));
             salvarEspelho(lancamento, data);
-            log.salvarLancamento(lancamento, vendedor);
+            this.log.salvarLancamento(lancamento, this.vendedor);
             this.quantidade = 1;
         } catch (Exception ex) {
             this.controleService.excluir(lancamento.getNumero());

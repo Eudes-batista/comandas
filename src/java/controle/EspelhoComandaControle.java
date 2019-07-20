@@ -35,6 +35,9 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
                 session.getTransaction().commit();
             } catch (Exception ex) {
                 this.registrarErroAoSalvar(ex, espelhoComanda);
+                if(session.getTransaction() != null && session.getTransaction().isActive()){
+                    session.getTransaction().rollback();
+                }
             } finally {
                 session.close();
             }
