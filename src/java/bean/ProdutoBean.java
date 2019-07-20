@@ -421,8 +421,8 @@ public class ProdutoBean implements Serializable {
                 this.espelhoComandaBean.excluir(Integer.parseInt(lancamento.getNumero()));
                 this.itemAcompanhamentoService.excluirTodos(lancamento.getItem(), lancamento.getPedido());
             }
-            this.lancamentosAdicionados.remove(lancamento);
-            totalizarItensAdicionado();
+            this.listarProdutosAdicionados();
+            this.totalizarItensAdicionado();
             this.quantidadeItensAdicionados--;
         } catch (Exception ex) {
             Messages.addGlobalWarn("Erro ao excluir item.");
