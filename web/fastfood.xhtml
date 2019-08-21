@@ -316,8 +316,10 @@
                             <h:inputText id="numeroComanda" class="form-control" required="true"
                                          requiredMessage="Comanda obrigatoria!"
                                          onkeyup="apenasNumeros(this)"
-                                         value="#{fastFoodBean.comandas.COMANDA}">
+                                         value="#{fastFoodBean.comandas.COMANDA}"
+                                         >
                                 <f:passThroughAttribute name="placeholder" value="Número da comanda."/>
+                                <f:passThroughAttribute name="type" value="number"/>
                             </h:inputText>
                         </div>
                     </div>
@@ -366,11 +368,10 @@
                         <div class="col-md-12">
                             <h:outputLabel value="Quantidade"/>
                             <h:inputText id="inputQuantidade" class="form-control" value="#{fastFoodBean.quantidade}"
-                                         onkeyup="this.value = this.value.replace(/[^0,-9,]/g, '');"
                                          converter="converterValor">
                                 <f:passThroughAttribute name="placeholder" value="Quantidade"/>
                                 <f:passThroughAttribute name="autofocus" value="true"/>
-                                <f:passThroughAttribute name="type" value="tel"/>
+                                <f:passThroughAttribute name="type" value="number"/>
                             </h:inputText>
                         </div>
                     </div>
