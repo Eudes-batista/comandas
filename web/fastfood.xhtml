@@ -298,7 +298,7 @@
                     </div>
                     <div class="col-md-3" >
                         <p:commandLink class="btn btn-block btn-warning" style="padding-top: 20px;font-size: 25pt;height: 110px;"
-                                       actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total"
+                                       actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total frmFinalizar:numeroComanda"
                                        process="@this" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                             Finalizar
                         </p:commandLink>
@@ -359,7 +359,7 @@
             </script>
         </p:dialog>
         <p:dialog id="dlQuantidade" widgetVar="dialogQuantidade" header="Definir Quantidade" draggable="false" dynamic="true" responsive="true" resizable="false"
-                  modal="true" showEffect="fade" position="center">
+                  modal="true" showEffect="fade" position="center" onShow="selecionarTexto()">
             <p:ajax event="close" process="@this" listener="#{fastFoodBean.novoProduto()}" />
             <h:form id="frmQauntidade">
                 <p:messages id="msgQuantidade" closable="true" showIcon="false" style="color: #fff !important;"/>
@@ -377,7 +377,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink process="@form" update="@form frm:itens frm:total msgQuantidade"
+                            <p:commandLink id="default" process="@form" update="@form frm:itens frm:total msgQuantidade"
                                            actionListener="#{fastFoodBean.definirQuantidade()}"
                                            oncomplete="selecionarCampo('frmQauntidade:inputQuantidade');">
                                 <i class="fa fa-check"></i>
@@ -386,9 +386,13 @@
                         </div>
                     </div>
                 </div>
-                <p:commandButton id="default" style="display: none;"/>
                 <p:defaultCommand target="default"/>
             </h:form>
+            <script>
+                function selecionarTexto() {
+                    document.getElementById("frmQauntidade:inputQuantidade").select();
+                }
+            </script>
         </p:dialog>
         <!--FORMULARIO DE AUTORIZAÇÃO-->
         <p:dialog header="Autorização" resizable="false" modal="true" responsive="true" fitViewport="true" draggable="false" width="300" id="dlUsuario" widgetVar="dialogoUsuario" dynamic="true" 

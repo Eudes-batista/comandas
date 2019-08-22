@@ -11,7 +11,7 @@ public class ConverterValor implements Converter{
 
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
-        return Double.parseDouble(string.replace(".","").replace(",","."));
+        return Double.parseDouble(string.replace(",","."));
     }
 
     @Override
