@@ -33,6 +33,8 @@
                            oncomplete="PF('dialogoPesquisaComanda').show();"
                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
             <p:commandButton id="sair" style="display: none;" actionListener="#{fastFoodBean.sair()}"/>
+            <p:commandButton id="btPrincipal" style="display: none;"/>
+            <p:defaultCommand target="btPrincipal"/>
             <div class="container-fluid">
                 <div class="row">
                     <nav class="navbar navbar-inverse">
@@ -340,12 +342,13 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink class="btn btn-success btn-block" process="frmFinalizar"
+                            <p:commandLink id="btfinalizar" class="btn btn-success btn-block" process="frmFinalizar"
                                            actionListener="#{fastFoodBean.finalizar()}" update="frm:itens frm:total"
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                 <i class="fa fa-check"></i>
                                 Confirma
                             </p:commandLink>
+                            <p:defaultCommand target="btfinalizar"/>
                         </div>
                     </div>
                 </div>
