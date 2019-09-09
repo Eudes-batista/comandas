@@ -25,11 +25,11 @@ public class AbrirComandaBean implements Serializable {
     private ComandaService controleService;
     
     public String verificar() {
-        if (!"RSVA".equals(mesa)) {
-            mesa = String.format("%04d", Integer.parseInt(mesa));
+        if (!"RSVA".equals(this.mesa)) {
+            this.mesa = String.format("%04d", Integer.parseInt(this.mesa));
         }
-        comanda = String.format("%04d", Integer.parseInt(comanda));
-        int verificarComanda = controleService.verificarComanda(mesa, comanda);
+        this.comanda = String.format("%04d", Integer.parseInt(this.comanda));
+        int verificarComanda = controleService.verificarComanda(this.mesa, this.comanda);
         if (verificarComanda != 0) {
             Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
             existe =true;

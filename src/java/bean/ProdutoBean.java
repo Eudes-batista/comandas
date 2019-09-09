@@ -749,6 +749,11 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
+        int verificarComanda = this.controleService.verificarComanda(this.mesa, this.comanda);
+        if (verificarComanda != 0) {
+            Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
+            return;
+        }
         this.controleService.transferenciaItensParaComanda(new TransferenciaItensParaComanda(this.comandaTransferencia, this.lancamentosSelecionadadosTransferencia, this.lancamentosAdicionadosAuxlizar, this.usuarioTransferencia.toUpperCase()));
         if (this.lancamentosAdicionados.size() == this.lancamentosSelecionadadosTransferencia.size()) {
             try {
