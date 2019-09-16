@@ -56,7 +56,7 @@ public class ProdutoControle implements ProdutoService, Serializable {
     public List<Produto> listarPorReferenciaDescricaoCodigoBarra(String pesquisa) {
         session = HibernateUtil.getSessionFactory().openSession();
         if (session != null) {
-            Query query = session.createSQLQuery("select first 20 prrefere as REFERENCIA,prdescri as DESCRICAO,EEPLQTB1 as PRECO,T51DSGRP as GRUPO from scea07 left outer join scea01 on(prrefere=eerefere) left outer join LAPT51 on(T51CDGRP=PRCGRUPO) where PRDATCAN is null and prrefere='" + pesquisa + "' or prdescri like '%" + pesquisa + "%' or prcodbar='" + pesquisa + "' group by prrefere,prdescri,EEPLQTB1,T51DSGRP order by prdescri").setResultTransformer(Transformers.aliasToBean(Produto.class));
+            Query query = session.createSQLQuery("select first 20 prrefere as REFERENCIA,prdescri as DESCRICAO,EEPLQTB1 as PRECO,T51DSGRP as GRUPO from scea07 left outer join scea01 on(prrefere=eerefere) left outer join LAPT51 on(T51CDGRP=PRCGRUPO) where PRDATCAN is null AND (prrefere='" + pesquisa + "' or prdescri like '%" + pesquisa + "%' or prcodbar='" + pesquisa + "') group by prrefere,prdescri,EEPLQTB1,T51DSGRP order by prdescri").setResultTransformer(Transformers.aliasToBean(Produto.class));
             List<Produto> produtos = query.list();
             session.close();
             return produtos;
