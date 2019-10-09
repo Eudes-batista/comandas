@@ -1,19 +1,18 @@
 function desabilitarBotoes() {
-    var botoes = document.querySelectorAll(".botoes-rapidos a");
+    var botoes = document.querySelectorAll("#itensRapidos a");
     botoes.forEach(botao => {
         var texto = botao.textContent;
         texto = texto.trim();
         botao.style.display = texto ? "block" : "none";
     });
 }
-
 function limitarCaracteres() {
     var nomeProdutos = document.querySelectorAll(".nome-produto");
     nomeProdutos.forEach(e => {
         var texto = e.textContent;
-        if (texto.toString().length >= 19){
+        if (texto.toString().length >= 19) {
             e.textContent = texto.toString().substring(0, 18);
-       }
+        }
     });
 }
 function adicionarQuantidade(id, idInput) {
@@ -32,11 +31,7 @@ function removerQuantidade(id, idInput) {
     }
 }
 function mandarFocu() {
-    var botoes = document.querySelectorAll(".focu");
-    botoes.forEach(b => {
-        b.focus();
-    });    
-    document.querySelectorAll(".zeraQuantidade").forEach(elemento =>{
+    document.querySelectorAll(".zeraQuantidade").forEach(elemento => {
         elemento.textContent = "1";
     });
 }
@@ -45,7 +40,31 @@ function tratarNumerosNegativos(valor) {
         return false;
     return true;
 }
-function selecionarCampo(id){
-    document.getElementById(id).select();
-    document.getElementById(id).focus();
+function selecionarCampo(id) {
+    setTimeout(function () {
+        document.getElementById(id).value = 0;
+        document.getElementById(id).focus();
+        document.getElementById(id).select();
+    }, 500);
+}
+
+function mostrarItens() {
+    if (document.getElementById('itensRapidos').style.display === "none") {
+        document.getElementById('itensRapidos').style.display = "block";
+        document.getElementById('frmProduto').style.display = "none";
+        return;
+    }
+    document.getElementById('itensRapidos').style.display = "none";
+    document.getElementById('frmProduto').style.display = "block";
+}
+function apenasNumeros(input) {
+    var regExp = /[^0-9]/g;
+    input.value = input.value.replace(regExp, "");
+    input.value = ("0000" + input.value).slice(-4);
+}
+function fecharModal(modal){
+    document.getElementById(modal).style.display= "none";
+    document.querySelectorAll('.modal-backdrop').forEach(element => {
+        element.style.display="none";
+    });
 }

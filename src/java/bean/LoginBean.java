@@ -31,6 +31,7 @@ public class LoginBean implements Serializable{
     }
     
     public void logar(){
+        usuario.setNOME(usuario.getNOME().toUpperCase());
         usuarioBean.setUsuario(usuario);
         usuario.setSENHA(usuarioBean.gerarSenha());
         Usuario usuarioEncontrado =usuarioService.validarUsuario(this.usuario);

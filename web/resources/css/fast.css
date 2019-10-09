@@ -1,127 +1,56 @@
-body{
-    background: #fff;
-    background-attachment: fixed;
-    background-size: cover;
-}
-@media(max-width:767px){
-    ul li{
-        display: inline;
-        float: left;
-    }
-    .barra-grupo{
-        height: 200px !important;
-        overflow-y: auto;
-        overflow-x: hidden;
-        
-    }
-}
-a,a:hover{
-    color: #286090;
-    text-decoration: none;
-}
-input{
-    background-color:transparent;
-    border: none;
-    border-bottom: 1px solid #858585;
-    outline: none !important;
-    border-radius: 0px;
-    font-size: 25pt;
-    width: 100%;
-    text-transform: uppercase;
-}
-.campo-pesquisa{
-    margin-top: 10px;
-    width: auto;
-    margin-left: 10px;
-    margin-right: 10px;
-
-}
-.barra,input{
-    color: #333;
-    font-weight: bold;
-}
-input::placeholder{
-    color: #ccc;
-    font-size: 12pt;
-    text-transform: capitalize;
+*{
+    box-sizing: border-box;
+    font-size: 12px;
 }
 
-ul{
-    list-style: none;
-    margin-left: -50px;
-    color: #229b54;
-    text-align: center;
-}
-ul li{
-    margin-bottom: 15px;
-    font-size: 10px;
-}
-.ui-dialog{
-    font-family: tahoma !important;
-}
-.row{
-    margin-bottom: 5px;
-}
-.modal-text,.ui-confirm-dialog{
-    font-weight: bold;    
-}
-.barra-grupo{
-    border-right: 0.2px solid #bbb;
-    margin-left: -20px;
-    overflow: auto;
-    height: 199px;
-}
-.produto{
+.grupo,.produto{
     width: 150px;
     height: 100px;
     padding: 5px;
     border-radius: 3px;
     margin-top:  10px;
-    color: #fff;
-    background: #68b6c9;
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    color: #000;
+    background: #fff;
+    border: 1px solid #68b6c9;
     display: inline-block;
-    /*box-shadow: 1px 1px #ccc;*/
+}
+.rolagem{
+    overflow-y: auto;
+    height:380px;
+}
+.btn{
+    font-size: 14pt;
+}
+.btn-purple,.btn-purple:hover,.btn-purple:focus{
+    color: #fff;   
+}
+.btn-purple{
+    background-color: #5e35b1;
+    margin-bottom: 5px;
+}
+.cabecalho{
+    grid-column-start:1;
+    grid-column-end:3;
+}
+.cabecalho a{
+    font-size: 11pt;
+}
+.conteudo{
+    grid-column-start:1;
+    grid-column-end:3;
 }
 .barra-botoes{
-    border-top: 0.2px solid #bbb;
-    width: 100%;
-    padding-top: 10px;
+    grid-column-start:1;
+    grid-column-end:3;
+    padding: 5px; 
 }
-.lista-itens{
-    border-left:  0.2px solid #bbb;
-
+#itensRapidos a{
+    font-size: 11pt;
 }
-.btn-success{
-    color:#68b6c9;
-    border: none;
-    background: rgba(250,250,250,.6);
-}
-.btn-danger{
-    color:#68b6c9;
-    border: none;
-    background: rgba(250,250,250,.6);
-}
-.referencia{
-    color: #bbb;
-    font-size: 7pt;
-    text-align: center;
-
-}
-.item{
-    color: #858585;
-    font-size: 8pt
-}
-.li-grupo{
-    transition: width 0.2s ease-in;
-}
-.li-grupo:hover{
-    width: 80px;
-}
-
-a{
-    color: #fff;
+.my-container{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 10vh 80vh 10vh;
 }
 .mesa,.mesa-vermelha,.mesa-modal{
     text-align: center;
@@ -136,22 +65,22 @@ a{
     background-color:#68b6c9;
 }
 .mesa-vermelha{
-    background-color:#ee929d;
+    background-color:#9575cd;
 }
-.modal-text{
-    font-size: 12pt !important;
-}
-.ui-dialog ul{
+ul{
     list-style: none;
-    margin-left: -30px;
+    margin-left: -50px;
+    color: #229b54;
+    text-align: center;
 }
-.ui-dialog ul li{
+ul li{
+    margin-bottom: 15px;
+    font-size: 10px;
     display: inline-block;
-    margin-right: 8px;
 }
-.ui-dialog{
-    font-family: tahoma !important;
+.ui-messages-warn-summary{
+    color: #fff !important;
 }
-a{
-    color: #000;
+.modal{
+    z-index: 10000;
 }

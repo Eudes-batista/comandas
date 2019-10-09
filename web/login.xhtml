@@ -44,7 +44,8 @@
                             <h:outputLabel for="usuario" value="Usuario" />
                             <h:inputText id="usuario" class="form-control" required="true"
                                          requiredMessage="Usuario Obrigatorio!"
-                                         value="#{loginBean.usuario.NOME}" onkeyup="this.value = this.value.toUpperCase();">
+                                         value="#{loginBean.usuario.NOME}">
+                                <f:passThroughAttribute name="autofocus" value="true"/>
                                 <f:passThroughAttribute name="placeholder" value="Usuario obrigatorio!"/>
                             </h:inputText>
                         </div>
@@ -60,13 +61,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink class="btn btn-success"
+                            <p:commandLink id="logar" class="btn btn-success"
                                            actionListener="#{loginBean.logar()}"
                                            update="msgUsuario" process="@form" 
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
                                            >
                                 <i class="glyphicon glyphicon-check"></i> Logar
                             </p:commandLink>
+                            <p:defaultCommand target="logar" />
                         </div>
                     </div>
                 </div>

@@ -107,7 +107,7 @@ public class FastFoodBean implements Serializable {
             if (produtoEncontrado.getUNIDADE().contains("KG")) {
                 this.produto = produtoEncontrado;
                 this.quantidade = 0;
-                PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
+                PrimeFaces.current().executeScript("document.getElementById('btQuantidade').click()");
                 return;
             }
         }
@@ -130,7 +130,7 @@ public class FastFoodBean implements Serializable {
             if (this.produto == null) {
                 this.produto = p;
                 this.quantidade = 0;
-                PrimeFaces.current().executeScript("PF('dialogQuantidade').show();");
+                PrimeFaces.current().executeScript("document.getElementById('btQuantidade').click()");
                 return;
             }
         }
@@ -145,6 +145,7 @@ public class FastFoodBean implements Serializable {
         lancamentoItem.setStatus("P");
         lancamentoItem.setVendedor(this.usuario.getNOME());
         this.lancamentos.add(lancamentoItem);
+        Messages.addGlobalInfo(this.quantidade + "X " + p.getDescricao());
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
         this.incluio = true;
         this.quantidade = 1;
@@ -169,7 +170,7 @@ public class FastFoodBean implements Serializable {
         if (this.configuracao.getGerarComandaAutomatico().equalsIgnoreCase("nao")) {
             if (this.comandas.getCOMANDA() == null) {
                 if (!this.lancamentos.isEmpty()) {
-                    PrimeFaces.current().executeScript("PF('dialogFinalizar').show();");
+                    PrimeFaces.current().executeScript("document.getElementById('btfinalizarComanda').click()");
                 }
                 return;
             }
@@ -179,8 +180,13 @@ public class FastFoodBean implements Serializable {
             }
         }
         if (!this.comandaReaberta) {
+            if(this.comandas.getCOMANDA() != null && ("0".equals(this.comandas.getCOMANDA()) || "0000".equals(this.comandas.getCOMANDA()) )){
+                Messages.addGlobalWarn("Comanda não pode ser aberta com 0 ou 0000");
+                return;
+            }
             if (verificarSeExisteComanda()) {
-                Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
+                Messages.addGlobalWarn("Comanda já existe em outra mesa.");
+                return;
             }
         }
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
@@ -193,14 +199,18 @@ public class FastFoodBean implements Serializable {
         });
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
-        if (!this.comandaReaberta) {
-            realizarImpressao();
-        }
+        realizarImpressao();
         if (this.incluio) {
             atualiazarStatusComanda();
         }
         limparVariaveis();
-        PrimeFaces.current().executeScript("PF('dialogFinalizar').hide();");
+        PrimeFaces.current().executeScript("fecharModal('finalizarModal')");
+    }
+
+    public void mostrarMensagemQueComandaNaoExiste() {
+        if (verificarSeExisteComanda()) {
+            Messages.addGlobalWarn("Comanda já existe em outra mesa. ");
+        }
     }
 
     private boolean verificarSeExisteComanda() {
@@ -221,9 +231,8 @@ public class FastFoodBean implements Serializable {
 
     private void limparVariaveis() {
         this.comandas = null;
-        this.lancamentos = null;
         this.comandas = new Comandas();
-        this.lancamentos = new ArrayList<>();
+        this.lancamentos.clear();
         this.total = 0;
         this.comandaReaberta = false;
         this.incluio = false;
@@ -234,14 +243,10 @@ public class FastFoodBean implements Serializable {
         switch (this.configuracao.getCondicaoParaImpressao()) {
             case "PP":
                 this.produtoBean.imprimirTodos();
-                PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
-                PrimeFaces.current().ajax().update("frm:total");
                 this.imprimirPrecontaMesa();
                 break;
             case "P":
                 this.produtoBean.imprimirTodos();
-                PrimeFaces.current().ajax().update("frmDialogMensagem:dlImpressao");
-                PrimeFaces.current().ajax().update("frm:total");
                 break;
             default:
                 this.imprimirPrecontaMesa();
@@ -259,7 +264,7 @@ public class FastFoodBean implements Serializable {
         Date data = new Date();
         sosa98.setId(sosa98Id);
         String item = this.controleService.gerarSequencia(this.comandas.getCOMANDA());
-        String numero = this.controleService.gerarNumero() + item;
+        String numero = this.controleService.gerarNumero();
         lancamento.setComanda(this.comandas.getCOMANDA());
         lancamento.setMesa(this.comandas.getCOMANDA());
         lancamento.setItem(item);
