@@ -749,10 +749,6 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Nenhum item selecionado.");
             return;
         }
-        if (this.lancamentosAdicionados.get(0).getComanda().equals(this.comanda)) {
-            Messages.addGlobalWarn("Não pode transferir para mesma comanda.");
-            return;
-        }
         this.controleService.transferenciaItensParaComanda(new TransferenciaItensParaComanda(this.comandaTransferencia, this.lancamentosSelecionadadosTransferencia, this.lancamentosAdicionadosAuxlizar, this.usuarioTransferencia.toUpperCase()));
         if (this.lancamentosAdicionados.size() == this.lancamentosSelecionadadosTransferencia.size()) {
             try {
