@@ -49,7 +49,7 @@
                         </a>
                     </div>
                     <div class="col-xs-4">
-                        <p:commandLink id="btComanda" class="btn btn-purple btn-block"
+                        <p:commandLink id="btComanda" class="btn btn-purple btn-block" disabled="#{not empty fastFoodBean.lancamentos}"
                                        onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
                                        update="frmPesquisaComanda:tabelaComanda" process="@this" actionListener="#{fastFoodBean.listarComandas()}">
                             #{empty fastFoodBean.comandas.COMANDA ? 'Comandas' : fastFoodBean.comandas.COMANDA }
@@ -75,7 +75,7 @@
                     <h:form id="frmProduto">
                         <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
                             <div class="produto">
-                                <p:commandLink update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens total" process="@this frmProduto:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
+                                <p:commandLink update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens total" process="@this frmProduto:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
                                                style="color: #000;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                     <div class="row text-center">
                                         <div class="col-xs-12 text-center">
@@ -110,7 +110,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao01}
                                 </p:commandLink>
                             </div>                                
@@ -118,7 +118,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia02)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao02}
                                 </p:commandLink>
                             </div>                                
@@ -126,7 +126,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao03}
                                 </p:commandLink>
                             </div>                                
@@ -134,7 +134,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao04}
                                 </p:commandLink>
                             </div>                                
@@ -142,7 +142,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao05}
                                 </p:commandLink>
                             </div>                                
@@ -150,7 +150,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao06}
                                 </p:commandLink>
                             </div>                                
@@ -158,7 +158,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao07}
                                 </p:commandLink>
                             </div>                                
@@ -166,7 +166,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao08}
                                 </p:commandLink>
                             </div>                                
@@ -174,7 +174,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao09}
                                 </p:commandLink>
                             </div>                                
@@ -182,7 +182,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao10}
                                 </p:commandLink>
                             </div>                                
@@ -190,7 +190,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao11}
                                 </p:commandLink>
                             </div>                                
@@ -198,7 +198,7 @@
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
+                                               process="@this" update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:btComanda frmBotoes:itens frmItens" oncomplete="mandarFocu()">
                                     #{fastFoodBean.atalhoFastFood.descricao12}
                                 </p:commandLink>
                             </div>                                
@@ -318,7 +318,7 @@
                                                     <p:commandLink id="apagarG" class="btn btn-danger" style="font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lancamento)}"
                                                                    rendered="#{not empty fastFoodBean.usuario.GERENTE}"
                                                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                                                   update="frmBotoes:itens frmFinalizar:btfinalizarComanda frmItens total" process="@this">
+                                                                   update="frmBotoes:itens frmBotoes:btComanda frmFinalizar:btfinalizarComanda frmItens total" process="@this">
                                                         <i class="fa fa-trash"></i>
                                                     </p:commandLink>
                                                     <p:commandLink id="apagarN" class="btn btn-danger" style="font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lancamento)}"
@@ -330,7 +330,7 @@
                                                     </p:commandLink>
                                                     <p:commandLink id="apagarNG" class="btn btn-danger" style="font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lancamento)}"
                                                                    rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '0'}"
-                                                                   update="frmBotoes:itens frmFinalizar:btfinalizarComanda frmItens total" process="@this"
+                                                                   update="frmBotoes:itens frmBotoes:btComanda frmFinalizar:btfinalizarComanda frmItens total" process="@this"
                                                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                                         <i class="fa fa-trash"></i>
                                                     </p:commandLink>
@@ -373,7 +373,7 @@
                             </p:inputText>
                             <p:messages id="mensagemQuantidade" showIcon="false" closable="true" />
                             <p:commandLink id="confirmaQuantidade" value="Confirmar" class="btn btn-purple btn-block" 
-                                           update="frmQuantidade:mensagemQuantidade frmBotoes:itens frmFinalizar:btfinalizarComanda frmItens frmMessage:message" process="frmQuantidade"
+                                           update="frmQuantidade:mensagemQuantidade frmBotoes:btComanda frmBotoes:itens frmFinalizar:btfinalizarComanda frmItens frmMessage:message" process="frmQuantidade"
                                            actionListener="#{fastFoodBean.definirQuantidade()}">
                                 <f:passThroughAttribute name="data-dismiss" value="modal"/>
                             </p:commandLink>
@@ -543,7 +543,7 @@
                        closable="false" closeOnEscape="true"
                        showEffect="fade" hideEffect="fade" visible="false">
                 <span style="font-size: 30pt;text-align: center;">#{produtoBean.mensagem}</span>
-                <a style="font-size:15pt" onclick="PF('dialogoImpressao').hide();" class="btn btn-purple btn-block">OK</a>
+                <a style="font-size:15pt" onclick="PF('dialogoImpressao').hide();" href="fastfood.jsf" class="btn btn-purple btn-block">OK</a>
             </p:dialog>
         </h:form>
     </h:body>
