@@ -21,10 +21,15 @@
                 margin-top: 20px;
                 padding: 20px;
                 width: 500px;
-                box-shadow: 1px 1px 1px #bbb;
+                box-shadow: 1px 1px 1px 1px #bbb;
+                background-color: #fff;
             }
             .form-control{
                 margin-bottom: 5px;
+            }
+            .btn-purple,.btn-purple:hover,.btn-purple:focus{
+                background-color: #5e35b1;
+                color: #fff;
             }
         </style>
     </h:head>
@@ -61,7 +66,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p:commandLink id="logar" class="btn btn-success"
+                            <p:commandLink id="logar" class="btn btn-purple"
                                            actionListener="#{loginBean.logar()}"
                                            update="msgUsuario" process="@form" 
                                            onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"

@@ -68,3 +68,7 @@ function fecharModal(modal){
         element.style.display="none";
     });
 }
+
+function acionarEventoBotao(id){
+    document.getElementById(id).click();
+}

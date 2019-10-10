@@ -73,6 +73,7 @@ public class FastFoodBean implements Serializable {
     private double total;
     private boolean comandaReaberta;
     private boolean incluio = false;
+    private int item;
 
     public void init() {
         this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
@@ -120,7 +121,7 @@ public class FastFoodBean implements Serializable {
             return;
         }
         this.adicionarItem(this.produto);
-        PrimeFaces.current().executeScript("PF('dialogQuantidade').hide();");
+        PrimeFaces.current().executeScript("fecharModal('quantidadeModal')");
         this.produto = null;
         this.quantidade = 1;
     }
@@ -182,10 +183,12 @@ public class FastFoodBean implements Serializable {
         if (!this.comandaReaberta) {
             if(this.comandas.getCOMANDA() != null && ("0".equals(this.comandas.getCOMANDA()) || "0000".equals(this.comandas.getCOMANDA()) )){
                 Messages.addGlobalWarn("Comanda não pode ser aberta com 0 ou 0000");
+                this.comandas.setCOMANDA(null);
                 return;
             }
             if (verificarSeExisteComanda()) {
                 Messages.addGlobalWarn("Comanda já existe em outra mesa.");
+                this.comandas.setCOMANDA(null);
                 return;
             }
         }
@@ -281,6 +284,7 @@ public class FastFoodBean implements Serializable {
         sosa98.setTerefere(lancamento.getReferencia());
         sosa98.setTestatus(lancamento.getStatus());
         sosa98.setTevended(lancamento.getVendedor());
+        sosa98.setTeobserv(lancamento.getObservacao());
         try {
             this.controleService.salvar(sosa98);
             this.salvarEspelho(lancamento, data);
@@ -325,6 +329,11 @@ public class FastFoodBean implements Serializable {
 
     public void setLancamento(Lancamento lancamento) {
         this.lancamento = lancamento;
+    }
+    
+    public void setLancamentoObervacao(Lancamento lancamento,int item) {
+        this.lancamento = lancamento;
+        this.item = item;
     }
 
     public void validarUsuario() {
@@ -418,5 +427,12 @@ public class FastFoodBean implements Serializable {
             Messages.addGlobalWarn("Erro ao excluir item.");
         }
     }
+    
+    public void adicionarObservacao() {
+        this.lancamentos.set(item,this.lancamento);
+        this.lancamento = null;
+        this.item = 0;
+    }
+    
 
 }
