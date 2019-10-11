@@ -322,14 +322,15 @@
                                                         <i class="fa fa-trash"></i>
                                                     </p:commandLink>
                                                     <p:commandLink id="apagarN" class="btn btn-danger" style="font-size:11pt;" actionListener="#{fastFoodBean.setLancamento(lancamento)}"
-                                                                   rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '1'}"
+                                                                   rendered="#{empty fastFoodBean.usuario.GERENTE and lancamento.imprimir eq '1'}"
                                                                    process="@this"
-                                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                                                   oncomplete="PF('dialogoUsuario').show();">
+                                                                   onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                                         <i class="fa fa-trash"></i>
+                                                        <f:passThroughAttribute name="data-toggle" value="modal" />
+                                                        <f:passThroughAttribute name="data-target" value="#autorizacaoModal" />  
                                                     </p:commandLink>
                                                     <p:commandLink id="apagarNG" class="btn btn-danger" style="font-size:11pt;" actionListener="#{fastFoodBean.removerItem(lancamento)}"
-                                                                   rendered="#{empty fastFoodBean.usuario.GERENTE and lacamento.imprimir eq '0'}"
+                                                                   rendered="#{empty fastFoodBean.usuario.GERENTE and lancamento.imprimir eq '0'}"
                                                                    update="frmBotoes:itens frmBotoes:btComanda frmFinalizar:btfinalizarComanda frmItens total" process="@this"
                                                                    onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                                         <i class="fa fa-trash"></i>
@@ -546,5 +547,45 @@
                 <a style="font-size:15pt" onclick="PF('dialogoImpressao').hide();" href="fastfood.jsf" class="btn btn-purple btn-block">OK</a>
             </p:dialog>
         </h:form>
+        <div id="autorizacaoModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Autorização</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h:form id="frmDialogo"> 
+                            <p:messages id="msgUsuario" closable="true" showIcon="false"/>              
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>Usuario</label>
+                                        <p:inputText class="form-control" id="usuario" required="true" requiredMessage="Nome do Usuario devi ser informado" maxlength="15" style="text-transform: uppercase;"
+                                                     value="#{fastFoodBean.usuarioBean.usuario.NOME}"/>                                        
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>Senha</label>
+                                        <p:password id="senha" class="form-control" required="true" requiredMessage="Senha do Usuario devi ser informado" maxlength="10" 
+                                                    value="#{fastFoodBean.usuarioBean.usuario.SENHA}"/>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <p:commandLink style="margin-top: 5px;" id="sim" class="btn btn-purple btn-block" 
+                                                       value="Confirma" resetValues="true"
+                                                       update="frmItens frmBotoes:itens total msgUsuario" process="frmDialogo" actionListener="#{fastFoodBean.validarUsuario()}"/>
+                                        <p:defaultCommand target="sim" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="nao" class="btn btn-purple" data-dismiss="modal">
+                            Fechar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </h:body>
 </html>

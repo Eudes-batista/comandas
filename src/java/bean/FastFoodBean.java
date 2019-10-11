@@ -26,7 +26,6 @@ import modelo.dto.Usuario;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 import servico.AtalhoFastFoodService;
 import servico.ComandaService;
 import servico.GrupoServico;
@@ -337,18 +336,14 @@ public class FastFoodBean implements Serializable {
         this.item = item;
     }
 
-    public void validarUsuario() {
-        RequestContext context = RequestContext.getCurrentInstance();
-        boolean fechar;
-        if (this.usuarioBean.validarGerente()) {
-            removerItem(this.lancamento);
-            this.lancamento = null;
-            fechar = true;
-        } else {
-            fechar = false;
+    public void validarUsuario() {        
+        if (!this.usuarioBean.validarGerente()) {
             Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
+            return;
         }
-        context.addCallbackParam("fechar", fechar);
+        removerItem(this.lancamento);
+        this.lancamento = null;
+        PrimeFaces.current().executeScript("fecharModal('autorizacaoModal')");
     }
 
     public void listarComandas() {
