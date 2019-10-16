@@ -34,8 +34,10 @@
                             <f:selectItem itemLabel="Não" itemValue=""/>
                         </p:selectOneMenu>
                     </p:panelGrid>
-                    <p:panel header="Configuração FastFood">
+                    <p:panel header="Configuração FastFood/Padaria">
                         <p:panelGrid id="panel2" columns="1" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4">
+                            <p:outputLabel value="Caminho para o arquivo de verificação da catraca" for="catraca"/>
+                            <p:inputText id="catraca"  value="#{bancoConecta.configuracao.caminhoCatraca}" placeholder="Caminho" />
                             <p:outputLabel value="Tipo de Finalização" for="tipoFinalizacao"/>
                             <p:selectOneMenu id="tipoFinalizacao" value="#{bancoConecta.configuracao.condicaoParaImpressao}" placeholder="Obrigatorio">
                                 <f:selectItem itemLabel="Pedido/Preconta" itemValue="PP"/>

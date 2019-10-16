@@ -30,6 +30,7 @@ import servico.AtalhoFastFoodService;
 import servico.ComandaService;
 import servico.GrupoServico;
 import servico.ProdutoService;
+import util.GeradoDeArquivoXMLCatraca;
 import util.GerenciaArquivo;
 
 @ManagedBean(name = "fastFoodBean")
@@ -158,7 +159,6 @@ public class FastFoodBean implements Serializable {
     }
 
     public void removerItem(Lancamento lancamento) {
-        this.lancamentos.remove(lancamento);
         this.excluir(lancamento);
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
         this.incluio = false;
@@ -182,7 +182,7 @@ public class FastFoodBean implements Serializable {
             }
         }
         if (!this.comandaReaberta) {
-            if(this.comandas.getCOMANDA() != null && ("0".equals(this.comandas.getCOMANDA()) || "0000".equals(this.comandas.getCOMANDA()) )){
+            if (this.comandas.getCOMANDA() != null && ("0".equals(this.comandas.getCOMANDA()) || "0000".equals(this.comandas.getCOMANDA()))) {
                 Messages.addGlobalWarn("Comanda não pode ser aberta com 0 ou 0000");
                 this.comandas.setCOMANDA(null);
                 return;
@@ -204,6 +204,9 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.setComanda(this.comandas.getCOMANDA());
         this.produtoBean.setMesa(this.comandas.getCOMANDA());
         realizarImpressao();
+        if (!this.comandaReaberta) {
+            GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(this.comandas.getCOMANDA(), "C");
+        }
         if (this.incluio) {
             atualiazarStatusComanda();
         }
@@ -331,13 +334,13 @@ public class FastFoodBean implements Serializable {
     public void setLancamento(Lancamento lancamento) {
         this.lancamento = lancamento;
     }
-    
-    public void setLancamentoObervacao(Lancamento lancamento,int item) {
+
+    public void setLancamentoObervacao(Lancamento lancamento, int item) {
         this.lancamento = lancamento;
         this.item = item;
     }
 
-    public void validarUsuario() {        
+    public void validarUsuario() {
         if (!this.usuarioBean.validarGerente()) {
             Messages.addGlobalWarn("Essa ação não pode ser executada\n informe um usuario valido ou \nusuario e senha de Gerente");
             return;
@@ -403,7 +406,7 @@ public class FastFoodBean implements Serializable {
 
     private void excluir(Lancamento lancamento) {
         if ("0".equals(lancamento.getImprimir())) {
-            return;
+            this.lancamentos.remove(lancamento);
         }
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setMesa(lancamento.getMesa());
@@ -420,16 +423,19 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.cancelamentoDeItem();
         try {
             this.controleService.excluir(lancamento.getNumero());
+            if (this.lancamentos.size() == 1) {
+                GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(lancamento.getComanda(), "L");
+            }
+            this.lancamentos.remove(lancamento);
         } catch (Exception ex) {
             Messages.addGlobalWarn("Erro ao excluir item.");
         }
     }
-    
+
     public void adicionarObservacao() {
-        this.lancamentos.set(item,this.lancamento);
+        this.lancamentos.set(item, this.lancamento);
         this.lancamento = null;
         this.item = 0;
     }
-    
 
 }

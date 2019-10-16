@@ -45,6 +45,9 @@ public class GerenciaArquivo {
                 getConfiguracao().setCobraDezPorcento(lines.get(3));
                 getConfiguracao().setCondicaoParaImpressao(lines.get(4));
                 getConfiguracao().setGerarComandaAutomatico(lines.get(5));
+                if(lines.size() > 6){
+                    getConfiguracao().setCaminhoCatraca(lines.get(6));
+                }
             }
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao consultar no arquivo " + ex.getMessage());
@@ -62,6 +65,7 @@ public class GerenciaArquivo {
                 pw.println(this.configuracao.getCobraDezPorcento() == null ? "" : this.configuracao.getCobraDezPorcento());
                 pw.println(this.configuracao.getCondicaoParaImpressao() == null ? "" : this.configuracao.getCondicaoParaImpressao());
                 pw.println(this.configuracao.getGerarComandaAutomatico());
+                pw.println(this.configuracao.getCaminhoCatraca());
                 pw.flush();
                 salvarAsConfiguracoesDoBancoDeDados(this.configuracao.getCaminho());
                 Messages.addGlobalInfo("salvo com sucesso!!");
