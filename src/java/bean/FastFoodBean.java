@@ -117,6 +117,7 @@ public class FastFoodBean implements Serializable {
     public void definirQuantidade() {
         if (validarQuantidade()) {
             Messages.addGlobalWarn("Quantidade tem que ser maior que zero.");
+            this.quantidade = 0;
             this.produto = null;
             return;
         }
