@@ -22,5 +22,6 @@
     <mapping class="modelo.AtalhoFastFood"/>
     <mapping class="modelo.Cancelamento"/>
     <mapping class="modelo.Transferencia"/>
+    <mapping class="modelo.ComandaExcluida"/>
   </session-factory>
 </hibernate-configuration>
