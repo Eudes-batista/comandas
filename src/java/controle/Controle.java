@@ -756,4 +756,9 @@ public class Controle implements ComandaService, Serializable {
         this.executarSql(sql.toString());
     }
 
+    @Override
+    public void excluirComandasCatraca(String comanda){
+        this.executarSql("delete from COMANDAS_EXCLUIDAS where comanda ='"+comanda+"'");
+    }
+    
 }

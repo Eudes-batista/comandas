@@ -69,5 +69,5 @@ public interface ComandaService {
     
     public void cancelarPedidos(Cancelamento cancelamento);
     
-    
+    public void excluirComandasCatraca(String comandas);
 }

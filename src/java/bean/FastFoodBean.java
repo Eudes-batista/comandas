@@ -407,6 +407,7 @@ public class FastFoodBean implements Serializable {
     private void excluir(Lancamento lancamento) {
         if ("0".equals(lancamento.getImprimir())) {
             this.lancamentos.remove(lancamento);
+            return;
         }
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setMesa(lancamento.getMesa());
@@ -424,7 +425,10 @@ public class FastFoodBean implements Serializable {
         try {
             this.controleService.excluir(lancamento.getNumero());
             if (this.lancamentos.size() == 1) {
-                GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(lancamento.getComanda(), "L");
+                boolean excluiu = GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(lancamento.getComanda(), "L");
+                if (excluiu) {
+                    this.controleService.excluir(lancamento.getComanda());
+                }
             }
             this.lancamentos.remove(lancamento);
         } catch (Exception ex) {
