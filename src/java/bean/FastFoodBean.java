@@ -431,6 +431,9 @@ public class FastFoodBean implements Serializable {
                 }
             }
             this.lancamentos.remove(lancamento);
+            if (this.lancamentos.size() == 1) {
+                Faces.redirect("fastfood.jsf");
+            }
         } catch (Exception ex) {
             Messages.addGlobalWarn("Erro ao excluir item.");
         }
