@@ -80,11 +80,11 @@ public class FastFoodBean implements Serializable {
     public void init() {
         this.usuario = (Usuario) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuario");
         if (this.usuario == null) {
-            try {
-                Faces.redirect("login.jsf");
-            } catch (IOException ex) {
-                Messages.addGlobalError("Erro ao redireciona para a pagina de login.");
-            }
+            this.redirecinarParaPagina("login");
+            return;
+        }
+        if(this.comanda == null){
+            this.redirecinarParaPagina("abrirComandaFastFood");            
             return;
         }
         this.atalhoFastFood = atalhoFastFoodService.carregar();
@@ -94,20 +94,8 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.instacias();
         this.comandas = new Comandas();
         this.comandas.setCOMANDA(this.comanda);
-        this.comandas.setMESA(this.comanda);
-        if (this.comanda == null) {
-            this.lancamentos = new ArrayList<>();
-            return;
-        }
-        this.pesquisa = this.comanda;
-        this.pesquisarComandas();
-        if (!this.listaComandas.isEmpty()) {
-            this.comandas.setCOMANDA(this.listaComandas.get(0).getCOMANDA());
-            this.comandas.setMESA(this.listaComandas.get(0).getCOMANDA());
-            this.comandaReaberta = true;
-            this.listarLancamentos();
-        }
-        this.pesquisa = "";
+        this.comandas.setMESA(this.comanda);        
+        this.listarLancamentos();
     }
 
     public void pesquisarProduto() {
@@ -361,16 +349,15 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.setMesa(this.comanda);
         this.produtoBean.listarProdutosAdicionados();
         this.lancamentos = this.produtoBean.getLancamentosAdicionados();
+        if (this.lancamentos == null) {
+            this.lancamentos = new ArrayList<>();
+        }
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
     }
 
     public void sair() {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        try {
-            Faces.redirect("login.jsf");
-        } catch (IOException ex) {
-            Messages.addGlobalWarn("Erro ao abrir tela de login.");
-        }
+        redirecinarParaPagina("login");
     }
 
     public void imprimirPrecontaMesa() {
@@ -424,12 +411,9 @@ public class FastFoodBean implements Serializable {
                 boolean excluiu = GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(lancamento.getComanda(), "L");
                 if (excluiu) {
                     this.controleService.excluir(lancamento.getComanda());
-                }
+                }               
             }
             this.lancamentos.remove(lancamento);
-            if (this.lancamentos.size() == 1) {
-                Faces.redirect("fastfood.jsf");
-            }
         } catch (Exception ex) {
             Messages.addGlobalWarn("Erro ao excluir item.");
         }
@@ -439,6 +423,14 @@ public class FastFoodBean implements Serializable {
         this.lancamentos.set(item, this.lancamento);
         this.lancamento = null;
         this.item = 0;
+    }
+    
+    private void redirecinarParaPagina(String pagina) {
+        try {
+            Faces.redirect(pagina+".jsf");
+        } catch (IOException ex) {
+            Messages.addGlobalError("Erro ao redireciona para a pagina de login.");
+        }
     }
 
 }

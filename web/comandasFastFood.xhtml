@@ -3,7 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <f:metadata>
@@ -16,7 +15,6 @@
         <link rel="shortcut icon" href="resources/imagens/mesa.png" type="image/x-icon" />
         <meta name="mobile-web-app-capable" content="yes" />
         <h:outputStylesheet library="css" name="bootstrap.min.css" />
-        <h:outputStylesheet library="css" name="fast.css" />
         <h:outputStylesheet library="css" name="login.css" />
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/fastfood.js"></script>
@@ -25,10 +23,12 @@
         <!--CABECALHO-->
         <h:form id="frmPesquisaComanda">
             <div class="barra" style="padding: 10px;">
-                Comandas
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-10">
+                        <div class="col-md-2">
+                            <a href="comandasFastFood.jsf" style="color:#fff;font-size: 20pt;">Comandas</a>
+                        </div>
+                        <div class="col-md-8">
                             <h:inputText value="#{fastFoodBean.pesquisa}" class="form-control">
                                 <f:passThroughAttribute name="placeholder" value="Pesquisa de Comanda"/>
                                 <f:passThroughAttribute name="type" value="tel"/>
@@ -46,24 +46,24 @@
                 <ul>
                     <ui:repeat  value="#{fastFoodBean.listaComandas}" var="item">   
                         <li>    
-                            <div jsf:id="listaComanda" class="#{item.STATUS eq 'P' ? 'mesa-vermelha' : 'mesa' }" style="padding-top: 1px;">
-                                <p:link id="linkComanda" outcome="fastfood.jsf">
+                            <div jsf:id="listaComanda" class="mesa" style="padding-top: 1px;">
+                                <h:link id="linkComanda" outcome="fastfood.jsf">
                                     <h3 style="color: #fff; font-weight: bold;">#{item.COMANDA}</h3>
                                     <h:outputLabel id="label" style="font-size: 12pt;font-weight: bold;color: #fff;" value="#{item.TOTAL}">
                                         <f:convertNumber for="label" pattern="#,##0.00"/>
                                     </h:outputLabel>
                                     <f:param name="comanda" value="#{item.COMANDA}" />
                                     <h5 style="color: #fff; font-weight: bold;">M #{item.MESA}</h5>
-                                </p:link>
+                                </h:link>
                             </div>
                             <div style="margin-top: 5px;margin-left: -5px;">                                            
-                                <p:commandLink id="imprimirComanda" class="btn btn-purple"
-                                               process="@this" style="border: 0.2px solid #bbb;color: #fff;"
-                                               onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
+                                <h:commandLink id="imprimirComanda" class="btn btn-purple"
+                                               style="border: 0.2px solid #bbb;color: #fff;"
                                                actionListener="#{fastFoodBean.imprimirPrecontaMesa(item)}"
                                                title="Imprimir Preconta">
                                     <i class="fa fa-print"></i>
-                                </p:commandLink>
+                                    <f:ajax execute="@this" render="@this"/>
+                                </h:commandLink>
                             </div>  
                         </li>
                     </ui:repeat>

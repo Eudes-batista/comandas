@@ -50,11 +50,9 @@
                         </a>
                     </div>
                     <div class="col-xs-4">
-                        <p:commandLink id="logout" class="btn btn-purple btn-block"
-                                       onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
-                                       process="@this" actionListener="#{fastFoodBean.sair()}">
-                            Sair
-                        </p:commandLink>
+                        <a id="logout" class="btn btn-purple btn-block text-left" href="abrirComandaFastFood.jsf">
+                            N.Comanda
+                        </a>
                     </div>
                 </h:form>  
             </div>            
@@ -384,9 +382,12 @@
                         </h:form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-purple" data-dismiss="modal">
-                            Fechar
-                        </button>
+                        <h:form>
+                            <button jsf:id="fecharModalQuantidade" type="button" class="btn btn-purple" data-dismiss="modal">
+                                Fechar
+                                <f:ajax listener="#{fastFoodBean.setProduto(null)}" />
+                            </button>
+                        </h:form> 
                     </div>
                 </div>
             </div>

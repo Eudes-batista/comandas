@@ -30,3 +30,33 @@
     border-bottom: 1px solid #ccc;
     color: #fff;
 }
+.mesa{
+    text-align: center;
+    width: 145px;
+    height: 145px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    text-transform: uppercase;
+}
+.mesa{
+    background-color:#9575cd;
+}
+.btn-purple{
+    background-color: #5e35b1;
+    margin-bottom: 5px;
+}
+.btn-purple,.btn-purple:hover,.btn-purple:focus{
+    color: #fff;   
+}
+ul{
+    list-style: none;
+    margin-left: -50px;
+    color: #229b54;
+    text-align: center;
+}
+ul li{
+    margin-bottom: 15px;
+    font-size: 10px;
+    display: inline-block;
+}
