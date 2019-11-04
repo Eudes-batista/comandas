@@ -56,6 +56,8 @@ public class FastFoodBean implements Serializable {
     @ManagedProperty(value = "#{mesasBean}")
     private MesasBean mesasBean;
 
+    private String comanda;
+
     private AtalhoFastFood atalhoFastFood;
     private Usuario usuario;
     private Comandas comandas;
@@ -88,10 +90,24 @@ public class FastFoodBean implements Serializable {
         this.atalhoFastFood = atalhoFastFoodService.carregar();
         this.grupos = grupoServico.listarGrupos();
         this.produtos = produtoServico.lsitarProdutosFastFood();
-        this.lancamentos = new ArrayList<>();
-        this.comandas = new Comandas();
         this.configuracao = new GerenciaArquivo().bucarInformacoes().getConfiguracao();
         this.produtoBean.instacias();
+        this.comandas = new Comandas();
+        this.comandas.setCOMANDA(this.comanda);
+        this.comandas.setMESA(this.comanda);
+        if (this.comanda == null) {
+            this.lancamentos = new ArrayList<>();
+            return;
+        }
+        this.pesquisa = this.comanda;
+        this.pesquisarComandas();
+        if (!this.listaComandas.isEmpty()) {
+            this.comandas.setCOMANDA(this.listaComandas.get(0).getCOMANDA());
+            this.comandas.setMESA(this.listaComandas.get(0).getCOMANDA());
+            this.comandaReaberta = true;
+            this.listarLancamentos();
+        }
+        this.pesquisa = "";
     }
 
     public void pesquisarProduto() {
@@ -169,30 +185,6 @@ public class FastFoodBean implements Serializable {
     }
 
     public void finalizar() {
-        if (this.configuracao.getGerarComandaAutomatico().equalsIgnoreCase("nao")) {
-            if (this.comandas.getCOMANDA() == null) {
-                if (!this.lancamentos.isEmpty()) {
-                    PrimeFaces.current().executeScript("document.getElementById('btfinalizarComanda').click()");
-                }
-                return;
-            }
-        } else {
-            if (this.comandas.getCOMANDA() == null) {
-                this.comandas.setCOMANDA(this.controleService.gerarNumeroComanda());
-            }
-        }
-        if (!this.comandaReaberta) {
-            if (this.comandas.getCOMANDA() != null && ("0".equals(this.comandas.getCOMANDA()) || "0000".equals(this.comandas.getCOMANDA()))) {
-                Messages.addGlobalWarn("Comanda não pode ser aberta com 0 ou 0000");
-                this.comandas.setCOMANDA(null);
-                return;
-            }
-            if (verificarSeExisteComanda()) {
-                Messages.addGlobalWarn("Comanda já existe em outra mesa.");
-                this.comandas.setCOMANDA(null);
-                return;
-            }
-        }
         List<Lancamento> lancamentosAdicionados = this.produtoBean.getLancamentosAdicionados();
         String pedido = gerarPedido();
         lancamentos.stream().filter(la -> la.getImprimir().equals("0")).forEach((l) -> {
@@ -201,11 +193,11 @@ public class FastFoodBean implements Serializable {
                 lancamentosAdicionados.add(l);
             }
         });
-        this.produtoBean.setComanda(this.comandas.getCOMANDA());
-        this.produtoBean.setMesa(this.comandas.getCOMANDA());
+        this.produtoBean.setComanda(this.comanda);
+        this.produtoBean.setMesa(this.comanda);
         realizarImpressao();
         if (!this.comandaReaberta) {
-            GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(this.comandas.getCOMANDA(), "C");
+            GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(this.comanda, "C");
         }
         if (this.incluio) {
             atualiazarStatusComanda();
@@ -359,13 +351,17 @@ public class FastFoodBean implements Serializable {
     }
 
     public void abrirComanda(Comandas comanda) {
-        this.produtoBean.setComanda(comanda.getCOMANDA());
-        this.produtoBean.setMesa(comanda.getMESA());
+        listarLancamentos();
+        this.comandas = comanda;
+        this.comandaReaberta = true;
+    }
+
+    private void listarLancamentos() {
+        this.produtoBean.setComanda(this.comanda);
+        this.produtoBean.setMesa(this.comanda);
         this.produtoBean.listarProdutosAdicionados();
         this.lancamentos = this.produtoBean.getLancamentosAdicionados();
-        this.comandas = comanda;
         this.total = this.lancamentos.stream().mapToDouble(Lancamento::getPrecoTotal).sum();
-        this.comandaReaberta = true;
     }
 
     public void sair() {
@@ -379,9 +375,9 @@ public class FastFoodBean implements Serializable {
 
     public void imprimirPrecontaMesa() {
         this.mesasBean.setMesas(new ArrayList());
-        this.mesasBean.setPesquisa(this.comandas.getCOMANDA());
+        this.mesasBean.setPesquisa(this.comanda);
         this.mesasBean.pesquisarMesas();
-        this.mesasBean.imprimirPreconta(this.comandas.getCOMANDA());
+        this.mesasBean.imprimirPreconta(this.comanda);
         listarComandas();
     }
 

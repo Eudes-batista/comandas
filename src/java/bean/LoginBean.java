@@ -41,7 +41,7 @@ public class LoginBean implements Serializable{
         }
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuario",usuarioEncontrado);     
         try {
-            Faces.redirect("fastfood.jsf");
+            Faces.redirect("comandasFastFood.jsf");
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao abrir pagina de lançamentos.");
         }

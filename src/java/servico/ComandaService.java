@@ -13,7 +13,7 @@ public interface ComandaService {
 
     public List<Comandas> listarComandasPorCodigo(String mesa,String comanda);
 
-    public List<Object[]> ListarLancamentos(String codigo,String mesa);
+    public List<Object[]> ListarLancamentos(String comanda,String mesa);
     
     public int buscarQuantidadeProdutosComanda(String comanda,String mesa);
 

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>Abrir comanda</title>
+        <title>Login</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="shortcut icon" href="resources/imagens/mesa.png" type="image/x-icon" />
+        <link rel="stylesheet" href="resources/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="resources/css/login.css"/>
+        <script src="resources/js/jquery-3.2.1.min.js"></script>
+        <script src="resources/js/bootstrap.min.js"></script>        
+    </h:head>
+    <h:body>        
+        <div class="jumbotron">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Abrir Comanda</h3>
+                        <input id="numeroComanda" class="form-control" type="tel" placeholder="Número da comanda" maxlength="5" autofocus="true"/>
+                        <div class="hidden alert alert-danger alert-dismissible" role="alert">
+                            <button id="fecharMensagem" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong>AVISO!</strong> <span id="mensagem"></span>  
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button id="abrirComanda" class="btn btn-purple btn-block">Abrir comanda</button>
+                        <a href="comandasFastFood.jsf" class="btn btn-purple btn-block">Voltar</a>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </h:body>
+    <script src="resources/js/abrirComandaFastFood.js"></script>
+</html>

@@ -1,0 +1,32 @@
+.jumbotron{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 1px 1px 1px 1px #bbb;
+    background-color: #fff;
+}
+.form-control{
+    margin-bottom: 5px;
+}
+.btn-purple,.btn-purple:hover,.btn-purple:focus{
+    background-color: #5e35b1;
+    color: #fff;
+}
+@media(min-width:400px){
+    .jumbotron{
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        padding: 20px;
+        width: 500px;
+        box-shadow: 1px 1px 1px 1px #bbb;
+        background-color: #fff;
+    }
+}
+.barra{
+    background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #43546B 75%);
+    font-size: 20pt;
+    border-bottom: 1px solid #ccc;
+    color: #fff;
+}
