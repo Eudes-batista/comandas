@@ -1,6 +1,5 @@
 package util;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +21,14 @@ public class JuntaComandas {
         return mapAuditoria;
     }
 
-    public static Map<Date, Comandas> juntarPedidosPorDataPreconta(List<Comandas> lista) {
+    public static Map<String, Comandas> juntarPorPedidoPreconta(List<Comandas> lista) {
         valorCouvert=0;
-        Map<Date, Comandas> mapAuditoria = new HashMap<>();
+        Map<String, Comandas> mapAuditoria = new HashMap<>();
         lista.forEach((comandas) -> {
-            Date chave = comandas.getDATA_PRECONTA();
-            Comandas comanda = mapAuditoria.get(chave);
+            String pedido = comandas.getPEDIDO();
+            Comandas comanda = mapAuditoria.get(pedido);
             comanda = realizarCalculoValorTotal(comandas, comanda);
-            mapAuditoria.put(chave, comanda);
+            mapAuditoria.put(pedido, comanda);
         });
         return mapAuditoria;
     }

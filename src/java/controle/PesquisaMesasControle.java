@@ -1,7 +1,6 @@
 package controle;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.faces.bean.ManagedBean;
@@ -41,9 +40,9 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<Date, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorDataPreconta(lista);
+        Map<String, Comandas> separarPedidos = JuntaComandas.juntarPorPedidoPreconta(lista);
         lista.clear();
-        for (Map.Entry<Date, Comandas> entry : separarPedidos.entrySet()) {
+        for (Map.Entry<String, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();
             lista.add(value);
         }
@@ -69,9 +68,9 @@ public class PesquisaMesasControle implements PesquisaMesasService, Serializable
         SQLQuery sQLQuery = session.createSQLQuery(sb.toString());
         Query query = sQLQuery.setResultTransformer(Transformers.aliasToBean(Comandas.class));
         List<Comandas> lista = query.list();
-        Map<Date, Comandas> separarPedidos = JuntaComandas.juntarPedidosPorDataPreconta(lista);
+        Map<String, Comandas> separarPedidos = JuntaComandas.juntarPorPedidoPreconta(lista);
         lista.clear();
-        for (Map.Entry<Date, Comandas> entry : separarPedidos.entrySet()) {
+        for (Map.Entry<String, Comandas> entry : separarPedidos.entrySet()) {
             Comandas value = entry.getValue();
             lista.add(value);
         }
