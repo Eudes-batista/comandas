@@ -83,8 +83,8 @@ public class FastFoodBean implements Serializable {
             this.redirecinarParaPagina("login");
             return;
         }
-        if(this.comanda == null){
-            this.redirecinarParaPagina("abrirComandaFastFood");            
+        if (this.comanda == null) {
+            this.redirecinarParaPagina("abrirComandaFastFood");
             return;
         }
         this.atalhoFastFood = atalhoFastFoodService.carregar();
@@ -94,7 +94,7 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.instacias();
         this.comandas = new Comandas();
         this.comandas.setCOMANDA(this.comanda);
-        this.comandas.setMESA(this.comanda);        
+        this.comandas.setMESA(this.comanda);
         this.listarLancamentos();
     }
 
@@ -184,9 +184,7 @@ public class FastFoodBean implements Serializable {
         this.produtoBean.setComanda(this.comanda);
         this.produtoBean.setMesa(this.comanda);
         realizarImpressao();
-        if (!this.comandaReaberta) {
-            GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(this.comanda, "C");
-        }
+        GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(this.comanda, "C");
         if (this.incluio) {
             atualiazarStatusComanda();
         }
@@ -411,7 +409,7 @@ public class FastFoodBean implements Serializable {
                 boolean excluiu = GeradoDeArquivoXMLCatraca.initGeradoDeArquivoXMLCatraca().criarArquivoXML(lancamento.getComanda(), "L");
                 if (excluiu) {
                     this.controleService.excluir(lancamento.getComanda());
-                }               
+                }
             }
             this.lancamentos.remove(lancamento);
         } catch (Exception ex) {
@@ -424,10 +422,10 @@ public class FastFoodBean implements Serializable {
         this.lancamento = null;
         this.item = 0;
     }
-    
+
     private void redirecinarParaPagina(String pagina) {
         try {
-            Faces.redirect(pagina+".jsf");
+            Faces.redirect(pagina + ".jsf");
         } catch (IOException ex) {
             Messages.addGlobalError("Erro ao redireciona para a pagina de login.");
         }
