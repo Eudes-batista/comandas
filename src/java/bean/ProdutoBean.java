@@ -547,12 +547,12 @@ public class ProdutoBean implements Serializable {
     }
 
     private boolean validarGrupo(String subgrupo) {
-        if (subgrupo == null && "".equals(subgrupo)) {
-            mensagem = "Nenhum Grupo de Impressão foi encontrado nesse item.";
-            PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
-            return true;
+        if (subgrupo != null && !"".equals(subgrupo)) {
+            return false;
         }
-        return false;
+        mensagem = "Nenhum Grupo de Impressão foi encontrado nesse item.";
+        PrimeFaces.current().executeScript("PF('dialogoImpressao').show();");
+        return true;
     }
 
     public void imprimirTodos() {
