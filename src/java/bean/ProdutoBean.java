@@ -750,7 +750,7 @@ public class ProdutoBean implements Serializable {
             return;
         }
         long quantidadeItemSelecionado = this.lancamentosSelecionadadosTransferencia.stream().filter(lancamento -> "0".equals(lancamento.getImprimir())).count();
-        if (quantidadeItemSelecionado != 1) {
+        if (quantidadeItemSelecionado != 0) {
             Messages.addGlobalWarn("Item selecionado ainda falta ser impresso.");
             return;
         }
