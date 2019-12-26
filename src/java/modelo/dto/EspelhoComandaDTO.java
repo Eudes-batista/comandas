@@ -13,6 +13,7 @@ public class EspelhoComandaDTO implements Serializable {
 
     private Double QUANTIDADE_CANCELADA;
     private Double QUANTIDADE_LANCADA;
+    private Double QUANTIDADE_ATUAL;
     private String COMANDA;
     private String MESA;
     private String PEDIDO;

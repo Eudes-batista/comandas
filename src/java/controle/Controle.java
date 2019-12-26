@@ -210,7 +210,7 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void excluir(String codigo) throws Exception{
+    public void excluir(String codigo) throws Exception {
         executarSql("delete from sosa98 where tenumero='" + codigo + "'");
     }
 
@@ -411,7 +411,7 @@ public class Controle implements ComandaService, Serializable {
         transferencia.setMesaDestino(transferenciaItensParaComanda.getComanda().getMESA());
         transferencia.setData(new Date());
         transferencia.setResponsavel(transferenciaItensParaComanda.getUsuarioTransferencia());
-        transferencia.setPedidoDestino(transferenciaItensParaComanda.getComanda().getPEDIDO());
+        transferencia.setPedidoDestino(pedido);
         for (Lancamento lancamento : transferenciaItensParaComanda.getLancamentosTransferencia()) {
             Lancamento lancamentoOrigem = transferenciaItensParaComanda.getLancamentosOrigem().stream().filter(l -> l.getNumero().equals(lancamento.getNumero())).findFirst().get();
             transferencia.setComandaOrigem(lancamentoOrigem.getComanda());
@@ -422,8 +422,14 @@ public class Controle implements ComandaService, Serializable {
             transferencia.setProduto(lancamento.getReferencia());
             if (lancamento.getQuantidade() != lancamentoOrigem.getQuantidade()) {
                 numero += "," + lancamento.getNumero();
-                transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
-                transferencia.setQuantidade(calcultarQuantidadeRestante(lancamentoOrigem, lancamento));
+                TransferenciaParcialComandaInexistente parcialComandaInexistente = new TransferenciaParcialComandaInexistente();
+                parcialComandaInexistente.setTransferenciaItensParaComanda(transferenciaItensParaComanda);
+                parcialComandaInexistente.setLancamentoTransferencia(lancamento);
+                parcialComandaInexistente.setLancamentoOrigem(lancamentoOrigem);
+                parcialComandaInexistente.setPedido(pedido);
+                parcialComandaInexistente.setQuantidadeDePessoas(quantidadePessoas);
+                this.transferenciaParcialDeItens(parcialComandaInexistente);
+                transferencia.setQuantidade(lancamento.getQuantidade());
                 this.transferenciaService.salvar(transferencia);
                 continue;
             }
@@ -460,7 +466,13 @@ public class Controle implements ComandaService, Serializable {
             transferencia.setProduto(lancamento.getReferencia());
             if (lancamento.getQuantidade() != lancamentoOrigem.getQuantidade()) {
                 numero += "," + lancamento.getNumero();
-                transferenciaParcialDeItens(transferenciaItensParaComanda.getComanda(), lancamento, lancamentoOrigem, transferenciaItensParaComanda.getUsuarioTransferencia(), pedido, quantidadePessoas);
+                TransferenciaParcialComandaInexistente parcialComandaInexistente = new TransferenciaParcialComandaInexistente();
+                parcialComandaInexistente.setTransferenciaItensParaComanda(transferenciaItensParaComanda);
+                parcialComandaInexistente.setLancamentoTransferencia(lancamento);
+                parcialComandaInexistente.setLancamentoOrigem(lancamentoOrigem);
+                parcialComandaInexistente.setPedido(pedido);
+                parcialComandaInexistente.setQuantidadeDePessoas(quantidadePessoas);
+                this.transferenciaParcialDeItens(parcialComandaInexistente);
                 transferencia.setQuantidade(calcultarQuantidadeRestante(lancamentoOrigem, lancamento));
                 this.transferenciaService.salvar(transferencia);
                 continue;
@@ -521,13 +533,18 @@ public class Controle implements ComandaService, Serializable {
         return numeros.replaceFirst(",", "");
     }
 
-    private void transferenciaParcialDeItens(Comandas comanda, Lancamento lancamento, Lancamento lancamentoOrigem, String usuarioTransferencia, String pedido, String pessoas) {
+    private void transferenciaParcialDeItens(TransferenciaParcialComandaInexistente parcialComandaInexistente) {
+        Lancamento lancamento = parcialComandaInexistente.getLancamentoTransferencia();
+        Lancamento lancamentoOrigem = parcialComandaInexistente.getLancamentoOrigem();
+        String usuarioTransferencia = parcialComandaInexistente.getTransferenciaItensParaComanda().getUsuarioTransferencia();
+        Comandas comanda = parcialComandaInexistente.getTransferenciaItensParaComanda().getComanda();
+        String quantidadeDePessoas = parcialComandaInexistente.getQuantidadeDePessoas();
         lancamento.setNumero(gerarNumero() + lancamento.getItem());
-        lancamento.setPedido(pedido);
+        lancamento.setPedido(parcialComandaInexistente.getPedido());
         lancamento.setComanda(comanda.getCOMANDA());
         lancamento.setMesa(comanda.getMESA());
-        preencherSosa98(lancamento, usuarioTransferencia.toUpperCase(), pessoas);
-        salvarAcompanhamento(pedido, lancamentoOrigem);
+        preencherSosa98(parcialComandaInexistente);
+        salvarAcompanhamento(parcialComandaInexistente.getPedido(), lancamentoOrigem);
         double quantidadeItem = this.calcultarQuantidadeRestante(lancamentoOrigem, lancamento);
         alterarQuantidade(quantidadeItem, lancamentoOrigem.getNumero());
     }
@@ -566,7 +583,10 @@ public class Controle implements ComandaService, Serializable {
         }
     }
 
-    private void preencherSosa98(Lancamento lancamento, String usuario, String pessoas) {
+    private void preencherSosa98(TransferenciaParcialComandaInexistente parcialComandaInexistente) {
+        Lancamento lancamento = parcialComandaInexistente.getLancamentoTransferencia();
+        String usuario = parcialComandaInexistente.getTransferenciaItensParaComanda().getUsuarioTransferencia();
+        String pessoas = parcialComandaInexistente.getQuantidadeDePessoas();
         Date data = new Date();
         Sosa98 sosa98 = new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
                 lancamento.getComanda(),
@@ -582,13 +602,16 @@ public class Controle implements ComandaService, Serializable {
         );
         try {
             salvar(sosa98);
-            salvarEspelho(lancamento, data, usuario, pessoas);
+            salvarEspelho(parcialComandaInexistente,data);
         } catch (Exception ex) {
             registrarErroAoSalvarProduto(sosa98, ex);
         }
     }
 
-    private void salvarEspelho(Lancamento lancamento, Date data, String usuario, String pessoas) throws Exception {
+    private void salvarEspelho(TransferenciaParcialComandaInexistente parcialComandaInexistente,Date data) throws Exception {
+        Lancamento lancamento = parcialComandaInexistente.getLancamentoTransferencia();
+        String usuario = parcialComandaInexistente.getTransferenciaItensParaComanda().getUsuarioTransferencia();
+        String pessoas = parcialComandaInexistente.getQuantidadeDePessoas();
         EspelhoComanda espelhoComanda = new EspelhoComanda();
         espelhoComanda.setNumero(Integer.parseInt(lancamento.getNumero()));
         espelhoComanda.setPedido(lancamento.getPedido());
@@ -603,6 +626,7 @@ public class Controle implements ComandaService, Serializable {
         espelhoComanda.setStatus(lancamento.getStatus());
         espelhoComanda.setObservacao(lancamento.getObservacao());
         espelhoComanda.setValorItem(lancamento.getPreco());
+        espelhoComanda.setMesaOrigem(parcialComandaInexistente.getLancamentoOrigem().getMesa());
         espelhoComanda.setStatusItem("N");
         espelhoComanda.setPessoasMesa(pessoas);
         espelhoComanda.setRespansavelTransferencia(usuario);
@@ -757,8 +781,20 @@ public class Controle implements ComandaService, Serializable {
     }
 
     @Override
-    public void excluirComandasCatraca(String comanda){
-        this.executarSql("delete from COMANDAS_EXCLUIDAS where comanda ='"+comanda+"'");
+    public void excluirComandasCatraca(String comanda) {
+        this.executarSql("delete from COMANDAS_EXCLUIDAS where comanda ='" + comanda + "'");
     }
-    
+
+}
+
+@Getter
+@Setter
+class TransferenciaParcialComandaInexistente {
+
+    private TransferenciaItensParaComanda transferenciaItensParaComanda;
+    private Lancamento lancamentoTransferencia;
+    private Lancamento lancamentoOrigem;
+    private String pedido;
+    private String quantidadeDePessoas;
+
 }

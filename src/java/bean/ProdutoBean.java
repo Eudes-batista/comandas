@@ -693,7 +693,7 @@ public class ProdutoBean implements Serializable {
     private void preencherCancelamentoParcial() {
         EspelhoComandaDTO espelhoComandaDTO = this.espelhoComandaBean.buscarQuantidadeCanceladaEQuantidadeLancada(this.lancamento.getNumero());
         double quantidadeCancelada = espelhoComandaDTO != null && espelhoComandaDTO.getQUANTIDADE_CANCELADA() > 0 ? espelhoComandaDTO.getQUANTIDADE_CANCELADA() + this.quantidade : this.quantidade;
-        double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_LANCADA() - quantidadeCancelada;
+        double quantidadeAtual = espelhoComandaDTO == null ? this.lancamento.getQuantidade() - quantidadeCancelada : espelhoComandaDTO.getQUANTIDADE_ATUAL() - quantidadeCancelada;
         this.espelhoComandaBean.getEspelhoComanda().setQuantidadeCancelada(quantidadeCancelada);
         this.espelhoComandaBean.getEspelhoComanda().setQuantidade(quantidadeAtual);
         this.espelhoComandaBean.getEspelhoComanda().setStatusItem("N");
@@ -747,6 +747,11 @@ public class ProdutoBean implements Serializable {
     public void transferirItensParaMesaComanda() {
         if (this.lancamentosSelecionadadosTransferencia.isEmpty()) {
             Messages.addGlobalWarn("Nenhum item selecionado.");
+            return;
+        }
+        long quantidadeItemSelecionado = this.lancamentosSelecionadadosTransferencia.stream().filter(lancamento -> "0".equals(lancamento.getImprimir())).count();
+        if (quantidadeItemSelecionado != 1) {
+            Messages.addGlobalWarn("Item selecionado ainda falta ser impresso.");
             return;
         }
         this.controleService.transferenciaItensParaComanda(new TransferenciaItensParaComanda(this.comandaTransferencia, this.lancamentosSelecionadadosTransferencia, this.lancamentosAdicionadosAuxlizar, this.usuarioTransferencia.toUpperCase()));
