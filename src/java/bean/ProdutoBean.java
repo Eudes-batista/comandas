@@ -229,7 +229,7 @@ public class ProdutoBean implements Serializable {
                     String.valueOf(l[12]).equals("null") ? "" : String.valueOf(l[12]),
                     String.valueOf(l[13]).equals("null") ? "" : String.valueOf(l[13])));
         });
-        totalizarItensAdicionado();
+        this.totalizarItensAdicionado();
     }
 
     private void listarItensAcompanhamento(String item, String pedido) {
@@ -241,7 +241,7 @@ public class ProdutoBean implements Serializable {
     }
 
     public void adicionarItemQuantidadeMetade(Produto p) {
-        if (verificarSeComandaJaExiste()) {
+        if (this.verificarSeComandaJaExiste()) {
             return;
         }
         Lancamento lancamentoItem = new Lancamento();
@@ -260,11 +260,11 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setStatus(this.status);
         lancamentoItem.setPedido(this.pedido);
         this.produto = p;
-        preparaItem(lancamentoItem);
+        this.preparaItem(lancamentoItem);
     }
 
     public void adicionarItem(Produto p) {
-        if (verificarSeComandaJaExiste()) {
+        if (this.verificarSeComandaJaExiste()) {
             return;
         }
         Lancamento lancamentoItem = new Lancamento();
@@ -283,15 +283,15 @@ public class ProdutoBean implements Serializable {
         lancamentoItem.setStatus(this.status);
         lancamentoItem.setPedido(this.pedido);
         this.produto = p;
-        preparaItem(lancamentoItem);
+        this.preparaItem(lancamentoItem);
     }
 
     public void preparaItem(Lancamento lancamento) {
-        salvar(lancamento);
+        this.salvar(lancamento);
     }
 
     public void adicionarItem() {
-        if (verificarSeComandaJaExiste()) {
+        if (this.verificarSeComandaJaExiste()) {
             return;
         }
         this.produto = this.produtoServico.buscarProduto(produto.getReferencia());
@@ -300,7 +300,7 @@ public class ProdutoBean implements Serializable {
             Messages.addGlobalWarn("Produto não encontrado.");
             return;
         }
-        adicionarItem(this.produto);
+        this.adicionarItem(this.produto);
     }
 
     public void salvoAcompanhamento() {
@@ -317,14 +317,14 @@ public class ProdutoBean implements Serializable {
             }
         }
         if (!this.lancamentoAcompanhamento.getObservacao().isEmpty()) {
-            alterar(this.lancamentoAcompanhamento);
+            this.alterar(this.lancamentoAcompanhamento);
         }
     }
 
     public void salvar(Lancamento lancamento) {
         try {
             Date data = new Date();
-            salvarEspelho(lancamento, data);
+            this.salvarEspelho(lancamento, data);
             this.controleService.salvar(new Sosa98(new Sosa98Id(lancamento.getNumero(), lancamento.getItem()),
                     lancamento.getComanda(),
                     lancamento.getReferencia(),
@@ -361,7 +361,7 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setData(data);
         espelhoComanda.setNumeroItem(lancamento.getItem());
         espelhoComanda.setReferencia(lancamento.getReferencia());
-        espelhoComanda.setPessoasMesa(quantidadePessoas);
+        espelhoComanda.setPessoasMesa(this.quantidadePessoas);
         espelhoComanda.setQuantidade(lancamento.getQuantidade());
         espelhoComanda.setQuantidadeLancada(lancamento.getQuantidade());
         espelhoComanda.setVendedor(lancamento.getVendedor());
@@ -370,13 +370,13 @@ public class ProdutoBean implements Serializable {
         espelhoComanda.setObservacao(lancamento.getObservacao());
         espelhoComanda.setStatusItem("N");
         espelhoComanda.setValorItem(lancamento.getPreco());
-        if ("P".equals(status)) {
+        if ("P".equals(this.status)) {
             try {
-                String dataPreconta = espelhoComandaBean.buscarDataPreconta(pedido);
+                String dataPreconta = this.espelhoComandaBean.buscarDataPreconta(this.pedido);
                 Date dataPrecontaBanco = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataPreconta);
                 espelhoComanda.setDataPreconta(dataPrecontaBanco);
             } catch (ParseException ex) {
-                mensagem = "Erro ao converter data da preconta.";
+                this.mensagem = "Erro ao converter data da preconta.";
                 PrimeFaces.current().executeScript("PF('dialogoErro').show();");
             }
         }
@@ -385,8 +385,8 @@ public class ProdutoBean implements Serializable {
             double valorComDezPOrcento = lancamento.getPrecoTotal() * 0.10;
             espelhoComanda.setValorPorcentagem(valorComDezPOrcento);
         }
-        espelhoComandaBean.setEspelhoComanda(espelhoComanda);
-        espelhoComandaBean.salvar();
+        this.espelhoComandaBean.setEspelhoComanda(espelhoComanda);
+        this.espelhoComandaBean.salvar();
     }
 
     private boolean verificarSeComandaJaExiste() {
