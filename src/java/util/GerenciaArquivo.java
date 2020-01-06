@@ -49,7 +49,7 @@ public class GerenciaArquivo {
                     getConfiguracao().setCaminhoCatraca(lines.get(6));
                 }
                 if (lines.size() > 7) {
-                    getConfiguracao().setCaminhoCatraca(lines.get(7));
+                    getConfiguracao().setMensagemDezPorcento(lines.get(7));
                 }
             }
         } catch (IOException ex) {
