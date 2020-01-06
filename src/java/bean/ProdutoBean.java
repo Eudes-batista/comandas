@@ -135,7 +135,7 @@ public class ProdutoBean implements Serializable {
         this.instacias();
         this.controlePedido = new ControlePedido(this.controleService, this.comanda);
         this.pedido = this.pedido == null ? this.controlePedido.gerarNumero() : this.pedido;
-        this.status = this.status == null ? "" : this.status;
+        this.buscarStatusPreconta();
         int buscarNumeroDePessoas = this.controleService.buscarNumeroDePessoas(this.pedido);
         if (buscarNumeroDePessoas != 0) {
             this.quantidadePessoas = String.valueOf(buscarNumeroDePessoas);
@@ -788,5 +788,16 @@ public class ProdutoBean implements Serializable {
             return false;
         }
     }
+    
+    private void buscarStatusPreconta() {
+        if(this.status == null){
+            this.status = this.controleService.buscarStatusPreconta(this.pedido);
+            return;
+        }
+        if("".equals(this.status)){
+            this.status = this.controleService.buscarStatusPreconta(this.pedido);   
+        }
+    }
+    
 
 }

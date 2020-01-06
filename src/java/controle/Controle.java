@@ -785,6 +785,18 @@ public class Controle implements ComandaService, Serializable {
         this.executarSql("delete from COMANDAS_EXCLUIDAS where comanda ='" + comanda + "'");
     }
 
+    @Override
+    public String buscarStatusPreconta(String pedido) {
+        session = HibernateUtil.getSessionFactory().openSession();
+        if (session != null) {
+            Object uniqueResult = session.createSQLQuery("select status from espelho_comanda where pedido='" + pedido + "' group by status")
+                    .uniqueResult();
+            session.close();
+            return uniqueResult != null ? String.valueOf(uniqueResult) : "";
+        }
+        return "";
+    }
+
 }
 
 @Getter

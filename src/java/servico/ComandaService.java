@@ -63,6 +63,8 @@ public interface ComandaService {
     
     public int buscarNumeroDePessoas(String pedido);
     
+    public String buscarStatusPreconta(String pedido);
+    
     public String gerarNumero();
     
     public String gerarNumeroComanda();
