@@ -8,9 +8,11 @@ import modelo.Lancamento;
 public class CalcularPreconta {
 
     private List<Lancamento> lancamentos;
+    private final Configuracao configuracao;
 
-    public CalcularPreconta(List<Lancamento> lancamentos) {
+    public CalcularPreconta(List<Lancamento> lancamentos,Configuracao configuracao) {
         this.lancamentos = lancamentos;
+        this.configuracao = configuracao;
     }
     
     public double realizarCalculoValorOpcional() {
@@ -43,9 +45,7 @@ public class CalcularPreconta {
     }
 
     public boolean verificarDezPorcento() {
-        GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
-        Configuracao configuracao = gerenciaArquivo.bucarInformacoes().getConfiguracao();
-        return !configuracao.getCobraDezPorcento().isEmpty();
+        return !this.configuracao.getCobraDezPorcento().isEmpty();
     }
 
     public void setLancamentos(List<Lancamento> lancamentos) {

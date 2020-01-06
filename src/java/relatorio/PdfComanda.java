@@ -17,10 +17,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import modelo.Configuracao;
 import modelo.Empresa;
 import modelo.Lancamento;
 import servico.PdfService;
 import util.CalcularPreconta;
+import util.GerenciaArquivo;
 
 public class PdfComanda implements PdfService {
 
@@ -29,6 +31,7 @@ public class PdfComanda implements PdfService {
     private List<Lancamento> lancamentos;
     private Empresa empresa;
     private final DecimalFormat df = new DecimalFormat("##,##0.00");
+    private final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
 
     public PdfComanda() {
     }
@@ -178,7 +181,8 @@ public class PdfComanda implements PdfService {
         PdfPCell div = controlePdf.criarCelula("________________________________________", ControlePdf.FONT_PPB, 4, Element.ALIGN_CENTER);
 
         div.setPaddingTop(-5f);
-        CalcularPreconta calcularPreconta = new CalcularPreconta(lancamentos);
+        Configuracao configuracao = this.gerenciaArquivo.bucarInformacoes().getConfiguracao();
+        CalcularPreconta calcularPreconta = new CalcularPreconta(lancamentos, configuracao);
         double valorSubTotal = calcularPreconta.calcularItens(l -> !l.getComanda().isEmpty());
         double valorOpcional = calcularPreconta.realizarCalculoValorOpcional();
         double resultado = calcularPreconta.realizaCalculoTotal();
@@ -187,7 +191,7 @@ public class PdfComanda implements PdfService {
             PdfPCell tituloSubTotal = controlePdf.criarCelula("Sub-Total", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
             PdfPCell subTotal = controlePdf.criarCelula(df.format(valorSubTotal), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
-            PdfPCell dezPorcento = controlePdf.criarCelula("10% OPCIONAL", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+            PdfPCell dezPorcento = controlePdf.criarCelula(configuracao.getMensagemDezPorcento(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
             PdfPCell valor = controlePdf.criarCelula(df.format(valorOpcional), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
             tabelaComissao.addCell(tituloSubTotal);

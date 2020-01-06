@@ -24,5 +24,6 @@ public class Configuracao implements Serializable {
     private String condicaoParaImpressao;
     private String gerarComandaAutomatico;
     private String caminhoCatraca;
+    private String mensagemDezPorcento;
     
 }

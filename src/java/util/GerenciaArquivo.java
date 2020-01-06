@@ -45,8 +45,11 @@ public class GerenciaArquivo {
                 getConfiguracao().setCobraDezPorcento(lines.get(3));
                 getConfiguracao().setCondicaoParaImpressao(lines.get(4));
                 getConfiguracao().setGerarComandaAutomatico(lines.get(5));
-                if(lines.size() > 6){
+                if (lines.size() > 6) {
                     getConfiguracao().setCaminhoCatraca(lines.get(6));
+                }
+                if (lines.size() > 7) {
+                    getConfiguracao().setCaminhoCatraca(lines.get(7));
                 }
             }
         } catch (IOException ex) {
@@ -66,6 +69,7 @@ public class GerenciaArquivo {
                 pw.println(this.configuracao.getCondicaoParaImpressao() == null ? "" : this.configuracao.getCondicaoParaImpressao());
                 pw.println(this.configuracao.getGerarComandaAutomatico());
                 pw.println(this.configuracao.getCaminhoCatraca());
+                pw.println(this.configuracao.getMensagemDezPorcento());
                 pw.flush();
                 salvarAsConfiguracoesDoBancoDeDados(this.configuracao.getCaminho());
                 Messages.addGlobalInfo("salvo com sucesso!!");
@@ -127,7 +131,7 @@ public class GerenciaArquivo {
     public void salvarAsConfiguracoesDoBancoDeDados(String caminhoDoBancoDeDados) throws URISyntaxException, IOException {
         List<String> configuracoesAlteradas = mudarCaminhoDoBancoDeDados(caminhoDoBancoDeDados);
         try (PrintWriter pw = new PrintWriter(new File(buscarCaminho()))) {
-            configuracoesAlteradas.forEach(configuracoesAlterada ->pw.println(configuracoesAlterada));
+            configuracoesAlteradas.forEach(configuracoesAlterada -> pw.println(configuracoesAlterada));
             pw.flush();
         }
     }

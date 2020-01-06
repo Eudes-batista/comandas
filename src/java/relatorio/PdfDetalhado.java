@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import modelo.Configuracao;
 import modelo.Empresa;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
@@ -33,6 +34,7 @@ import servico.ComandaService;
 import servico.ItemAcompanhamentoService;
 import servico.PdfService;
 import util.CalcularPreconta;
+import util.GerenciaArquivo;
 
 public class PdfDetalhado implements PdfService {
 
@@ -44,6 +46,7 @@ public class PdfDetalhado implements PdfService {
     private Mesa mesa;
     private final Set<String> vendedores = new HashSet<>();
     private final DecimalFormat df = new DecimalFormat("##,##0.00");
+    private final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
     private ItemAcompanhamentoService itemAcompanhamentoService;
 
     public PdfDetalhado() {
@@ -95,7 +98,8 @@ public class PdfDetalhado implements PdfService {
         Collections.sort(numerosComandas);
         for (String numeroComanda : numerosComandas) {
             List<Lancamento> lancamentos = new ArrayList<>();
-            CalcularPreconta calcularPreconta = new CalcularPreconta(lancamentos);
+            Configuracao configuracao = this.gerenciaArquivo.bucarInformacoes().getConfiguracao();
+            CalcularPreconta calcularPreconta = new CalcularPreconta(lancamentos,configuracao);
             Paragraph divider1 = new Paragraph(-1f, "______________________________");
             Paragraph espaco = new Paragraph(10f, " ");
 
@@ -210,7 +214,7 @@ public class PdfDetalhado implements PdfService {
                 PdfPCell labelsubTotal = controlePdf.criarCelula("Sub-Total", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
                 PdfPCell subTotal = controlePdf.criarCelula(df.format(valorSubTotal), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
-                PdfPCell dezPorcento = controlePdf.criarCelula("10% OPCIONAL", ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
+                PdfPCell dezPorcento = controlePdf.criarCelula(configuracao.getMensagemDezPorcento(), ControlePdf.FONT_PP, 2, Element.ALIGN_RIGHT);
                 PdfPCell valor = controlePdf.criarCelula(df.format(valorOpcional), ControlePdf.FONT_PP, 2, Element.ALIGN_CENTER);
 
                 tabelaComissao.addCell(labelsubTotal);
