@@ -62,17 +62,17 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
 
     @Override
     public void excluir(Integer numero) {
-        executarSql("delete from espelho_comanda where numero =" + numero + "");
+        this.executarSql("delete from espelho_comanda where numero =" + numero + "");
     }
 
     @Override
     public void atualizarStatusImpressao(String pedido) {
-        executarSql("update espelho_comanda set impressao='1' where pedido='" + pedido + "'");
+        this.executarSql("update espelho_comanda set impressao='1' where pedido='" + pedido + "'");
     }
 
     @Override
     public void atualizarDataPreconta(String data, Mesa mesa) {
-        executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getPAGANTES() + "' where pedido in(" + mesa.getPEDIDO() + ")");
+        this.executarSql("update espelho_comanda set data_preconta='" + data + "',pessoas_pagantes='" + mesa.getPAGANTES() + "' where pedido in(" + mesa.getPEDIDO() + ")");
     }
 
     @Override

@@ -85,6 +85,8 @@ public class MesasBean implements Serializable {
     private boolean reabrimesa;
     private boolean mostrareabrimesa;
     private boolean transferirComanda;
+    
+    private SimpleDateFormat dateFormat;
 
     public void init() {
         GerenciaEntrada gerenciaEntrada = new GerenciaEntrada();
@@ -95,8 +97,9 @@ public class MesasBean implements Serializable {
             this.lancamentos = new ArrayList<>();
             this.comandas = new ArrayList<>();
             this.impressaoBean = new ImpressaoBean();
-            novo();
-            listarMesas();
+            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.novo();
+            this.listarMesas();
         }
     }
 
@@ -112,12 +115,12 @@ public class MesasBean implements Serializable {
 
     private void listarMesas() {
         this.mesas.clear();
-        adicionarMesas(separarMesas(this.controle.listarMesas()));
+        this.adicionarMesas(separarMesas(this.controle.listarMesas()));
     }
 
     public void pesquisarMesas() {
         this.mesas.clear();
-        adicionarMesas(separarMesas(this.controle.listarMesas(this.pesquisa.toUpperCase())));
+        this.adicionarMesas(separarMesas(this.controle.listarMesas(this.pesquisa.toUpperCase())));
     }
 
     private Map<String, List<Mesa>> separarMesas(List<Mesa> listarMesas) {
@@ -140,6 +143,7 @@ public class MesasBean implements Serializable {
                         this.mesas.add(new Mesa(chave, "V", mesa.getPEDIDO()));
                         countP = 0;
                     }
+                    continue;
                 }
                 if ((mesa.getSTATUS().isEmpty() || mesa.getSTATUS().equals("null")) && countP == 0) {
                     this.mesas.add(new Mesa(chave, "N", mesa.getPEDIDO()));
@@ -151,38 +155,38 @@ public class MesasBean implements Serializable {
     }
 
     public void imprimirPreconta(String mesa) {
-        prepararPreconta(mesa, "normal");
+        this.prepararPreconta(mesa, "normal");
     }
 
     public void imprimirPreconta() {
-        imprimir("normal");
+        this.imprimir("normal");
     }
 
     public void imprimirPrecontaDetalhada() {
-        imprimir("detalhada");
+        this.imprimir("detalhada");
     }
 
     public void imprimirParcial() {
-        imprimir("parcial");
+        this.imprimir("parcial");
     }
 
     public void imprimir(String tipo) {
         if (!"RSVA".equals(this.mesa.getMESA()) && Pattern.compile("\\d").matcher(this.mesa.getMESA()).find()) {
-            prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), tipo);
-            listarMesas();
+            this.prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), tipo);
+            this.listarMesas();
             PrimeFaces.current().executeScript("PF('dialogoPrecontaRapida').hide();");
         }
     }
 
     private void prepararPreconta(String mesa1, String tipo) {
-        this.mesa = inserirPessoasNaMesa(mesa1);
+        this.mesa = this.inserirPessoasNaMesa(mesa1);
         this.mesa.setPAGANTES(this.mesa.getPAGANTES() == null || "".equals(this.mesa.getPAGANTES()) ? "1" : this.mesa.getPAGANTES());
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
         Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesa1);
         Empresa empresa = relatorio.getEmpresa();
         Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
         String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
-        PdfService pdfService = selecionarTipoImpressao(tipo, empresa, mapComanda);
+        PdfService pdfService = this.selecionarTipoImpressao(tipo, empresa, mapComanda);
         try {
             new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
         } catch (FileNotFoundException | DocumentException ex) {
@@ -191,7 +195,7 @@ public class MesasBean implements Serializable {
             Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
         }
         if ("normal".equals(tipo)) {
-            fecharMesa(this.mesa);
+            this.fecharMesa(this.mesa);
         }
     }
 
@@ -202,10 +206,10 @@ public class MesasBean implements Serializable {
                 pdfService = new PdfMesa(empresa, mapComanda, this.comandaService, this.mesa);
                 break;
             case "parcial":
-                pdfService = new PdfMesaParcial(empresa, mapComanda, this.comandaService, mesa);
+                pdfService = new PdfMesaParcial(empresa, mapComanda, this.comandaService, this.mesa);
                 break;
             default:
-                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, mesa, this.itemAcompanhamentoService);
+                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, this.mesa, this.itemAcompanhamentoService);
                 break;
         }
         return pdfService;
@@ -232,7 +236,7 @@ public class MesasBean implements Serializable {
         this.usuarioBean.getUsuario().setNOME(this.usuario);
         this.usuarioBean.getUsuario().setSENHA(this.senha);
         if (this.usuarioBean.validarGerente()) {
-            verificarAcaoUsuario();
+            this.verificarAcaoUsuario();
             setUsuario("");
             setSenha("");
             fechar = true;
@@ -245,17 +249,16 @@ public class MesasBean implements Serializable {
 
     private void verificarAcaoUsuario() {
         if (this.condicao == null) {
-            excluirMesa();
+            this.excluirMesa();
             return;
         }
         switch (this.condicao) {
             case MESA:
-                redirecionarParaComandas();
+                this.redirecionarParaComandas();
                 break;
             case COMANDA:
-                redirecionarParaLancamentoItens();
+                this.redirecionarParaLancamentoItens();
                 break;
-
             case TRANSFERENCIA:
                 this.usuarioTransferencia = this.usuario;
                 PrimeFaces.current().executeScript("PF('dialogoTransferencia').show();");
@@ -267,7 +270,7 @@ public class MesasBean implements Serializable {
 
     private void redirecionarParaComandas() {
         try {
-            abrirMesa();
+            this.abrirMesa();
             Faces.redirect("comandas.jsf?id=" + this.mesa.getMESA());
         } catch (IOException ex) {
             Messages.addGlobalWarn("Erro ao tentar abrir comandas");
@@ -300,8 +303,8 @@ public class MesasBean implements Serializable {
         if (this.mesaOrigem == null && this.mesaDestino == null) {
             return;
         }
-        formataNumeroMesaDestino();
-        if (verificarMesaDestinoIgualMesaOrigem()) {
+        this.formataNumeroMesaDestino();
+        if (this.verificarMesaDestinoIgualMesaOrigem()) {
             return;
         }
         if (!this.mesaDestino.equals("RSVA") && !Pattern.compile("\\d").matcher(this.mesaDestino).find()) {
@@ -316,7 +319,7 @@ public class MesasBean implements Serializable {
             }
             this.controle.transferirMesa(mesaOrigemEncontrada, this.mesaDestino.toUpperCase());
             this.espelhoComandaService.atualizarResponsavelTransferencia(mesaOrigemEncontrada.getPEDIDO(), this.usuarioTransferencia.toUpperCase());
-            listarMesas();
+            this.listarMesas();
             PrimeFaces.current().ajax().update("frm:tabelaMesa");
             PrimeFaces.current().executeScript("PF('dialogoTransferencia').hide();");
             return;
@@ -341,8 +344,8 @@ public class MesasBean implements Serializable {
     public void fecharMesa(Mesa mesa) {
         mesa.setResponsavelPorReabrirMesa("");
         this.controle.atualizarStatusPreconta(mesa, "FECHAR");
-        atualizarDataPreContaPessoasPagantes(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), mesa);
-        listarMesas();
+        this.atualizarDataPreContaPessoasPagantes(dateFormat.format(new Date()), mesa);
+        this.listarMesas();
     }
 
     public boolean getSTATUS(Mesa mesa) {
@@ -376,8 +379,8 @@ public class MesasBean implements Serializable {
         String permissao = this.vendedorService.validarVendedor(this.usuarioBean.gerarSenha());
         if (!"null".equals(permissao)) {
             this.vendedor = permissao;
-            realizarAcaoDeImpressao(this.tipoImpressao);
-            limparStatusJanela();
+            this.realizarAcaoDeImpressao(this.tipoImpressao);
+            this.limparStatusJanela();
         } else {
             Messages.addGlobalWarn("Senha incorreta.");
         }
@@ -387,16 +390,16 @@ public class MesasBean implements Serializable {
         PrimeFaces.current().executeScript("PF('dialogoVendedor').hide();");
         PrimeFaces.current().executeScript("PF('dialogoPreconta').hide();");
         this.senha = "";
-        novo();
+        this.novo();
     }
 
     public void realizarAcaoDeImpressao(String tipo) {
         if (tipo.equals("parcial")) {
-            imprimirParcial();
+            this.imprimirParcial();
             this.espelhoComandaService.atualizarResponsavelParcial(this.mesa.getPEDIDO(), this.vendedor);
             return;
         }
-        imprimirPreconta();
+        this.imprimirPreconta();
         this.espelhoComandaService.atualizarResponsavelPreconta(this.mesa.getPEDIDO(), this.vendedor);
     }
 
@@ -416,9 +419,9 @@ public class MesasBean implements Serializable {
         this.mesa = this.mesas.get(this.mesas.indexOf(this.mesa));
         this.mesa.setResponsavelPorReabrirMesa("");
         if (this.reabrimesa) {
-            mesa.setSTATUS("");
+            this.mesa.setSTATUS("");
             this.mesa.setResponsavelPorReabrirMesa(this.usuario.toUpperCase());
-            controle.atualizarStatusPreconta(this.mesa, "REABRIR");
+            this.controle.atualizarStatusPreconta(this.mesa, "REABRIR");
             PrimeFaces.current().executeScript("PF('dialogoReabrir').hide();");
         }
     }
