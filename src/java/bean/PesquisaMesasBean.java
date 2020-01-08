@@ -56,10 +56,10 @@ public class PesquisaMesasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa(Comandas comandas) {
-        this.mesasBean.setMesas(new ArrayList<Mesa>());
+        this.mesasBean.setMesas(new ArrayList<>());
         this.mesasBean.setPesquisa(comandas.getMESA());
         this.mesasBean.pesquisarMesas();
-        this.mesasBean.imprimirPreconta(comandas.getMESA());
-        listarComandas();
+        this.mesasBean.reipressaoPreconta(comandas.getMESA());
+        this.listarComandas();
     }
 }

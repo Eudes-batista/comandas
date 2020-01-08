@@ -157,6 +157,10 @@ public class MesasBean implements Serializable {
     public void imprimirPreconta(String mesa) {
         this.prepararPreconta(mesa, "normal");
     }
+    
+    public void reipressaoPreconta(String mesa) {
+        this.prepararPreconta(mesa, "");
+    }
 
     public void imprimirPreconta() {
         this.imprimir("normal");
@@ -178,13 +182,13 @@ public class MesasBean implements Serializable {
         }
     }
 
-    private void prepararPreconta(String mesa1, String tipo) {
-        this.mesa = this.inserirPessoasNaMesa(mesa1);
+    private void prepararPreconta(String mesaSelecionada, String tipo) {
+        this.mesa = this.inserirPessoasNaMesa(mesaSelecionada);
         this.mesa.setPAGANTES(this.mesa.getPAGANTES() == null || "".equals(this.mesa.getPAGANTES()) ? "1" : this.mesa.getPAGANTES());
         GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
-        Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesa1);
+        Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesaSelecionada);
         Empresa empresa = relatorio.getEmpresa();
-        Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesa1).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
+        Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesaSelecionada).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
         String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
         PdfService pdfService = this.selecionarTipoImpressao(tipo, empresa, mapComanda);
         try {
@@ -208,8 +212,11 @@ public class MesasBean implements Serializable {
             case "parcial":
                 pdfService = new PdfMesaParcial(empresa, mapComanda, this.comandaService, this.mesa);
                 break;
+            case "detalhada":
+                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, this.mesa, this.itemAcompanhamentoService);                
+                break;
             default:
-                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, this.mesa, this.itemAcompanhamentoService);
+                pdfService = new PdfMesa(empresa, mapComanda, this.comandaService, this.mesa);
                 break;
         }
         return pdfService;
@@ -344,7 +351,10 @@ public class MesasBean implements Serializable {
     public void fecharMesa(Mesa mesa) {
         mesa.setResponsavelPorReabrirMesa("");
         this.controle.atualizarStatusPreconta(mesa, "FECHAR");
-        this.atualizarDataPreContaPessoasPagantes(dateFormat.format(new Date()), mesa);
+        if(this.dateFormat == null){
+            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+        this.atualizarDataPreContaPessoasPagantes(this.dateFormat.format(new Date()), mesa);
         this.listarMesas();
     }
 
