@@ -169,11 +169,11 @@ public class ComandasBean implements Serializable {
     }
 
     public void imprimirPrecontaMesa() {
-        this.mesasBean.setMesas(new ArrayList<Mesa>());
+        this.mesasBean.setMesas(new ArrayList<>());
         this.mesasBean.setPesquisa(this.codigoMesa);
         this.mesasBean.pesquisarMesas();
         this.mesasBean.imprimirPreconta(this.codigoMesa);
-        listarComandas();
+        this.listarComandas();
     }
 
     public void receberCodigoExcluxao(Comandas comanda) {
