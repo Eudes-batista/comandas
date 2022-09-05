@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "cancelamento_mesa")
@@ -29,12 +30,15 @@ public class Cancelamento implements Serializable {
     @Column(name = "numero", length = 15, nullable = false)
     private String numero;
 
+    @Index(name = "mesa", columnNames = {"mesa"})
     @Column(name = "mesa", length = 4, nullable = false)
     private String mesa;
-    
+
+    @Index(name = "comanda", columnNames = {"comanda"})
     @Column(name = "comanda", length = 4, nullable = false)
     private String comanda;
-    
+
+    @Index(name = "pedido", columnNames = {"pedido"})
     @Column(name = "pedido", length = 9, nullable = false)
     private String pedido;
 

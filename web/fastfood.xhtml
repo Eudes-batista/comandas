@@ -57,7 +57,7 @@
                 </h:form>  
             </div>            
             <div class="conteudo">
-                <div style="padding: 5px;">
+                <div style="padding: 3px;">
                     <label for="pesquisa" >Pesquisar</label>
                     <h:form id="frmPesquisa">
                         <p:inputText id="pesquisa" type="text" class="form-control" placeholder="Pesquisa de Produto"
@@ -70,41 +70,43 @@
                 </div>
                 <div class="text-center rolagem">
                     <h:form id="frmProduto">
-                        <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
-                            <div class="produto">
-                                <p:commandLink update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens total" process="@this frmProduto:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
-                                               style="color: #000;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
-                                    <div class="row text-center">
-                                        <div class="col-xs-12 text-center">
-                                            <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                        <div class="list-group" style="padding: 2px;box-shadow: 1px 1px 1px rgba(0,0,0,0.2)">
+                            <ui:repeat id="loop" value="#{fastFoodBean.produtos}" var="produto" varStatus="status">
+                                <div class="list-group-item rounded" style="margin-top: 5px">
+                                    <p:commandLink update="frmMessage:message frmFinalizar:btfinalizarComanda frmBotoes:itens frmItens total" process="@this frmProduto:loop:#{status.index}:qtdInput" actionListener="#{fastFoodBean.adicionarItem(produto)}"
+                                                   style="color: #000;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
+                                        <div class="row text-center">
+                                            <div class="col-xs-12 text-center">
+                                                <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row text-center" style="font-size: 8pt;">
-                                        <h:outputText value="#{produto.preco}">
-                                            <f:convertNumber pattern="###,##0.00"/>
-                                        </h:outputText>
-                                    </div>
-                                </p:commandLink>  
-                                <div class="row" style="margin-top: 15px;">
-                                    <div class="col-xs-4 text-left">
-                                        <span class="btn btn-purple fa fa-minus"
-                                              onclick="removerQuantidade('frmProduto:loop:#{status.index}:qtd', 'frmProduto:loop:#{status.index}:qtdInput')"></span>
-                                    </div>
-                                    <div class="col-xs-3 text-center" style="font-size: 12pt;">
-                                        <h:outputText id="qtd" value="1" class="zeraQuantidade"/>
-                                        <h:inputText id="qtdInput" value="#{fastFoodBean.quantidade}" style="display: none;"/>
-                                    </div>
-                                    <div class="col-xs-4 text-right" >
-                                        <span class="btn btn-purple fa fa-plus" onclick="adicionarQuantidade('frmProduto:loop:#{status.index}:qtd', 'frmProduto:loop:#{status.index}:qtdInput');"></span>
-                                    </div>
+                                        <div class="row text-center" style="font-size: 8pt;">
+                                            <h:outputText value="#{produto.preco}">
+                                                <f:convertNumber pattern="###,##0.00"/>
+                                            </h:outputText>
+                                        </div>
+                                    </p:commandLink>  
+                                    <div class="row" style="margin-top: 15px;">
+                                        <div class="col-xs-4 text-left">
+                                            <span class="btn btn-purple fa fa-minus"
+                                                  onclick="removerQuantidade('frmProduto:loop:#{status.index}:qtd', 'frmProduto:loop:#{status.index}:qtdInput')"></span>
+                                        </div>
+                                        <div class="col-xs-3 text-center" style="font-size: 12pt;">
+                                            <h:outputText id="qtd" value="1" class="zeraQuantidade"/>
+                                            <h:inputText id="qtdInput" value="#{fastFoodBean.quantidade}" style="display: none;"/>
+                                        </div>
+                                        <div class="col-xs-4 text-right" >
+                                            <span class="btn btn-purple fa fa-plus" onclick="adicionarQuantidade('frmProduto:loop:#{status.index}:qtd', 'frmProduto:loop:#{status.index}:qtdInput');"></span>
+                                        </div>
+                                    </div>                                
                                 </div>
-                            </div>
-                        </ui:repeat>   
+                            </ui:repeat>   
+                        </div>
                         <script>
                             limitarCaracteres();
                         </script>
                     </h:form>  
-                    <div id="itensRapidos" style="display: none">
+                    <div id="itensRapidos" style="display: none; margin-top: 10px">
                         <h:form>
                             <div class="col-xs-6 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 

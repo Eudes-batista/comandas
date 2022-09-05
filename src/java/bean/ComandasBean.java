@@ -20,7 +20,6 @@ import modelo.Comandas;
 import modelo.Empresa;
 import modelo.ItemAcompanhamento;
 import modelo.Lancamento;
-import modelo.Mesa;
 import modelo.dto.Cancelamento;
 import modelo.dto.Usuario;
 import org.omnifaces.util.Faces;

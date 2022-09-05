@@ -10,7 +10,6 @@ import javax.faces.bean.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import modelo.Comandas;
-import modelo.Mesa;
 import modelo.dto.ItemPedido;
 import servico.PesquisaMesasService;
 

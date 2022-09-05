@@ -194,7 +194,7 @@ public class MesasBean implements Serializable {
         try {
             new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
         } catch (FileNotFoundException | DocumentException ex) {
-            Messages.addGlobalError("Erro ao encontra o arquivo config.txt");
+            Messages.addGlobalError("Erro ao encontra o arquivo config.txt \n"+ex.getMessage());
         } catch (IOException | PrinterException ex) {
             Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
         }

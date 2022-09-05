@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -12,6 +13,7 @@ import modelo.Lancamento;
 import modelo.Mesa;
 import modelo.dto.Cancelamento;
 import modelo.dto.EspelhoComandaDTO;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import servico.EspelhoComandaService;
@@ -28,20 +30,21 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     @Override
     public void salvar(EspelhoComanda espelhoComanda) throws Exception {
         session = HibernateUtil.getSessionFactory().openSession();
-        if (session != null) {
-            try {
-                session.getTransaction().begin();
-                session.save(espelhoComanda);
-                session.getTransaction().commit();
-            } catch (Exception ex) {
-                if(session.getTransaction() != null && session.getTransaction().isActive()){
-                    session.getTransaction().rollback();
-                }
-                this.registrarErroAoSalvar(ex, espelhoComanda);
-                throw ex;
-            } finally {
-                session.close();
+        if (session == null) {
+            throw new HibernateException("Não foi possível abrir conexão com o banco de dados");
+        }
+        try {
+            session.getTransaction().begin();
+            session.save(espelhoComanda);
+            session.getTransaction().commit();
+            session.close();
+        } catch (HibernateException ex) {
+            if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
             }
+            session.close();
+            this.registrarErroAoSalvar(ex, espelhoComanda);
+            throw ex;
         }
     }
 
@@ -114,12 +117,12 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     @Override
     public List<EspelhoComanda> listarAuditoria() {
         session = HibernateUtil.getSessionFactory().openSession();
-        if (session != null) {
-            List<EspelhoComanda> espelhoComandas = session.createQuery("from EspelhoComanda").list();
-            session.close();
-            return espelhoComandas;
+        if (session == null) {
+            return Arrays.asList();
         }
-        return null;
+        List<EspelhoComanda> espelhoComandas = session.createQuery("from EspelhoComanda").list();
+        session.close();
+        return espelhoComandas;
     }
 
     @Override
@@ -131,13 +134,13 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
     @Override
     public List<Object[]> listarProdutosPedido(String pedido) {
         session = HibernateUtil.getSessionFactory().openSession();
-        if (session != null) {
-            List<Object[]> objects = session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
-                    + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') left outer join scea01 on (prrefere = eerefere) where pedido = '" + pedido + "' ").list();
-            session.close();
-            return objects;
+        if (session == null) {
+            return Arrays.asList();
         }
-        return null;
+        List<Object[]> objects = session.createSQLQuery("select numero, EEPLQTB1, quantidade, porcentagem,prdescri from espelho_comanda left outer join \n"
+                + "scea07 on (eerefere = referencia and eecodemp = '" + new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa() + "') left outer join scea01 on (prrefere = eerefere) where pedido = '" + pedido + "' ").list();
+        session.close();
+        return objects;
     }
 
     @Override
@@ -210,7 +213,7 @@ public class EspelhoComandaControle implements EspelhoComandaService, Serializab
         if (session != null) {
             Object object = session.createSQLQuery("select coalesce(quantidade_cancelada,0) as quantidade_cancelada,quantidade_lancada,quantidade as QUANTIDADE_ATUAL from espelho_comanda where numero='" + numero + "' ").setResultTransformer(Transformers.aliasToBean(EspelhoComandaDTO.class)).uniqueResult();
             session.close();
-            EspelhoComandaDTO espelhoComandaDTO  = object == null ? null :  (EspelhoComandaDTO) object;
+            EspelhoComandaDTO espelhoComandaDTO = object == null ? null : (EspelhoComandaDTO) object;
             return espelhoComandaDTO;
         }
         return null;

@@ -12,6 +12,7 @@ import javax.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Index;
 
 @ToString
 @Entity
@@ -24,28 +25,32 @@ public class EspelhoComanda implements Serializable {
     @Column(name = "numero", nullable = false)
     private Integer numero;
 
+    @Index(name = "pedido", columnNames = {"pedido"})
     @Column(name = "pedido", length = 9, nullable = false)
     private String pedido;
 
+    @Index(name = "numero_item", columnNames = {"pedido"})
     @Column(name = "numero_item", length = 8, nullable = false)
     private String numeroItem;
 
+    @Index(name = "comanda", columnNames = {"pedido"})
     @Column(name = "comanda", length = 4, nullable = false)
     private String comanda;
 
+    @Index(name = "referencia", columnNames = {"pedido"})
     @Column(name = "referencia", length = 20, nullable = false)
     private String referencia;
 
     @Column(name = "quantidade", precision = 6, scale = 3, nullable = false)
     private Double quantidade;
-    
+
     @Column(name = "quantidade_lancada", precision = 6, scale = 3, nullable = false)
     private Double quantidadeLancada;
 
     @Column(name = "data", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date data;
-    
+
     @Column(name = "data_cancelamento", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCancelamento;
@@ -58,7 +63,7 @@ public class EspelhoComanda implements Serializable {
 
     @Column(name = "mesa", length = 4, nullable = false)
     private String mesa;
-    
+
     @Column(name = "mesa_origem", length = 4, nullable = true)
     private String mesaOrigem;
 
@@ -101,29 +106,29 @@ public class EspelhoComanda implements Serializable {
 
     @Column(name = "responsavel_cancelamento", nullable = true, length = 50)
     private String respansavelCancelamento;
-    
+
     @Column(name = "responsavel_reipressao", nullable = true, length = 50)
     private String respansavelReipressao;
-    
+
     @Column(name = "responsavel_transferencia", nullable = true, length = 50)
     private String respansavelTransferencia;
-    
-    @Column(name = "quantidade_cancelada", nullable = true, precision = 6,scale = 3)
+
+    @Column(name = "quantidade_cancelada", nullable = true, precision = 6, scale = 3)
     private Double quantidadeCancelada;
-    
+
     @Column(name = "valor_item", precision = 18, scale = 3, nullable = false)
     private Double valorItem;
-    
-    @Column(name="responsavel_preconta",length = 50,nullable = true)
+
+    @Column(name = "responsavel_preconta", length = 50, nullable = true)
     private String responsavelPreconta;
-    
-    @Column(name="responsavel_parcial",length = 50,nullable = true)
+
+    @Column(name = "responsavel_parcial", length = 50, nullable = true)
     private String responsavelParcial;
-    
-    @Column(name="mesa_reaberta",length = 1,nullable = true)
+
+    @Column(name = "mesa_reaberta", length = 1, nullable = true)
     private String mesa_reaberta;
-    
-    @Column(name="responsavel_reabriu_mesa",length = 50,nullable = true)
+
+    @Column(name = "responsavel_reabriu_mesa", length = 50, nullable = true)
     private String responsavelPorReabriMesa;
 
     @Override

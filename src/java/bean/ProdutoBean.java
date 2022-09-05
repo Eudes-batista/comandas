@@ -522,7 +522,7 @@ public class ProdutoBean implements Serializable {
             return;
         }
         try {
-            String caminhoDaImpressora = buscarCaminhoImpressora(subgrupo);
+            String caminhoDaImpressora = this.buscarCaminhoImpressora(subgrupo);
             ControleImpressao controleImpressao = new ControleImpressao(caminhoDaImpressora);
             PdfService pdfPedido = new PdfPedido(lancamentos, lanc, itemAcompanhamentoService);
             File gerarPdf = pdfPedido.gerarPdf();
@@ -644,15 +644,16 @@ public class ProdutoBean implements Serializable {
     }
 
     public void excluirProdutoJaImpresso() {
-        if (!validarGerente()) {
+        if (!this.validarGerente()) {
             Messages.addGlobalWarn("Usuário não autorizado.");
             return;
         }
-        excluirProdutoJaImpressoSosa98();
-        cancelamentoDeItem();
-        ItemCanceladoGarcom canceladoGarcom = preencherInformacoesCancelamento();
+        this.excluirProdutoJaImpressoSosa98();
+        this.cancelamentoDeItem();
+        ItemCanceladoGarcom canceladoGarcom = this.preencherInformacoesCancelamento();
         if (!imprimirCancelamento(this.lancamento, canceladoGarcom)) {
             Messages.addGlobalWarn("Erro ao imprimir cancelamento\n verifique se a impressora está ligada.");
+            PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
             return;
         }
         PrimeFaces.current().executeScript("PF('dialogoCancelamento').hide()");
@@ -684,7 +685,7 @@ public class ProdutoBean implements Serializable {
             preencherInformacoesCancelamentoTotal(espelhoComanda);
             this.itemAcompanhamentoService.atualizarStatusAcompanhamento(lancamento, "C");
         } else {
-            preencherCancelamentoParcial();
+            this.preencherCancelamentoParcial();
         }
         this.espelhoComandaBean.alterar();
         this.cancelamentoBean.salvarCancelamento(this.preencherCancelamento(espelhoComanda));
@@ -775,7 +776,8 @@ public class ProdutoBean implements Serializable {
         try {
             PdfService pdfService = new PdfCancelamento(lancamento, itemCanceladoGarcom, this.itemAcompanhamentoService);
             File pdf = pdfService.gerarPdf();
-            String impressora = new GerenciaArquivo().bucarInformacoes().getConfiguracao().getImpressora();
+            String subgrupo = this.validarAntesImprimir(lancamento.getReferencia());
+            String impressora = this.buscarCaminhoImpressora(subgrupo);
             ControleImpressao controleImpressao = new ControleImpressao(impressora);
             controleImpressao.imprime(pdf);
             return true;
