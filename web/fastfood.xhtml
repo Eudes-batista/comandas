@@ -58,13 +58,22 @@
             </div>            
             <div class="conteudo">
                 <div style="padding: 3px;">
-                    <label for="pesquisa" >Pesquisar</label>
-                    <h:form id="frmPesquisa">
-                        <p:inputText id="pesquisa" type="text" class="form-control" placeholder="Pesquisa de Produto"
-                                     value="#{fastFoodBean.pesquisa}" onkeyup="this.value = this.value.toUpperCase();">
+                    <label for="pesquisa" style="font-size: 15pt !important">Pesquisar</label>
+                    <h:form id="frmPesquisa" onsubmit="return false;" >
+                        <f:passThroughAttribute name="autocomplete" value="off"/>
+                        <p:remoteCommand name="pesquisarProduto"
+                                         action="#{fastFoodBean.pesquisarProduto()}"
+                                         process="@this pesquisa"
+                                         update="frmProduto"/>
+                        <p:inputText id="pesquisa" type="search" class="form-control" style="font-size: 40px !important;height: 50px" placeholder="Pesquisa de Produto"
+                                     value="#{fastFoodBean.pesquisa}" onkeydown="if (event.keyCode === 13) {
+                                                 pesquisarProduto();
+                                                 event.preventDefault();
+                                                 return false;
+                                             }">
                             <f:passThroughAttribute name="autofocus" value="true"/>
-                            <f:ajax event="keyup" render="frmProduto" execute="@this" listener="#{fastFoodBean.pesquisarProduto()}"
-                                    onevent="limitarCaracteres"/>
+                            <!--                            <f:ajax event="keyup" render="" execute="@this" listener=""
+                                                                onevent="limitarCaracteres"/>-->
                         </p:inputText>  
                     </h:form>
                 </div>
@@ -77,22 +86,22 @@
                                                    style="color: #000;" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()">
                                         <div class="row text-center">
                                             <div class="col-xs-12 text-center">
-                                                <span class="nome-produto" style="font-size: 8pt;">#{produto.descricao}</span>
+                                                <span class="nome-produto fonte-itens" >#{produto.descricao}</span>
                                             </div>
                                         </div>
-                                        <div class="row text-center" style="font-size: 8pt;">
+                                        <div class="row text-center fonte-itens">
                                             <h:outputText value="#{produto.preco}">
                                                 <f:convertNumber pattern="###,##0.00"/>
                                             </h:outputText>
                                         </div>
                                     </p:commandLink>  
-                                    <div class="row" style="margin-top: 15px;">
+                                    <div class="row" style="margin-top: 15px;margin-left: 40px;text-align: center !important;">
                                         <div class="col-xs-4 text-left">
                                             <span class="btn btn-purple fa fa-minus"
                                                   onclick="removerQuantidade('frmProduto:loop:#{status.index}:qtd', 'frmProduto:loop:#{status.index}:qtdInput')"></span>
                                         </div>
-                                        <div class="col-xs-3 text-center" style="font-size: 12pt;">
-                                            <h:outputText id="qtd" value="1" class="zeraQuantidade"/>
+                                        <div class="col-xs-3 text-center" style="font-size: 12pt; text-align: center;">
+                                            <h:outputText id="qtd" value="1" class="zeraQuantidade" style="font-size: 24px !important;text-align: center"/>
                                             <h:inputText id="qtdInput" value="#{fastFoodBean.quantidade}" style="display: none;"/>
                                         </div>
                                         <div class="col-xs-4 text-right" >
@@ -108,7 +117,7 @@
                     </h:form>  
                     <div id="itensRapidos" style="display: none; margin-top: 10px">
                         <h:form>
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia01)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -116,7 +125,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao01}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia02)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -124,7 +133,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao02}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia03)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -132,7 +141,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao03}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia04)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -140,7 +149,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao04}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia05)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -148,7 +157,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao05}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia06)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -156,7 +165,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao06}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia07)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -164,7 +173,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao07}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia08)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -172,7 +181,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao08}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia09)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -180,7 +189,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao09}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia10)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -188,7 +197,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao10}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia11)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -196,7 +205,7 @@
                                     #{fastFoodBean.atalhoFastFood.descricao11}
                                 </p:commandLink>
                             </div>                                
-                            <div class="col-xs-6 col-md-6">
+                            <div class="col-xs-12 col-md-6">
                                 <p:commandLink class="btn btn-block btn-purple" 
                                                actionListener="#{fastFoodBean.buscarProduto(fastFoodBean.atalhoFastFood.referencia12)}"
                                                onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"
@@ -208,7 +217,7 @@
                     </div>
                 </div>
             </div>
-            <div class="barra-botoes" >
+            <div class="barra-botoes" style="padding-top: 25px;box-shadow: 5px 5px 5px 10px rgba(0,0,0,.1)">
                 <h:form id="frmFinalizar">
                     <div class="col-xs-6 col-md-6">
                         <a class="btn btn-purple btn-block" onclick="mostrarItens()">
@@ -239,7 +248,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Grupos</h4>
+                        <h4 class="modal-title" style="color: #532392" >Grupos</h4>
                     </div>
                     <h:form id="frmGrupo">
                         <div class="modal-body">
@@ -247,14 +256,14 @@
                                 <table class="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Descrição</th>
+                                            <th style="font-size: 20pt;">Descrição</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <ui:repeat id="grupos" value="#{fastFoodBean.grupos}" var="grupo" varStatus="indexGrupo">
                                             <tr>
                                                 <td onclick="document.getElementById('frmGrupo:grupos:#{indexGrupo.index}:confirma').click();">
-                                                    <button jsf:id="confirma"  data-dismiss="modal" class="btn btn-link">
+                                                    <button jsf:id="confirma" style="color: #532392"  data-dismiss="modal" class="btn btn-link">
                                                         #{grupo.t51dsgrp}
                                                         <f:ajax event="click" render="frmProduto" execute="@this" listener="#{fastFoodBean.pesquisarPorGrupo(grupo)}"  />
                                                     </button>
@@ -276,7 +285,7 @@
         </div>
 
         <div id="itensModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -286,26 +295,30 @@
                     <div class="modal-body">
                         <div class="table-responsive">
                             <h:form id="frmItens">
-                                <table class="table table-striped table-hover">
+                                <table class="table table-striped table-hover itens">
                                     <thead>
                                         <tr>
-                                            <td>Descrição</td>
-                                            <td>Quantidade</td>
-                                            <td>Preco.Uni</td>
-                                            <td>Total</td>
-                                            <td></td>
+                                            <th class="cabecalho-itens">Descrição</th>
+                                            <th class="cabecalho-itens">Quantidade</th>
+                                            <th class="cabecalho-itens">Preco.Uni</th>
+                                            <th class="cabecalho-itens">Total</th>
+                                            <th class="cabecalho-itens"></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody >
                                         <ui:repeat id="lancamentos" value="#{fastFoodBean.lancamentos}" var="lancamento" varStatus="indexLancamento">
-                                            <tr>
+                                            <tr style="cursor: pointer">
                                                 <p:commandLink id="btObservacao" style="display: none;" actionListener="#{fastFoodBean.setLancamentoObervacao(lancamento,indexLancamento.index)}"
                                                                process="@this" update="frmObservacao">
                                                     <f:passThroughAttribute name="data-toggle" value="modal" />
                                                     <f:passThroughAttribute name="data-target" value="#observacaoModal" />    
                                                 </p:commandLink>
                                                 <td onclick="acionarEventoBotao('frmItens:lancamentos:#{indexLancamento.index}:btObservacao')">#{lancamento.descricao}</td>
-                                                <td onclick="acionarEventoBotao('frmItens:lancamentos:#{indexLancamento.index}:btObservacao')">#{lancamento.quantidade}</td>
+                                                <td onclick="acionarEventoBotao('frmItens:lancamentos:#{indexLancamento.index}:btObservacao')">
+                                                    <h:outputText value="#{lancamento.quantidade}">
+                                                        <f:convertNumber pattern="###,##0.000"/>
+                                                    </h:outputText>                                                    
+                                                </td>
                                                 <td onclick="acionarEventoBotao('frmItens:lancamentos:#{indexLancamento.index}:btObservacao')">
                                                     <h:outputText value="#{lancamento.preco}">
                                                         <f:convertNumber pattern="###,##0.00"/>
@@ -369,9 +382,11 @@
                         <h4 class="modal-title">Quantidade</h4>
                     </div>
                     <div class="modal-body">
-                        <h:form id="frmQuantidade">
-                            <p:inputText id="quantidadeKilo" type="number" class="form-control" placeholder="Defina a quantidade"
-                                         value="#{fastFoodBean.quantidade}" style="margin-bottom: 5px;font-size:16pt;text-align:center">
+                        <h:form id="frmQuantidade" onsubmit="return false;">
+                            <f:passThroughAttribute name="autocomplete" value="off"/>
+                            <p:inputText id="quantidadeKilo" class="form-control" type="number" placeholder="Defina a quantidade"
+                                         value="#{fastFoodBean.quantidade}" style="margin-bottom: 5px;font-size:25pt;height: 60px;text-align:center"
+                                         >
                                 <f:passThroughAttribute name="autofocus" value="true"/>
                             </p:inputText>
                             <p:messages id="mensagemQuantidade" showIcon="false" closable="true" />

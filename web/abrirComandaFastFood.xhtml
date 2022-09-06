@@ -15,15 +15,15 @@
         <script src="resources/js/bootstrap.min.js"></script>        
     </h:head>
     <h:body>        
-        <div style="padding: 2px">
+        <div style="padding: 2px;display: flex;align-items: center;height: 100vh; ">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
                         <h3>Abrir Comanda</h3>
-                        <input id="numeroComanda" class="form-control" type="tel" placeholder="Número da comanda" maxlength="5" autofocus="true"/>
-                        <div class="hidden alert alert-danger alert-dismissible" role="alert">
+                        <input id="numeroComanda" style="text-align: center" class="form-control" type="tel" placeholder="Número da comanda" maxlength="4" autofocus="true"/>
+                        <div class="hidden alert alert-warning alert-dismissible" role="alert">
                             <button id="fecharMensagem" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>AVISO!</strong> <span id="mensagem"></span>  
+                            <strong>AVISO!</strong> <span id="mensagem" style="font-size: 12pt"></span>  
                         </div>
                     </div>
                     <div class="col-md-12">

@@ -1,6 +1,6 @@
 *{
     box-sizing: border-box;
-    font-size: 12px;
+    font-size: 1rem;
 }
 
 .grupo,.produto{
@@ -33,7 +33,7 @@
     grid-column-end:3;
 }
 .cabecalho a{
-    font-size: 11pt;
+    font-size: 13pt;
 }
 .conteudo{
     grid-column-start:1;
@@ -45,7 +45,7 @@
     padding: 5px; 
 }
 #itensRapidos a{
-    font-size: 11pt;
+    font-size: 12pt;
 }
 .my-container{
     display: grid;
@@ -75,7 +75,7 @@ ul{
 }
 ul li{
     margin-bottom: 15px;
-    font-size: 10px;
+    font-size: 1rem;
     display: inline-block;
 }
 .ui-messages-warn-summary{
@@ -83,4 +83,16 @@ ul li{
 }
 .modal{
     z-index: 10000;
+}
+
+.fonte-itens{
+    font-size: 2rem !important;
+}
+
+.cabecalho-itens{
+    font-size: 13pt !important;
+}
+
+.itens tbody tr td{
+    font-size: 12pt !important;    
 }

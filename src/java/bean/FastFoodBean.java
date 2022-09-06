@@ -99,7 +99,8 @@ public class FastFoodBean implements Serializable {
     }
 
     public void pesquisarProduto() {
-        this.produtos = this.produtoServico.listarPorReferenciaDescricaoCodigoBarraFastFood(pesquisa);
+        this.pesquisa = this.pesquisa == null ? "" : this.pesquisa;
+        this.produtos = this.produtoServico.listarPorReferenciaDescricaoCodigoBarraFastFood(pesquisa.toUpperCase());
     }
 
     public void pesquisarPorGrupo(Lapt51 lapt51) {
@@ -189,7 +190,8 @@ public class FastFoodBean implements Serializable {
             atualiazarStatusComanda();
         }
         limparVariaveis();
-        PrimeFaces.current().executeScript("fecharModal('finalizarModal')");
+//        PrimeFaces.current().executeScript("fecharModal('finalizarModal')");
+        this.redirecinarParaPagina("comandasFastFood");
     }
 
     public void mostrarMensagemQueComandaNaoExiste() {

@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.swing.JOptionPane;
 
 public class GeradoDeArquivoXMLCatraca {
+
     private static GeradoDeArquivoXMLCatraca geradoDeArquivoXMLCatraca = null;
 
     public boolean criarArquivoXML(String comanda, String status) {
@@ -15,7 +16,7 @@ public class GeradoDeArquivoXMLCatraca {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao buscar informação do arquivo de configuração.");
         }
-        File file = new File(caminho + "IMPORTESECULLUM.xml");
+        File file = new File(caminho + comanda + ".xml");
         if (!file.exists()) {
             try {
                 file.createNewFile();

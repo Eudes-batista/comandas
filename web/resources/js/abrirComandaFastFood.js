@@ -13,12 +13,8 @@ buttonFecharMensagem.addEventListener("click", () => {
 });
 
 numeroComanda.addEventListener("input", () => {
-    let valor = numeroComanda.value;
-    if (!valor) {
-        return;
-    }
-    numeroComanda.value = valor.replace(/[^0-9]/g, '');
-    numeroComanda.value = ("0000" + numeroComanda.value).slice(-4);
+    if (!numeroComanda.value) return;
+    numeroComanda.value = numeroComanda.value.replace(/\D/g, '');
 });
 
 numeroComanda.addEventListener("keypress", (event) => {
@@ -35,7 +31,7 @@ function abrirComanda() {
         mostrarMensagem("Não pode ser zero.");
         return;
     }
-    location.href = "fastfood.jsf?comanda=" + numeroComanda.value;
+    location.href = "fastfood.jsf?comanda=" + ("0000" + numeroComanda.value).slice(-4);
 }
 
 function mostrarMensagem(texto) {
