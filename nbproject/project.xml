@@ -8,6 +8,7 @@
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
             <name>Comandas</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
+            <explicit-platform explicit-source-supported="true"/>
             <web-module-libraries>
                 <library dirs="200">
                     <file>${file.reference.all-themes-1.0.10.jar}</file>
@@ -210,10 +211,6 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.lombok.jar}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
-                <library dirs="200">
                     <file>${file.reference.omnifaces-1.13.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
@@ -247,6 +244,10 @@
                 </library>
                 <library dirs="200">
                     <file>${file.reference.validation-api-1.1.0.Final.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.lombok-1.18.8.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
