@@ -85,7 +85,7 @@ public class MesasBean implements Serializable {
     private boolean reabrimesa;
     private boolean mostrareabrimesa;
     private boolean transferirComanda;
-    
+
     private SimpleDateFormat dateFormat;
 
     public void init() {
@@ -157,7 +157,7 @@ public class MesasBean implements Serializable {
     public void imprimirPreconta(String mesa) {
         this.prepararPreconta(mesa, "normal");
     }
-    
+
     public void reipressaoPreconta(String mesa) {
         this.prepararPreconta(mesa, "");
     }
@@ -176,7 +176,9 @@ public class MesasBean implements Serializable {
 
     public void imprimir(String tipo) {
         if (!"RSVA".equals(this.mesa.getMESA()) && Pattern.compile("\\d").matcher(this.mesa.getMESA()).find()) {
-            this.prepararPreconta(String.format("%04d", Integer.parseInt(this.mesa.getMESA())), tipo);
+            final int numeroMesa = Integer.parseInt(this.mesa.getMESA());
+            final String numeroDaMesaComQuatroDigitos = String.format("%04d", numeroMesa);
+            this.prepararPreconta(numeroDaMesaComQuatroDigitos, tipo);
             this.listarMesas();
             PrimeFaces.current().executeScript("PF('dialogoPrecontaRapida').hide();");
         }
@@ -185,16 +187,20 @@ public class MesasBean implements Serializable {
     private void prepararPreconta(String mesaSelecionada, String tipo) {
         this.mesa = this.inserirPessoasNaMesa(mesaSelecionada);
         this.mesa.setPAGANTES(this.mesa.getPAGANTES() == null || "".equals(this.mesa.getPAGANTES()) ? "1" : this.mesa.getPAGANTES());
-        GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
-        Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesaSelecionada);
-        Empresa empresa = relatorio.getEmpresa();
-        Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesaSelecionada).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
-        String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
-        PdfService pdfService = this.selecionarTipoImpressao(tipo, empresa, mapComanda);
+        final GerenciaArquivo gerenciaArquivo = new GerenciaArquivo();
+        final Relatorio relatorio = new Relatorio(this.comandaService, this.empresaService, mesaSelecionada);
+        final Empresa empresa = relatorio.getEmpresa();
+        if (empresa == null) {
+            Messages.addGlobalError("Empresa configurada não foi encontrada.");
+            return;
+        }
+        final Map<String, List<Object[]>> mapComanda = this.controle.listarComandasPorMesa(mesaSelecionada).stream().collect(Collectors.groupingBy(c -> String.valueOf(c[0])));
+        final String impressora = gerenciaArquivo.bucarInformacoes().getConfiguracao().getImpressora();
+        final PdfService pdfService = this.selecionarTipoImpressao(tipo, empresa, mapComanda);
         try {
             new ControleImpressao(impressora).imprime(pdfService.gerarPdf());
         } catch (FileNotFoundException | DocumentException ex) {
-            Messages.addGlobalError("Erro ao encontra o arquivo config.txt \n"+ex.getMessage());
+            Messages.addGlobalError("Erro ao encontra o arquivo config.txt \n" + ex.getMessage());
         } catch (IOException | PrinterException ex) {
             Messages.addGlobalError("Impressora desligada ou não configurada corretamente");
         }
@@ -213,7 +219,7 @@ public class MesasBean implements Serializable {
                 pdfService = new PdfMesaParcial(empresa, mapComanda, this.comandaService, this.mesa);
                 break;
             case "detalhada":
-                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, this.mesa, this.itemAcompanhamentoService);                
+                pdfService = new PdfDetalhado(empresa, mapComanda, this.comandaService, this.mesa, this.itemAcompanhamentoService);
                 break;
             default:
                 pdfService = new PdfMesa(empresa, mapComanda, this.comandaService, this.mesa);
@@ -351,7 +357,7 @@ public class MesasBean implements Serializable {
     public void fecharMesa(Mesa mesa) {
         mesa.setResponsavelPorReabrirMesa("");
         this.controle.atualizarStatusPreconta(mesa, "FECHAR");
-        if(this.dateFormat == null){
+        if (this.dateFormat == null) {
             this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         }
         this.atualizarDataPreContaPessoasPagantes(this.dateFormat.format(new Date()), mesa);

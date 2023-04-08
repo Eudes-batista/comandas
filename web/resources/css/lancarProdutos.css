@@ -2,12 +2,25 @@ body{
     background: #fff;
     background-attachment: fixed;
     background-size: cover;
+    overflow-x: hidden !important;
+}
+body::-webkit-scrollbar,
+.lista-scroll::-webkit-scrollbar,
+.ng-dropdown-panel .scroll-host::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb,
+.lista-scroll::-webkit-scrollbar-thumb,
+.ng-dropdown-panel .scroll-host::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .btn-produto,.btn-modal{
     margin-bottom: 5px;
     transition: all 0.1s ease-in;
     border: none !important;
-    color: #FFF !important;    
+    color: #FFF !important;
 }
 .btn-modal{
     background:rgba(250, 250, 250,.3) !important;
@@ -35,12 +48,31 @@ body{
     background-color: #337ab7 !important;
     border: none !important;
 }
+.panel-body{
+    background-color: rgba(255,255,255,.5);
+}
+.ui-notificationbar{
+    z-index: 3 !important;
+}
 .barra{
     background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #43546B 75%);
     color:#757575;
     font-size: 20pt;
     font-weight: bold;
     border-bottom: 1px solid #ccc;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+}
+.barra .row {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    margin: 0px !important;
 }
 .ui-sidebar a span{
     color: #fff !important;
@@ -71,6 +103,7 @@ span a{
 .texto-cabecalho{
     color: #fff !important;
     cursor: pointer ;
+    font-size: 1.6rem;
 }
 .texto-mesa{
     color: #333 !important;
@@ -89,7 +122,7 @@ span a{
     color: #fff !important;
 }
 .mesa-modal,.mensagem-impressao{
-    background: linear-gradient(135deg,#094b66 20%, #d7eef7 80%,#fffd );    
+    background: linear-gradient(135deg,#094b66 20%, #d7eef7 80%,#fffd );
     color:#fff !important;
     text-align: center;
 }
@@ -111,8 +144,9 @@ span a{
 }
 .transparente{
     background: transparent !important;
-    overflow: auto !important;
-    height: 455px !important;
+    overflow-y: auto !important;
+    min-height: 700px !important;
+    overflow-x: hidden !important;
 }
 .ui-grid{
     background: transparent !important;
@@ -135,7 +169,7 @@ span a{
     background: rgba(100,100,100,.5);
 }
 .form-cancelamento{
-    background: linear-gradient(135deg,#4d0000 20%, #d66259 80%,#fffd );    
+    background: linear-gradient(135deg,#4d0000 20%, #d66259 80%,#fffd );
     color: #fff;
     font-size: 15pt;
     width: 600px !important;
@@ -144,9 +178,18 @@ span a{
     font-size: 15pt !important;
     color:#757575 !important;
 }
-@media(max-width:700px){
+.lista-itens{
+    width: 500px !important;
+}
+@media(max-width:990px){
+    .barra .row {
+        display: block;
+    }
+    .lista-itens{
+        width: 100% !important;
+    }
     .form-cancelamento{
-        background: linear-gradient(135deg,#4d0000 20%, #d66259 80%,#fffd );    
+        background: linear-gradient(135deg,#4d0000 20%, #d66259 80%,#fffd );
         color: #fff;
         font-size: 15pt;
         height: 812px !important;
@@ -165,7 +208,9 @@ span a{
 .ui-button-text{
     padding: 0px !important;
 }
-.row{margin-bottom: 5px;}
+.row{
+    margin-bottom: 5px;
+}
 .tabela-tra,.tabela-tra tbody,.tabela-tra tr,.tabela-tra td,.tabela-tra thead,.tabela-tra th{
     background: transparent !important;
     background-color: transparent !important;
@@ -176,7 +221,7 @@ span a{
     border-top: 1px solid #fff !important;
 }
 .tabela-tra tr:hover{
-    background: rgba(100,100,100,.5) !important;   
+    background: rgba(100,100,100,.5) !important;
 }
 ::-webkit-scrollbar-track {
     background-color: #F4F4F4;

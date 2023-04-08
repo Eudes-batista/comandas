@@ -165,8 +165,11 @@ public class Relatorio {
     }
 
     public Empresa getEmpresa() {
-        Object[] listaEmpresa = empresaService.buscarEmpresa(new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa());
-        Empresa empresa = new Empresa(String.valueOf(listaEmpresa[0]), String.valueOf(listaEmpresa[1]),
+        final Object[] listaEmpresa = empresaService.buscarEmpresa(new GerenciaArquivo().bucarInformacoes().getConfiguracao().getEmpresa());
+        if(listaEmpresa == null){
+            return null;
+        }
+        final Empresa empresa = new Empresa(String.valueOf(listaEmpresa[0]), String.valueOf(listaEmpresa[1]),
                 String.valueOf(listaEmpresa[2]), String.valueOf(listaEmpresa[3]),
                 String.valueOf(listaEmpresa[4]), String.valueOf(listaEmpresa[5]),
                 String.valueOf(listaEmpresa[6]), String.valueOf(listaEmpresa[7]),

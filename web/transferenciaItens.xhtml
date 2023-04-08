@@ -7,7 +7,7 @@
                 xmlns:p="http://primefaces.org/ui">
     <h:form id="frmTransferenciaItens">
         <p:messages id="msgTransItens" showIcon="false" closable="true" />
-        <div style="overflow: auto;height: 340px;">
+        <div style="overflow: auto;max-height: 550px;">
             <p:dataTable id="tabelaTransferenciaItens" var="lancamentoTransferencia" value="#{produtoBean.lancamentosTransferencias}" selection="#{produtoBean.lancamentosSelecionadadosTransferencia}" rowKey="#{lancamentoTransferencia.numero}" 
                          style="margin-bottom:0" tableStyleClass="tabela-tra"
                          rowStyleClass="#{lancamentoTransferencia.imprimir eq '1' ?'ja-impressos':'nao-impresso'}">

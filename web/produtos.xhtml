@@ -64,12 +64,12 @@
             </p:notificationBar>
             <!--CABEÇALHO-->
             <div class="ui-fluid">
-                <div class="container-fluid barra">
+                <div class="barra">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h4 jsf:id="titulo" class="texto-cabecalho text-center">Mesa #{produtoBean.mesa} | Comanda #{produtoBean.comanda} | Vendedor #{produtoBean.vendedor}</h4>
+                        <div class="col-md-6">                            
+                            <div jsf:id="titulo" class="texto-cabecalho text-center">Mesa #{produtoBean.mesa} | Comanda #{produtoBean.comanda} | Vendedor #{produtoBean.vendedor}</div>                            
                         </div>
-                        <div class="col-md-6" style="padding-top: 10px;">
+                        <div class="col-md-6" style="text-align: center">
                             <ul>
                                 <li>
                                     <p:commandLink id="grupos" value="Grupos" class="btn-modal btn btn-info btn-block"  oncomplete="PF('sidebar1').show()" actionListener="#{produtoBean.listarGrupos()}"
@@ -108,20 +108,24 @@
                             </ul>                        
                         </div>
                     </div>
-                </div>
-                <!--CAMPO PESQUISA-->
-                <div class="panel-body">
-                    <p:inputText id="pesquisar" placeholder="O que você está buscando ? " value="#{produtoBean.pesquisa}" style="font-size: 15pt;">
-                        <p:ajax event="keyup" listener="#{produtoBean.pesquisarProduto()}" process="@this" update="frm:tabelaProduto" />
-                    </p:inputText>
+                    <!--CAMPO PESQUISA-->
+                    <div class="panel-body">
+                        <p:inputText type="search" id="pesquisar" placeholder="O que você está buscando ? " value="#{produtoBean.pesquisa}" style="font-size: 15pt;"
+                                     onkeypress="if (event.keyCode == 13) {
+                                                 pesquisarComEnter();
+                                                 return false;
+                                             }"  />
+                        <p:remoteCommand name="pesquisarComEnter" actionListener="#{produtoBean.pesquisarProduto()}"
+                                         process="@this frm:pesquisar" update="frm:tabelaProduto" />
+                    </div>
                 </div>
                 <!--MODAL DOS GRUPOS-->
                 <p:sidebar id="sidebar1" widgetVar="sidebar1" baseZIndex="10000" blockScroll="true" fullScreen="true">
-                    <div style="overflow: auto;height:500px;">
+                    <div style="overflow: auto;max-height: 914px;">
                         <h3><p:commandLink class="btn btn-default" oncomplete="PF('sidebar1').hide();">Grupos</p:commandLink></h3>
                         <ul jsf:id="listaGrupo">
                             <ui:repeat id="prd" value="#{produtoBean.grupos}" var="g" varStatus="indexpdr">
-                                <li>
+                                <li style="margin-left: 10px">
                                     <h:panelGrid columns="1" style="width:100%" columnClasses="logo,detail">
                                         <p:commandLink actionListener="#{produtoBean.listarProdutoPorGrupo(g)}" update="frm:tabelaProduto"
                                                        oncomplete="PF('sidebar1').hide();">                                            
@@ -141,7 +145,7 @@
                     <div class="mesa">
                         <div>
                             <ul>
-                                <li class="texto-mesa text-left" style="text-align: left; margin-top: 10px; width: 350px;">
+                                <li class="texto-mesa text-left" style="text-align: left; margin-top: 10px;">
                                     #{p.referencia} - #{p.descricao}
                                 </li>
                                 <li class="texto-mesa text-right" style="text-align: right;">
@@ -199,9 +203,9 @@
                     </div>
                 </p:dataGrid>  
                 <!--LISTA DOS ITENS ADICIONADOS-->
-                <p:sidebar id="itens" widgetVar="sidebar2" baseZIndex="10000" blockScroll="true"  style="width: 370px;" class="mesa-modal">
+                <p:sidebar id="itens" widgetVar="sidebar2" baseZIndex="10000" blockScroll="true"  class="mesa-modal lista-itens">
                     <h3>Comanda #{produtoBean.comanda}</h3>
-                    <div style="overflow: auto;height:380px;">
+                    <div style="overflow: auto;max-height: 570px;">
                         <h:panelGroup id="tabela">
                             <table class="table" >
                                 <tbody>
@@ -245,7 +249,7 @@
                             </table>
                         </h:panelGroup>  
                     </div>
-                    <div class="container-fluid">
+                    <div class="container-fluid" style="margin-top: 10px">
                         <div class="row">
                             <div class="col-md-12">
                                 <p:commandLink id="imprimirTodosItens" style="font-size: 13pt;color: #fff;" class="btn-modal btn btn-primary btn-block" update="frm:tabela frm:totalItens valorTotalItens" process="frm:tabela @this" actionListener="#{produtoBean.imprimirTodos()}"
@@ -274,7 +278,7 @@
                     </div>
                 </p:sidebar>
                 <!--BARRA DE OBSERVAÇÃO-->
-                <p:sidebar id="obs" widgetVar="sidebarObs" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
+                <p:sidebar id="obs" widgetVar="sidebarObs" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal lista-itens">
                     <h4>Acompanhamentos/Obersevações</h4>
                     <p:inputTextarea id="textArea" placeholder="Observação" value="#{produtoBean.lancamentoAcompanhamento.observacao}" style="font-size: 11pt"/>    
                     <h:selectOneMenu id="grupoAcompanhamento" class="form-control" value="#{produtoBean.grupoAcompanhamento}" converter="omnifaces.SelectItemsConverter">
@@ -486,7 +490,7 @@
             </h:form> 
         </p:dialog>
         <!--MODAL DE TRANSFERENCIA DE ITENS-->
-        <p:sidebar id="transferenciaItens" widgetVar="sidebarTransferenciaItens" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal" style="width: 370px;">
+        <p:sidebar id="transferenciaItens" widgetVar="sidebarTransferenciaItens" baseZIndex="10000" blockScroll="true" styleClass="mesa-modal lista-itens" >
             <ui:include src="transferenciaItens.xhtml" />    
         </p:sidebar>
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false"

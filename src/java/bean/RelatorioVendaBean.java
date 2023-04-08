@@ -37,7 +37,7 @@ public class RelatorioVendaBean implements Serializable {
     private double totalComissao;
     private double totalVendas;
     private int quantidadeClientesAtendidos;
-
+    
     public void init() {
         filtroVendaDetalhe = new FiltroVendaDetalhe();
         LocalDate date = LocalDate.now();
