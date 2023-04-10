@@ -50,14 +50,17 @@
                                 <span class="input-group-addon" id="basic-addon1">
                                     <i class="fa fa-search"></i>
                                 </span>
-                                <h:inputText class="form-control" value="#{pesquisaMesasBean.pesquisa}" >
+                                <h:inputText id="pesquisarMesas" class="form-control" value="#{pesquisaMesasBean.pesquisa}" 
+                                             onkeyup="if (event.keyCode == 13) {
+                                                         pesquisarComEnterHistoricoMesas();
+                                                         return false;
+                                                     }">
                                     <f:passThroughAttribute name="type" value="tel"/>
                                     <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
-                                    <f:passThroughAttribute name="aria-label" value="Username"/>
-                                    <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
                                     <f:passThroughAttribute name="autofocus" value="true"/>
-                                    <f:ajax event="keyup" render="tabela" execute="@this frmAuditoria:dataIncial frmAuditoria:dataFinal " listener="#{pesquisaMesasBean.pesquisarComanda()}"/>
                                 </h:inputText>
+                                <p:remoteCommand name="pesquisarComEnterHistoricoMesas" actionListener="#{pesquisaMesasBean.pesquisarComanda()}"
+                                                 process="@this frmAuditoria:dataIncial frmAuditoria:dataFinal frmAuditoria:pesquisarMesas" update="frmAuditoria:tabela"/>
                             </div>
                         </div>
                         <div class="col-md-1 text-right">
