@@ -34,14 +34,18 @@
                             <span class="input-group-addon" id="basic-addon1">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <h:inputText class="form-control" value="#{auditoriaBean.pesquisa}" >
+                            <h:inputText id="pesquisaComandaAuditoria" class="form-control" value="#{auditoriaBean.pesquisa}"
+                                         onkeyup="if (event.keyCode == 13) {
+                                                     pesquisarComEnterAuditoria();
+                                                     return false;
+                                                 }">
                                 <f:passThroughAttribute name="type" value="tel"/>
+                                <f:passThroughAttribute name="autocomplete" value="off"/>
                                 <f:passThroughAttribute name="placeholder" value="Pesquisa"/>
-                                <f:passThroughAttribute name="aria-label" value="Username"/>
-                                <f:passThroughAttribute name="aria-describedby" value="basic-addon1"/>
                                 <f:passThroughAttribute name="autofocus" value="true"/>
-                                <f:ajax event="keyup" render="tabela" execute="@this" listener="#{auditoriaBean.pesquisarComanda()}"/>
                             </h:inputText>
+                            <p:remoteCommand name="pesquisarComEnterAuditoria" actionListener="#{auditoriaBean.pesquisarComanda()}"
+                                             process="@this frmAuditoria:pesquisaComandaAuditoria" update="frmAuditoria:tabela"/>
                         </div>
                     </div>
                     <div class="col-md-1 text-right">
